@@ -1,0 +1,1 @@
+OK eski_yuz=47 yeni_yuz=173 hatali=8 duvar=1038 etek=33 bina=24 agac=511 cit=74 tas_taban=74

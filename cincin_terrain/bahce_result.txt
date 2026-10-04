@@ -1,0 +1,1 @@
+OK bahce=33 kaydedildi=true

@@ -1,0 +1,1 @@
+OK asagi(fill)=43 yukari(cut)=26 duz=5 eslesmeyen=0 max_yukseklik=4.95

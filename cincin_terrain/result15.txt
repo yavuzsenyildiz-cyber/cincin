@@ -1,0 +1,1 @@
+OK duzeltilen_duvar=64 istinat_yuk_ort=1.57 max=3.65

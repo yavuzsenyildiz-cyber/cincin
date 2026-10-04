@@ -1,0 +1,1 @@
+OK eski_yuz=67 yeni_yuz=93 hatali=0 kademe_duvar=263 agac=221 cit=73 tas_taban=73 etek=28

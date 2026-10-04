@@ -1,0 +1,1 @@
+OK duvar_tabani_kutu=74 max_derinlik=6.39 riser_etek_yuz=0

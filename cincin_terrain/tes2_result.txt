@@ -1,0 +1,1 @@
+OK bina=8 kaydedildi=true yuz=47258

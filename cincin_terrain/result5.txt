@@ -1,0 +1,1 @@
+OK tasinan=608 duvar=74 sabit(maske disi)=2 vertex=531 arka_yuz_duzeltilen=2556

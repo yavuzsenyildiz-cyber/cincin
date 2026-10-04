@@ -1,0 +1,1 @@
+OK binalar_geri_alindi=17 max=2.65
