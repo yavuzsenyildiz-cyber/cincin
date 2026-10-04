@@ -52,18 +52,18 @@ begin
 
   gy = ents.add_group; gy.name = "ARAC_YOLU"; gy.layer = t_yo
   nq = 0; bad = 0
-  File.foreach(dir + "yol_yuzey.txt") do |ln|
-    t = ln.split; next unless t[0] == "Q"
-    c = t[2..13].map(&:to_f)
-    q = (0..3).map { |i| Geom::Point3d.new(c[i * 3].m, c[i * 3 + 1].m, (c[i * 3 + 2] + 0.15).m) }
+  qs = []
+  File.foreach(dir + "yol_yuzey.txt") { |ln| t = ln.split; qs << t[2..13].map(&:to_f) if t[0] == "Q" }
+  rm = Geom::PolygonMesh.new(qs.length * 4, qs.length * 2)
+  qs.each do |c|
+    q = (0..3).map { |i| rm.add_point(Geom::Point3d.new(c[i * 3].m, c[i * 3 + 1].m, (c[i * 3 + 2] + 0.15).m)) }
     begin
-      fc = gy.entities.add_face(q); fc.reverse! if fc.normal.z < 0
-      fc.material = asf; fc.back_material = asf; nq += 1
+      rm.add_polygon(q[0], q[1], q[2]); rm.add_polygon(q[0], q[2], q[3]); nq += 1
     rescue
       bad += 1
     end
   end
-  gy.entities.grep(Sketchup::Edge).each { |e| e.hidden = true if e.faces.length == 2 }
+  gy.entities.add_faces_from_mesh(rm, Geom::PolygonMesh::AUTO_SOFTEN | Geom::PolygonMesh::SMOOTH_SOFT_EDGES, asf, asf)
   m.commit_operation
 
   vw = m.active_view
