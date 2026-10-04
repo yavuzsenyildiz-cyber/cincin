@@ -22,20 +22,31 @@ begin
   ga = ents.add_group; ga.name = "ARAZI_TESVIYE (yollu, kazi/dolgu sonrasi, sev 2:3)"; ga.layer = t_ar
   ga.entities.add_faces_from_mesh(pm, Geom::PolygonMesh::AUTO_SOFTEN | Geom::PolygonMesh::SMOOTH_SOFT_EDGES, mat, mat)
 
-  pts = ->(s, z) { s.split(";").map { |q| x, y = q.split(",").map(&:to_f); Geom::Point3d.new(x.m, y.m, z.m) } }
+  pts = lambda do |s, z|
+    a = s.split(";").map { |q| x, y = q.split(",").map(&:to_f); Geom::Point3d.new(x.m, y.m, z.m) }
+    o = []
+    a.each { |p| o << p if o.empty? || o.last.distance(p) > 2.mm }
+    o.pop while o.length > 1 && o.first.distance(o.last) <= 2.mm
+    o
+  end
   gp = ents.add_group; gp.name = "PLATFORM_BAHCE (yoldan kirpilmis)"; gp.layer = t_pl
-  fps = {}; nplat = 0
+  fps = {}; nplat = 0; badp = 0; msgp = []
   File.foreach(dir + "tes_objs_yol.txt") do |ln|
     t = ln.split
     if t[0] == "B" then fps[t[1]] = t[4]
     elsif t[0] == "L"
       name, z0, poly = t[1], t[2].to_f, t[3]
-      sg = gp.entities.add_group; sg.name = "#{name} platform +#{'%.2f' % (z0 + 105.07)}"
-      fc = sg.entities.add_face(pts.(poly, z0 + 0.02)); fc.reverse! if fc.normal.z < 0
-      fc.material = cim; fc.back_material = cim
-      hole = sg.entities.add_face(pts.(fps[name], z0 + 0.02)) rescue nil
-      hole.erase! if hole && hole.valid?
-      nplat += 1
+      begin
+        sg = gp.entities.add_group; sg.name = "#{name} platform +#{'%.2f' % (z0 + 105.07)}"
+        fc = sg.entities.add_face(pts.(poly, z0 + 0.02)); fc.reverse! if fc.normal.z < 0
+        fc.material = cim; fc.back_material = cim
+        hole = sg.entities.add_face(pts.(fps[name], z0 + 0.02)) rescue nil
+        hole.erase! if hole && hole.valid?
+        nplat += 1
+      rescue => e
+        badp += 1; msgp << "#{name}: #{e.message[0, 50]}"
+        sg.erase! if sg && sg.valid?
+      end
     end
   end
 
@@ -57,7 +68,7 @@ begin
   vw = m.active_view
   vw.camera = Sketchup::Camera.new(Geom::Point3d.new(85.m, -40.m, 60.m), Geom::Point3d.new(85.m, 65.m, 0), Geom::Vector3d.new(0, 0, 1))
   vw.write_image(dir + "yol_view.png", 1600, 1000, true, 0.0)
-  File.write(dir + "yol_result.txt", "OK platform=#{nplat} yol_dilimi=#{nq} hatali=#{bad} arazi_yuz=#{ga.entities.grep(Sketchup::Face).length}")
+  File.write(dir + "yol_result.txt", "OK platform=#{nplat} platform_hatali=#{badp} #{msgp.join(' / ')} yol_dilimi=#{nq} hatali=#{bad} arazi_yuz=#{ga.entities.grep(Sketchup::Face).length}")
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "yol_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(3).join("\n")}")
