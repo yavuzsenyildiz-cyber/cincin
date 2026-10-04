@@ -55,7 +55,7 @@ begin
   File.foreach(dir + "yol_yuzey.txt") do |ln|
     t = ln.split; next unless t[0] == "Q"
     c = t[2..13].map(&:to_f)
-    q = (0..3).map { |i| Geom::Point3d.new(c[i * 3].m, c[i * 3 + 1].m, (c[i * 3 + 2] + 0.03).m) }
+    q = (0..3).map { |i| Geom::Point3d.new(c[i * 3].m, c[i * 3 + 1].m, (c[i * 3 + 2] + 0.15).m) }
     begin
       fc = gy.entities.add_face(q); fc.reverse! if fc.normal.z < 0
       fc.material = asf; fc.back_material = asf; nq += 1
@@ -63,6 +63,7 @@ begin
       bad += 1
     end
   end
+  gy.entities.grep(Sketchup::Edge).each { |e| e.hidden = true if e.faces.length == 2 }
   m.commit_operation
 
   vw = m.active_view
