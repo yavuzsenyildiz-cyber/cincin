@@ -64,12 +64,25 @@ begin
     end
   end
   gy.entities.add_faces_from_mesh(rm, Geom::PolygonMesh::AUTO_SOFTEN | Geom::PolygonMesh::SMOOTH_SOFT_EDGES, asf, asf)
+  gg = ents.add_group; gg.name = "GIRIS_YAYA_YOLLARI (bolum -> yol)"; gg.layer = t_yo
+  gmat = m.materials["GIRIS_YOLU"] || m.materials.add("GIRIS_YOLU"); gmat.color = Sketchup::Color.new(200, 185, 150)
+  ng = 0
+  File.foreach(dir + "giris_yollari.txt") do |ln|
+    t = ln.split; next unless t[0] == "G"
+    c = t[2..13].map(&:to_f)
+    q = (0..3).map { |i| Geom::Point3d.new(c[i * 3].m, c[i * 3 + 1].m, (c[i * 3 + 2] + 0.10).m) }
+    begin
+      fc = gg.entities.add_face(q); fc.reverse! if fc.normal.z < 0
+      fc.material = gmat; fc.back_material = gmat; ng += 1
+    rescue
+    end
+  end
   m.commit_operation
 
   vw = m.active_view
   vw.camera = Sketchup::Camera.new(Geom::Point3d.new(85.m, -40.m, 60.m), Geom::Point3d.new(85.m, 65.m, 0), Geom::Vector3d.new(0, 0, 1))
   vw.write_image(dir + "yol_view.png", 1600, 1000, true, 0.0)
-  File.write(dir + "yol_result.txt", "OK platform=#{nplat} platform_hatali=#{badp} #{msgp.join(' / ')} yol_dilimi=#{nq} hatali=#{bad} arazi_yuz=#{ga.entities.grep(Sketchup::Face).length}")
+  File.write(dir + "yol_result.txt", "OK platform=#{nplat} platform_hatali=#{badp} #{msgp.join(' / ')} yol_dilimi=#{nq} hatali=#{bad} giris_yolu=#{ng} arazi_yuz=#{ga.entities.grep(Sketchup::Face).length}")
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "yol_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(3).join("\n")}")

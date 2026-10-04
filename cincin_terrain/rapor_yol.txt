@@ -1,10 +1,10 @@
-YOL1: uzunluk 141 m, genislik 4.0 m, kot 103.56..112.50, max boyuna egim %12.0
-   P115-YAPI1: yol-platform kot farki -1.67..0.81 m (platform 111.11, yol 109.44..111.91)
-   P115-YAPI2: yol-platform kot farki -0.92..-0.07 m (platform 108.17, yol 107.25..108.10)
-   P115-YAPI3: yol-platform kot farki -0.36..1.82 m (platform 103.92, yol 103.56..105.74)
+YOL1: uzunluk 141 m, genislik 4.0 m, kot 102.53..112.50, max boyuna egim %12.0
+   P115-YAPI1: yol-platform kot farki -2.16..0.73 m (platform 111.11, yol 108.95..111.84)
+   P115-YAPI2: yol-platform kot farki -0.82..-0.56 m (platform 108.17, yol 107.35..107.61)
+   P115-YAPI3: yol-platform kot farki -1.39..1.25 m (platform 103.92, yol 102.53..105.17)
    kirpilan platform alani: P115-YAPI1 63 m2, P115-YAPI2 69 m2, P115-YAPI3 70 m2, P116-YAPI4 62 m2, P116-YAPI5 67 m2, P116-YAPI6 65 m2
-YOL2: uzunluk 103 m, genislik 4.0 m, kot 104.20..111.08, max boyuna egim %12.0
-   P116-YAPI4: yol-platform kot farki -0.25..2.09 m (platform 108.37, yol 108.12..110.45)
-   P116-YAPI5: yol-platform kot farki -1.22..2.52 m (platform 105.60, yol 104.38..108.12)
-   P116-YAPI6: yol-platform kot farki -1.36..-0.12 m (platform 105.74, yol 104.38..105.62)
+YOL2: uzunluk 103 m, genislik 4.0 m, kot 103.94..111.08, max boyuna egim %12.0
+   P116-YAPI4: yol-platform kot farki -1.05..2.09 m (platform 108.37, yol 107.31..110.45)
+   P116-YAPI5: yol-platform kot farki -1.36..1.71 m (platform 105.60, yol 104.24..107.31)
+   P116-YAPI6: yol-platform kot farki -1.50..-0.92 m (platform 105.74, yol 104.24..104.82)
    kirpilan platform alani: P115-YAPI1 63 m2, P115-YAPI2 69 m2, P115-YAPI3 70 m2, P116-YAPI4 62 m2, P116-YAPI5 67 m2, P116-YAPI6 65 m2
