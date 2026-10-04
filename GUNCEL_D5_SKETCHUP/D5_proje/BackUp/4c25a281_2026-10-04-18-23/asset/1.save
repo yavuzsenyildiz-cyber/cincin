@@ -1,0 +1,931 @@
+{
+	"fileVersion": 22,
+	"fileVersionEx": 23,
+	"groupVersion": 3,
+	"wallStyleDatas": [],
+	"skpStyleDatas": [],
+	"pureLightDatas": [],
+	"furnitureDatas": [],
+	"bPFurnitureActorData": [],
+	"groupDatas": [
+		{
+			"uniqueActorId": "32D323094EA0D2629A90E28B48E5816A",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": true,
+			"isLock": false,
+			"layerId": "",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		},
+		{
+			"uniqueActorId": "56D7509B460957CEF0ECB4B7F2447EE1",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": false,
+			"isLock": true,
+			"layerId": "default0d50layer0id0000000000000",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/GUNCEL_D5_SKETCHUP/SketchUp/3dmodel3.skp[M_Realtime]",
+				"type": "Furniture",
+				"replace": false,
+				"mode": "RealtimeImport",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 5733.40234375,
+				"y": 7210.3046875,
+				"z": -1987.39990234375
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		}
+	],
+	"pureNiagaraActorData": [],
+	"pathSplineActorDatas": [],
+	"pureDecalActorDatas": [],
+	"meshSyncActorDatas": [
+		{
+			"uniqueActorId": "56D7509B460957CEF0ECB4B7F2447EE1",
+			"groupActorId": "",
+			"actorName": "3dmodel3.skp",
+			"transform":
+			{
+				"rotation":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0,
+					"w": 1
+				},
+				"translation":
+				{
+					"x": 5733.40234375,
+					"y": 7210.3046875,
+					"z": -1987.39990234375
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"bHide": false,
+			"bLock": true,
+			"meshPath": "d5a/56D7509B460957CEF0ECB4B7F2447EE1",
+			"zeroPointOffset":
+			{
+				"x": 5733.40234375,
+				"y": 7210.3046875,
+				"z": -1987.39990234375
+			},
+			"boundingBoxMin":
+			{
+				"x": -98999.99609375,
+				"y": -99000,
+				"z": 0
+			},
+			"boundingBoxMax":
+			{
+				"x": 98999.99609375,
+				"y": 99000,
+				"z": 26335.29833984375
+			},
+			"useDccZeroPoint": false,
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/GUNCEL_D5_SKETCHUP/SketchUp/3dmodel3.skp[M_Realtime]",
+				"type": "Furniture",
+				"replace": false,
+				"mode": "RealtimeImport",
+				"materialReplace": true
+			},
+			"materialGroup": "5A5B39CB47DE747FEFF47AA3739F23BE",
+			"hISMInfo_V2": [],
+			"brushInfo": [],
+			"useStrMaterialId": true,
+			"workSetId": "",
+			"responseIvyChannel": 1,
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		}
+	],
+	"panoRoamProjectDatas": [],
+	"xRRoamProjectDatas": [],
+	"clipActorDatas": [],
+	"createdCameraActorDatas": [],
+	"gaussianPointCloudDatas": [],
+	"measurementLineDatas": [],
+	"scatterActorDatas": [],
+	"landscapeTemplateActorDatas": [],
+	"cityActorDatas": [],
+	"cityTemplateActorDatas": [],
+	"cesiumData":
+	{
+		"fusionGeoreferenceData": [],
+		"fusionTilesetData": []
+	},
+	"coastlineDatas": [],
+	"designSettingData":
+	{
+		"effectData":
+		{
+			"naturalId": 2,
+			"outsideUrl": "ext/33/texture.hdr",
+			"sunIntensity": 1,
+			"sunAngle": 0,
+			"sunColor":
+			{
+				"r": 0,
+				"g": 0,
+				"b": 0,
+				"a": 1
+			},
+			"skyIntensity": 0.5,
+			"backgroundIntensity": 0.5,
+			"seperateBackgroundIntensity": false,
+			"skyTemperature": 0.54166668653488159,
+			"sunTemperature": 0.54166668653488159,
+			"sunBloomScale": 0,
+			"bloom": 0.20000000298023224,
+			"exposure": 0.5,
+			"autoExposureEnable": true,
+			"exposureOffset": 0,
+			"saturation": 1,
+			"contrast": 1,
+			"whiteBalanceTemp": 6500,
+			"crepuscularraysdensity": 0.0010000000474974513,
+			"crepuscularraysscattering": 0.5,
+			"crepuscularraysheight": 0.20000000298023224,
+			"crepuscularraysheightNewHandle": true,
+			"crepuscularraysheightfalloff": 0.40000000596046448,
+			"crepuscularraysstartdistance": 0,
+			"crepuscularrayscolorh": 0,
+			"crepuscularrayscolors": 0,
+			"crepuscularrayscolorv": 100,
+			"bDepthOfFocus": false,
+			"depthOfFieldFocalDistance": 0,
+			"depthOfFocus": 0,
+			"sourcecubemapangle": 0,
+			"sunshineheight": 40,
+			"sundiskradius": 1,
+			"shadowradius": 5,
+			"hightlevellight": 1,
+			"hightleveldark": 0.5,
+			"hightlevelmapbright": 0.30000001192092896,
+			"hightlevelmapcontrast": 0.80000001192092896,
+			"viewMode": 0,
+			"stroke": 0,
+			"lutState": 0,
+			"lutIntensity": 1,
+			"lutFileNames": "",
+			"lutIndex": 0,
+			"lensHeight": 0,
+			"modifyType": "EDITALL",
+			"time": 0,
+			"windEnable": 0,
+			"windStrength": 0.10000000149011612,
+			"windDirection": 0,
+			"sunEnable": 0,
+			"followHDR": 1,
+			"fogEnable": 0,
+			"autoFogBrightnessEnable": 1,
+			"tydallEnable": 0,
+			"lensFlare": 0,
+			"lensFlareHalo": 0,
+			"skySystemEnable": 1,
+			"sky_Time": 1624298400,
+			"longitude": 118.80000305175781,
+			"latitude": 32,
+			"northOffset": 0,
+			"sky_Month": 6,
+			"sky_Day": 21,
+			"cloudPreset": 1,
+			"cloudRotation": 0,
+			"cloudDissipationType": 0,
+			"cloudUVOffsetX": 1.6499999761581421,
+			"cloudUVOffsetY": 0,
+			"cloudBaseWindOffsetX": 0,
+			"cloudBaseWindOffsetY": 0,
+			"cloudExtinction": 0.44999998807907104,
+			"cloudSpeed": 0.0099999997764825821,
+			"cloudDirection": 0,
+			"cloudEnable": 1,
+			"cloudHeight": 0.5,
+			"cloudThickness": 0.89999997615814209,
+			"cloudDensity": 0.62999999523162842,
+			"cloudCastShadow": false,
+			"cloudCurl": 0.74000000953674316,
+			"cloudAltocumulus": 0,
+			"cloudStorm": 0.23999999463558197,
+			"cloudCirrus": 0.05000000074505806,
+			"cloudRandomSeed": 0.2800000011920929,
+			"advancedIntensity": false,
+			"atmosphereLuminance": 15,
+			"skyLightIntensity": 1,
+			"advancedIntensitySelf": false,
+			"atmosphereLuminanceSelf": 15,
+			"skyLightIntensitySelf": 1,
+			"sunlightIntensity": 0.125,
+			"globalGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"shadowGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"midToneGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"highLightGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"globalGainValid": true,
+			"shadowGainValid": true,
+			"midToneGainValid": true,
+			"highLightGainValid": true,
+			"precipEnable": 0,
+			"precipitation": 0,
+			"precipIntensity": 0.5,
+			"waterAccumulated": 0.5,
+			"waterAccumulatedSize": 1,
+			"waterAccumulatedOffsetX": 0,
+			"waterAccumulatedOffsetY": 0,
+			"snowFlakeSize": 0.5,
+			"rainTransparency": 1,
+			"waterMistEnable": false,
+			"waterMistDensity": 0.5,
+			"vignette": 0,
+			"fringe": 0,
+			"whiteBalanceTint": 0,
+			"autoFocus": true,
+			"fixPointLoc":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"aoIntensity": 350,
+			"aoModeEnable": false,
+			"aoBlendGiScale": 2,
+			"aoBlendGiEnable": false,
+			"sketchEnable": false,
+			"innerBorderEnable": false,
+			"highLevelOutlineBorderOpacity": 1,
+			"highLevelOutlineBorderColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"highLevelOutlineBorderWidth": 50,
+			"highLevelInnerBorderOpacity": 1,
+			"highLevelInnerBorderColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"highLevelInnerBorderWidth": 50,
+			"borderWidthByDistance": 0,
+			"highLevelNormalThreshold": 0,
+			"backgroundEnable": false,
+			"backGroundColor":
+			{
+				"x": 255,
+				"y": 255,
+				"z": 255
+			},
+			"customBackgroundColorEnable": false,
+			"customBackgroundColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"colorFadingByDistanceEnable": false,
+			"colorFadingDistance": 500,
+			"hDRFlipSwitch": false,
+			"zDepthDistanceEnable": false,
+			"zDepthWhiteDistance": 10,
+			"zDepthBlackDistance": 0,
+			"pathTracingOn": false,
+			"pathTracingSpp": 256,
+			"pathTracingBounces": 6,
+			"highLightLocalExposure": 1,
+			"shadowLocalExposure": 1,
+			"selfDefSunAzimuth": 0,
+			"selfDefSunElevation": 40,
+			"bSelfDefSunSettings": false,
+			"skySaturation": 0,
+			"skyHueShift": 0,
+			"skyTemperatureEnable": 1,
+			"skyColorEffectSwitch": 0,
+			"sunCausticsEnable": false,
+			"sunCausticsStrength": 1,
+			"sunCausticsSoftness": 0,
+			"skySunCausticsEnable": false,
+			"skySunCausticsStrength": 1,
+			"skySunCausticsSoftness": 0,
+			"seasonSwitch": 0,
+			"seasonAllGlobalSwitch": 0,
+			"seasonDate": 0,
+			"seasonDateHasMod": false,
+			"seasonDaySpring": 0,
+			"seasonDaySummer": 0,
+			"seasonDayAutumn": 0,
+			"seasonDayWinter": 0,
+			"skySunIntensity": 0.125,
+			"skySundiskradius": 1,
+			"skyMoonIntensity": 1,
+			"skyMoonSize": 1,
+			"skyStarsIntensity": 0.05000000074505806,
+			"skySystemType": 1,
+			"isCustomizeSun": true,
+			"isCustomizeMoon": false,
+			"moonPhase": 0.5,
+			"moonPhaseRotate": 0,
+			"moonElevation": 20,
+			"moonAzimuth": 90,
+			"moonSize": 1,
+			"moonIntensity": 1,
+			"moonBloomRadius": 1,
+			"moonBloomIntensity": 1,
+			"isCustomizeStars": false,
+			"starsElevationBias": 0,
+			"starsAzimuthBias": 0,
+			"brightStarsIntensity": 0.05000000074505806,
+			"isCustomizeMilkyway": false,
+			"milkyWayIntensity": 1,
+			"milkyWayHorizontalRotation": 0
+		},
+		"camerafov": 63.336006164550781,
+		"isLevel": true,
+		"pureLightMeshHide": true,
+		"lightIconVisible": true,
+		"lightFrameVisible": true,
+		"niagaraIconVisible": true,
+		"splineIconVisible": true,
+		"clipIconVisible": true,
+		"cameraIconVisible": true,
+		"outdoorSetting":
+		{
+			"id": 0,
+			"title": "",
+			"uePath": "",
+			"directionalLightRotation": "",
+			"directionalLightIntensity": 0,
+			"directionalLightLightColor": ""
+		},
+		"effectModeId": 2,
+		"effectDataVersion": 0,
+		"cameraData":
+		{
+			"cameraIndex": 1,
+			"camera3dTransform":
+			{
+				"rotation":
+				{
+					"x": 0.091453424180081844,
+					"y": 0.23519619888763738,
+					"z": -0.35067678940895708,
+					"w": 0.90185631261546928
+				},
+				"translation":
+				{
+					"x": 1345.6745782519245,
+					"y": 14764.891715187779,
+					"z": 4408.4753607194452
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"camera2dLocation":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1300
+			},
+			"camera45Location":
+			{
+				"x": 1345.6745782519245,
+				"y": 14764.891715187779,
+				"z": 4408.4753607194452
+			}
+		},
+		"cameraSpeed": 5,
+		"cameraRoll": 0,
+		"curSceneCoordinate": "World"
+	},
+	"skpTextureImagePath": [],
+	"friendD": "",
+	"friendN": "",
+	"friendO": "",
+	"friendC": "yavuzsenyildiz@gmail.com",
+	"skpFilePath": "",
+	"scenes": [],
+	"plantHub": [],
+	"selectedIdx": 0,
+	"skpProxy":
+	{
+	},
+	"recentHub": [],
+	"recentProduct": [],
+	"resourceHub": [],
+	"recentMaterial": [],
+	"scenceInfo":
+	{
+		"modelNumber": 0,
+		"lightNumber": 0,
+		"trianglesNumber": 0
+	},
+	"dCCPluginData": [],
+	"layerStatus":
+	{
+		"fusionLayers": [
+			{
+				"layerId": "default0d50layer0id0000000000000",
+				"parentLayerId": "",
+				"displayName": "",
+				"isHide": false,
+				"isLock": false,
+				"workSetId": "",
+				"isWorkSetDefaultLayer": false,
+				"isOnlyVisibleForWorkSetOwner": false,
+				"bIsVisibleInVideo": true
+			}
+		],
+		"activeLayerId": "default0d50layer0id0000000000000",
+		"selectedLayerId": ""
+	},
+	"textureMapPath": [],
+	"renderingSettings":
+	{
+		"lODEnable": true,
+		"realtimeEndCullDistance": 5000,
+		"renderEndCullDistance": 100000,
+		"tyndallBeamCount": 32,
+		"twoPointPerspectiveCompatibleMode": "NoCompatibleAndNoDisplay",
+		"glassReflectionEnable": false,
+		"atmosphericPerspectiveEnable": true,
+		"useNewMetrics": false,
+		"outsideCullRadius": 5000,
+		"gISettings":
+		{
+			"bEnableDiy": false,
+			"bGIdenoise": false,
+			"gIBounces": 1,
+			"gIReflectionMaxBounces": 1,
+			"accumFrames": 64,
+			"gIRoughness": 0.5
+		},
+		"hdriResolution": "Adaptive",
+		"colorSpace": "LinearRGB",
+		"cloudAndFogBlendingCompatibleMode": false,
+		"vRFine": false
+	},
+	"landscape":
+	{
+		"lsStyle":
+		{
+			"slope_noise_amount": 0,
+			"slope_sharpness": 0,
+			"mountain_height_offset": 0,
+			"mountain_height": 0,
+			"mountain_mask_tiling": 0,
+			"mountain_edge_amount": 0,
+			"default_slope_noise_amount": 0,
+			"default_slope_sharpness": 0,
+			"default_mountain_height_offset": 0,
+			"default_mountain_height": 0,
+			"default_mountain_mask_tiling": 0,
+			"default_mountain_edge_amount": 0,
+			"lscp_material_set":
+			{
+				"slope":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"mountain_top":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer01":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer02":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer03":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer04":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer05":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer06":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"modify_key": ""
+			},
+			"erosion_setting":
+			{
+				"use_erosion": false,
+				"erosion_bias": 6,
+				"erosion_intensity": 1.5,
+				"erosion_range": 200,
+				"base_erosion_color":
+				{
+					"r": 0.80000001192092896,
+					"g": 0.80000001192092896,
+					"b": 0.80000001192092896,
+					"a": 1
+				},
+				"slope_erosion_color":
+				{
+					"r": 0.10000000149011612,
+					"g": 0.10000000149011612,
+					"b": 0.10000000149011612,
+					"a": 1
+				},
+				"mountain_erosion_color":
+				{
+					"r": 0.020834000781178474,
+					"g": 0.020834000781178474,
+					"b": 0.020834000781178474,
+					"a": 1
+				},
+				"ls_color_alpha": 0,
+				"mountain_color_alpha": 1,
+				"slope_color_alpha": 1,
+				"default_erosion_intensity": 1.5,
+				"default_erosion_range": 200,
+				"default_erosion_bias": 6,
+				"default_ls_color_alpha": 0,
+				"default_mountain_color_alpha": 1,
+				"default_slope_color_alpha": 1,
+				"modify_key": ""
+			}
+		},
+		"uniqueActorId": "",
+		"isLandscapeEnabled": false,
+		"isHide": true,
+		"deleteInsteadOfHiding": false,
+		"displayHeightMapPath": "",
+		"displayHeightMapOffset": 0,
+		"displayMaxHeightMap": 0,
+		"landscapeOffset": -3,
+		"worldSize":
+		{
+			"x": 4000,
+			"y": 4000
+		},
+		"hISMInfo_V2": [],
+		"brushInfo": [],
+		"styleData":
+		{
+		}
+	},
+	"watermarkPhoto":
+	{
+		"watermarkType": 0,
+		"watermarkScale": 0,
+		"viewportWidth": 0,
+		"viewportHeight": 0
+	},
+	"watermarkVideo":
+	{
+		"watermarkType": 0,
+		"watermarkScale": 0,
+		"viewportWidth": 0,
+		"viewportHeight": 0
+	},
+	"customActorData": [],
+	"groupScenes": []
+}

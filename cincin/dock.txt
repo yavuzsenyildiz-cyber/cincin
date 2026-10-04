@@ -1,0 +1,32 @@
+Ana Menü;;;Proje Özellikleri;Netcad\Genel
+Ana Menü;;;Proje Özellikleri;Netcad\Dil
+Ana Menü;;;Proje Özellikleri;Netcad\Nokta ve Obje Seçim
+Ana Menü;;;Proje Özellikleri;Netcad\Birimler ve Görünüm
+Ana Menü;;;Proje Özellikleri;Aktif Proje\Ölçek
+Ana Menü;;;Proje Özellikleri;Aktif Proje\Projeksiyon
+Ana Menü;;;Proje Özellikleri;Lisans
+Ana Menü;;;Proje Özellikleri;Netcad\Ölçü ve Röleve
+Ana Menü;;;Proje Özellikleri;DWG-DGN Parametreleri
+Ana Menü;;;Proje Özellikleri;Netcad\Yedekleme
+Ana Menü;;;Proje Özellikleri;Aktif Proje\Proje Bilgileri
+Ana Menü;;;Proje Özellikleri;Aktif Proje\Proje Deðiþkenleri
+Ana Menü;;;Proje Özellikleri;Netcad\Katalog
+Ana Menü;;;Proje Özellikleri;Netcad\Nokta Bulutu
+Ana Menü;;;Proje Özellikleri;Hesap\Genel Parametreler
+Ana Menü;;;Proje Özellikleri;Netcad\Raster
+Ana Menü;;;Genel Ayarlar;Netcad\Genel
+Ana Menü;;;Genel Ayarlar;Netcad\Dil
+Ana Menü;;;Genel Ayarlar;Netcad\Nokta ve Obje Seçim
+Ana Menü;;;Genel Ayarlar;Netcad\Birimler ve Görünüm
+Ana Menü;;;Genel Ayarlar;Aktif Proje\Ölçek
+Ana Menü;;;Genel Ayarlar;Aktif Proje\Projeksiyon
+Ana Menü;;;Genel Ayarlar;Lisans
+Ana Menü;;;Genel Ayarlar;Netcad\Ölçü ve Röleve
+Ana Menü;;;Genel Ayarlar;DWG-DGN Parametreleri
+Ana Menü;;;Genel Ayarlar;Netcad\Yedekleme
+Ana Menü;;;Genel Ayarlar;Aktif Proje\Proje Bilgileri
+Ana Menü;;;Genel Ayarlar;Aktif Proje\Proje Deðiþkenleri
+Ana Menü;;;Genel Ayarlar;Netcad\Katalog
+Ana Menü;;;Genel Ayarlar;Netcad\Nokta Bulutu
+Ana Menü;;;Genel Ayarlar;Hesap\Genel Parametreler
+Ana Menü;;;Genel Ayarlar;Netcad\Raster

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Placemark>
+    <name>Cincin Mahallesi 189-ada-115-parsel</name>
+    <ExtendedData>
+      <Data name="İl">
+        <value>Aydın</value>
+      </Data>
+      <Data name="İlçe">
+        <value>Koçarlı</value>
+      </Data>
+      <Data name="Mahalle">
+        <value>Cincin</value>
+      </Data>
+      <Data name="Ada">
+        <value>189</value>
+      </Data>
+      <Data name="ParselNo">
+        <value>115</value>
+      </Data>
+      <Data name="Alan">
+        <value>2.082,94</value>
+      </Data>
+      <Data name="Pafta">
+        <value>M19-C-01-A-4</value>
+      </Data>
+      <Data name="Nitelik">
+        <value>Arsa</value>
+      </Data>
+      <Data name="Mevkii">
+        <value>Köycivarı</value>
+      </Data>
+    </ExtendedData>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <coordinates>27.754930000000002,37.737079999999999
+27.754909999999999,37.737139999999997
+27.754740000000002,37.737139999999997
+27.754629999999999,37.737130000000001
+27.754460000000002,37.737119999999997
+27.75431,37.737110000000001
+27.75413,37.737110000000001
+27.754010000000001,37.737130000000001
+27.75385,37.737119999999997
+27.753679999999999,37.737110000000001
+27.75357,37.737099999999998
+27.753360000000001,37.737079999999999
+27.753299999999999,37.737079999999999
+27.753260000000001,37.73706
+27.753350000000001,37.736980000000003
+27.75338,37.736960000000003
+27.754989999999999,37.737020000000001
+27.754930000000002,37.737079999999999</coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</kml>

@@ -1,0 +1,1956 @@
+{
+	"fileVersion": 22,
+	"fileVersionEx": 23,
+	"groupVersion": 3,
+	"wallStyleDatas": [],
+	"skpStyleDatas": [],
+	"pureLightDatas": [],
+	"furnitureDatas": [
+		{
+			"uePath": "",
+			"actorType": 1,
+			"isScaleLocked": true,
+			"responseIvyChannel": 1,
+			"uniqueActorId": "72A82A904EDDA1433C71A8B2B1FCA1AB",
+			"groupActorId": "",
+			"workSetId": "",
+			"productData":
+			{
+				"id": "18AC4220AA1446C59E1B7A8EA938887C",
+				"title": "3dmodel3.skp"
+			},
+			"furnitureTransform":
+			{
+				"rotation":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0,
+					"w": 1
+				},
+				"translation":
+				{
+					"x": 5389.3115234375,
+					"y": -3431.250244140625,
+					"z": 0.02
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"furnitureModelPath": "d5a/426264468a6587377a912bc320383ac8745f1825",
+			"syncFilePath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/3dmodel3.skp",
+			"resourceId": "ba8bb8a44ad54301a6348579a4faaaa1",
+			"userData":
+			{
+				"d5mList": [],
+				"moveList": []
+			},
+			"fileList": [
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/79_Grass Dark Green.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/89_Green Paver Herringbone.jpg",
+				"um/emptymaterial/D7308589442824918018B3BF6025D415.jpg",
+				"um/9cc1891c0e5340ad9b1f2ea789f7769a/99B9A5354DD95756EE1D578E8082C815.jpg",
+				"um/9cc1891c0e5340ad9b1f2ea789f7769a/BBA32B514A2A193339CF03A91EB5FDF1.jpg",
+				"um/ddb25e90f88141958360f83148a1f4c1/icon.png",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/91_Brick_Tumbled.jpg",
+				"um/emptymaterial/B87E66204F9B3C8D82FABBA12C47D751.jpg",
+				"um/9cc1891c0e5340ad9b1f2ea789f7769a/165743944E3145EF8D5F3C8F22F26FAA.jpg",
+				"um/9cc1891c0e5340ad9b1f2ea789f7769a/FC2C8DEB41C01EEB9CDE27A7687E7BF9.jpg",
+				"um/9cc1891c0e5340ad9b1f2ea789f7769a/7FD61E004F9F7456BD9C9BB7824F57B1.jpg",
+				"um/28d316f9692442fb86c911fb5fb9af89/icon.png",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/116_anadolu cevizi.png",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/118_aluminium.png",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/122_Galvanised_1.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/129_Ekran Resmi 2016-06-13 12.02.23.png",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/121637_131_DOĞAL HUŞ.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/135_TD_FABRIC30_roughness.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/139_KARBEYAZ.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/143_Aluminum.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/146_Metal_Corrogated_Shiny.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/148_textile_white.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/152_siyah keten.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/121654_167_Wood_Cherry_Original.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/178_Aluminum.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/187_Formica Blue.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/189_Formica Laminate Light.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/195_Metal_Seamed.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/198_Wood_Floor_Light.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/203_Translucent_Glass_Sky_Reflection_.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/205_Carpet_Berber_Pattern_Gray.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/208_Formica Beige.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/212_Herringbone.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/214_Wood_Floor_Dark.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/218_Wood_Bamboo_Medium.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/220_Slate.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/225_Stone_Coursed_Rough.jpg",
+				"ModelTextures/EA95CD5C46EB23621E953DB3E18DECB6/227_Cypress 'Goldcrest'.png"
+			],
+			"pakPath": "1.d5mesh",
+			"dataVersion": 2,
+			"isHide": false,
+			"isLock": false,
+			"isUseAsScene": false,
+			"hISMInfo": [],
+			"hISMInfo_V2": [],
+			"brushInfo": [],
+			"zeroPointOffset":
+			{
+				"x": 4787.8951720593523,
+				"y": 8108.4597495081698,
+				"z": -0.13670778134968309
+			},
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"bPlayingAct": true,
+			"currFrame": -1,
+			"playMode": 1,
+			"offset": 0,
+			"speed": 0,
+			"rangeStart": 0,
+			"rangeEnd": 0,
+			"layerId": "default0d50layer0id0000000000000",
+			"actorTag": "",
+			"dccProjectPath": "",
+			"dccOriginTransform":
+			{
+				"rotation":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0,
+					"w": 1
+				},
+				"translation":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"bGlobalSeason": true,
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		}
+	],
+	"bPFurnitureActorData": [
+		{
+			"uniqueActorId": "87D1B24544C396C2706DA8BE9A8E56C4",
+			"groupActorId": "",
+			"workSetId": "",
+			"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+			"productCode": "",
+			"name": "Electric SUV 01",
+			"brandName": "",
+			"foldername": "",
+			"pakUrl": "f2/2420220222000054/1.pak",
+			"uePath": "SkeletalMesh'/Game/Furniture/2420220222000054/SM_1.SM_1'",
+			"transform":
+			{
+				"rotation":
+				{
+					"x": 0,
+					"y": -0,
+					"z": 0.46651017569552816,
+					"w": 0.88451583138603407
+				},
+				"translation":
+				{
+					"x": 6983.37646484375,
+					"y": -8222.880859375,
+					"z": 582.19338378906252
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"bHide": false,
+			"bLock": false,
+			"classifyId": 524,
+			"filterType": 2,
+			"bpFurnitureActorParaData": [
+				{
+					"id": 1,
+					"name": "HasDriver",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 2,
+					"name": "LightSwitch",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 3,
+					"name": "LightIntensity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 50,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 4,
+					"name": "color",
+					"type": "linearColor",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 1,
+					"linearColorValue":
+					{
+						"r": 0.5349699854850769,
+						"g": 0.5349699854850769,
+						"b": 0.5349699854850769,
+						"a": 1
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 5,
+					"name": "Isdynamic?",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 6,
+					"name": "zuoduo",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 0,
+					"name": "",
+					"type": "",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 20,
+					"name": "Color string",
+					"type": "int",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 0,
+					"name": "",
+					"type": "",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 9,
+					"name": "carpaint_parament",
+					"type": "int",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 10,
+					"name": "clearcoat_opacity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 0.20000000298023224,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 11,
+					"name": "clearcoat_intensity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 1,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				}
+			],
+			"bPlayingAct": true,
+			"currFrame": -1,
+			"playMode": 1,
+			"offset": 0,
+			"speed": 0,
+			"rangeStart": 0,
+			"rangeEnd": 0,
+			"responseIvyChannel": 1
+		},
+		{
+			"uniqueActorId": "3F9D54DD49ECBA9E48B720AAC98384ED",
+			"groupActorId": "",
+			"workSetId": "",
+			"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+			"productCode": "",
+			"name": "Electric SUV 01",
+			"brandName": "",
+			"foldername": "",
+			"pakUrl": "f2/2420220222000054/1.pak",
+			"uePath": "SkeletalMesh'/Game/Furniture/2420220222000054/SM_1.SM_1'",
+			"transform":
+			{
+				"rotation":
+				{
+					"x": -0,
+					"y": 0,
+					"z": -0.04346834603626528,
+					"w": 0.999054804749405
+				},
+				"translation":
+				{
+					"x": 6783.3232421875,
+					"y": -3299.832538213408,
+					"z": 382.19311649399936
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"bHide": false,
+			"bLock": false,
+			"classifyId": 524,
+			"filterType": 2,
+			"bpFurnitureActorParaData": [
+				{
+					"id": 1,
+					"name": "HasDriver",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 2,
+					"name": "LightSwitch",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 3,
+					"name": "LightIntensity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 50,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 4,
+					"name": "color",
+					"type": "linearColor",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 1,
+					"linearColorValue":
+					{
+						"r": 0.5349699854850769,
+						"g": 0.5349699854850769,
+						"b": 0.5349699854850769,
+						"a": 1
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 5,
+					"name": "Isdynamic?",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 6,
+					"name": "zuoduo",
+					"type": "bool",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": true,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 0,
+					"name": "",
+					"type": "",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 20,
+					"name": "Color string",
+					"type": "int",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 0,
+					"name": "",
+					"type": "",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 9,
+					"name": "carpaint_parament",
+					"type": "int",
+					"intVal": 0,
+					"floatVal": 0,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 10,
+					"name": "clearcoat_opacity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 0.20000000298023224,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				},
+				{
+					"id": 11,
+					"name": "clearcoat_intensity",
+					"type": "float",
+					"intVal": 0,
+					"floatVal": 1,
+					"boolVal": false,
+					"stringVal": "",
+					"linearColorId": 0,
+					"linearColorValue":
+					{
+						"r": 0,
+						"g": 0,
+						"b": 0,
+						"a": 0
+					},
+					"vectorVal":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"vectorValLock": false,
+					"stringId": 0
+				}
+			],
+			"bPlayingAct": true,
+			"currFrame": -1,
+			"playMode": 1,
+			"offset": 0,
+			"speed": 0,
+			"rangeStart": 0,
+			"rangeEnd": 0,
+			"responseIvyChannel": 1
+		}
+	],
+	"groupDatas": [
+		{
+			"uniqueActorId": "32D323094EA0D2629A90E28B48E5816A",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": false,
+			"isLock": false,
+			"layerId": "",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		},
+		{
+			"uniqueActorId": "72A82A904EDDA1433C71A8B2B1FCA1AB",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": false,
+			"isLock": false,
+			"layerId": "default0d50layer0id0000000000000",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 5389.3115234375,
+				"y": -3431.250244140625,
+				"z": 0.02
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		},
+		{
+			"uniqueActorId": "87D1B24544C396C2706DA8BE9A8E56C4",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": false,
+			"isLock": false,
+			"layerId": "default0d50layer0id0000000000000",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 6983.37646484375,
+				"y": -8222.880859375,
+				"z": 582.19338378906252
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": 55.616003769744488,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		},
+		{
+			"uniqueActorId": "3F9D54DD49ECBA9E48B720AAC98384ED",
+			"groupActorId": "",
+			"actorName": "",
+			"children": [],
+			"isHide": false,
+			"isLock": false,
+			"layerId": "default0d50layer0id0000000000000",
+			"pluginSyncStub":
+			{
+				"id": "",
+				"src": "",
+				"type": "NoneType",
+				"replace": false,
+				"mode": "NoneMode",
+				"materialReplace": true
+			},
+			"actorLocation":
+			{
+				"x": 6783.3232421875,
+				"y": -3299.832538213408,
+				"z": 382.19311649399936
+			},
+			"actorRotation":
+			{
+				"pitch": 0,
+				"yaw": -4.9826755066034716,
+				"roll": 0
+			},
+			"actorScale":
+			{
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"workSetId": "",
+			"productId": "",
+			"furnitureOriginPivot":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"decorateToolRotation":
+			{
+				"pitch": 0,
+				"yaw": 0,
+				"roll": 0
+			},
+			"bUseCustomPivot": false
+		}
+	],
+	"pureNiagaraActorData": [],
+	"pathSplineActorDatas": [],
+	"pureDecalActorDatas": [],
+	"meshSyncActorDatas": [],
+	"panoRoamProjectDatas": [],
+	"xRRoamProjectDatas": [],
+	"clipActorDatas": [],
+	"createdCameraActorDatas": [],
+	"gaussianPointCloudDatas": [],
+	"measurementLineDatas": [],
+	"scatterActorDatas": [],
+	"landscapeTemplateActorDatas": [],
+	"cityActorDatas": [],
+	"cityTemplateActorDatas": [],
+	"cesiumData":
+	{
+		"fusionGeoreferenceData": [],
+		"fusionTilesetData": []
+	},
+	"coastlineDatas": [],
+	"designSettingData":
+	{
+		"effectData":
+		{
+			"naturalId": 2,
+			"outsideUrl": "",
+			"sunIntensity": 1,
+			"sunAngle": 0,
+			"sunColor":
+			{
+				"r": 0,
+				"g": 0,
+				"b": 0,
+				"a": 1
+			},
+			"skyIntensity": 0.5,
+			"backgroundIntensity": 0.5,
+			"seperateBackgroundIntensity": false,
+			"skyTemperature": 0.54166668653488159,
+			"sunTemperature": 0.54166668653488159,
+			"sunBloomScale": 0,
+			"bloom": 0.20000000298023224,
+			"exposure": 0.5,
+			"autoExposureEnable": true,
+			"exposureOffset": 0,
+			"saturation": 1,
+			"contrast": 1,
+			"whiteBalanceTemp": 6500,
+			"crepuscularraysdensity": 0.0010000000474974513,
+			"crepuscularraysscattering": 0.5,
+			"crepuscularraysheight": 0.20000000298023224,
+			"crepuscularraysheightNewHandle": true,
+			"crepuscularraysheightfalloff": 0.40000000596046448,
+			"crepuscularraysstartdistance": 0,
+			"crepuscularrayscolorh": 0,
+			"crepuscularrayscolors": 0,
+			"crepuscularrayscolorv": 100,
+			"bDepthOfFocus": false,
+			"depthOfFieldFocalDistance": 0,
+			"depthOfFocus": 0,
+			"sourcecubemapangle": 0,
+			"sunshineheight": 40,
+			"sundiskradius": 1,
+			"shadowradius": 5,
+			"hightlevellight": 1,
+			"hightleveldark": 0.5,
+			"hightlevelmapbright": 0.30000001192092896,
+			"hightlevelmapcontrast": 0.80000001192092896,
+			"viewMode": 0,
+			"stroke": 0,
+			"lutState": 0,
+			"lutIntensity": 1,
+			"lutFileNames": "",
+			"lutIndex": 0,
+			"lensHeight": 0,
+			"modifyType": "EDITALL",
+			"time": 0,
+			"windEnable": 0,
+			"windStrength": 0.10000000149011612,
+			"windDirection": 0,
+			"sunEnable": 0,
+			"followHDR": 1,
+			"fogEnable": 0,
+			"autoFogBrightnessEnable": 1,
+			"tydallEnable": 0,
+			"lensFlare": 0,
+			"lensFlareHalo": 0,
+			"skySystemEnable": 1,
+			"sky_Time": 1624298400,
+			"longitude": 118.80000305175781,
+			"latitude": 32,
+			"northOffset": 0,
+			"sky_Month": 6,
+			"sky_Day": 21,
+			"cloudPreset": 1,
+			"cloudRotation": 0,
+			"cloudDissipationType": 0,
+			"cloudUVOffsetX": 1.6499999761581421,
+			"cloudUVOffsetY": 0,
+			"cloudBaseWindOffsetX": 0,
+			"cloudBaseWindOffsetY": 0,
+			"cloudExtinction": 0.44999998807907104,
+			"cloudSpeed": 0.0099999997764825821,
+			"cloudDirection": 0,
+			"cloudEnable": 1,
+			"cloudHeight": 0.5,
+			"cloudThickness": 0.89999997615814209,
+			"cloudDensity": 0.62999999523162842,
+			"cloudCastShadow": false,
+			"cloudCurl": 0.74000000953674316,
+			"cloudAltocumulus": 0,
+			"cloudStorm": 0.23999999463558197,
+			"cloudCirrus": 0.05000000074505806,
+			"cloudRandomSeed": 0.2800000011920929,
+			"advancedIntensity": false,
+			"atmosphereLuminance": 15,
+			"skyLightIntensity": 1,
+			"advancedIntensitySelf": false,
+			"atmosphereLuminanceSelf": 15,
+			"skyLightIntensitySelf": 1,
+			"sunlightIntensity": 0.125,
+			"globalGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"shadowGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"midToneGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"highLightGain":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1,
+				"w": 1
+			},
+			"globalGainValid": true,
+			"shadowGainValid": true,
+			"midToneGainValid": true,
+			"highLightGainValid": true,
+			"precipEnable": 0,
+			"precipitation": 0,
+			"precipIntensity": 0.5,
+			"waterAccumulated": 0.5,
+			"waterAccumulatedSize": 1,
+			"waterAccumulatedOffsetX": 0,
+			"waterAccumulatedOffsetY": 0,
+			"snowFlakeSize": 0.5,
+			"rainTransparency": 1,
+			"waterMistEnable": false,
+			"waterMistDensity": 0.5,
+			"vignette": 0,
+			"fringe": 0,
+			"whiteBalanceTint": 0,
+			"autoFocus": true,
+			"fixPointLoc":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"aoIntensity": 350,
+			"aoModeEnable": false,
+			"aoBlendGiScale": 2,
+			"aoBlendGiEnable": false,
+			"sketchEnable": false,
+			"innerBorderEnable": false,
+			"highLevelOutlineBorderOpacity": 1,
+			"highLevelOutlineBorderColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"highLevelOutlineBorderWidth": 50,
+			"highLevelInnerBorderOpacity": 1,
+			"highLevelInnerBorderColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"highLevelInnerBorderWidth": 50,
+			"borderWidthByDistance": 0,
+			"highLevelNormalThreshold": 0,
+			"backgroundEnable": false,
+			"backGroundColor":
+			{
+				"x": 255,
+				"y": 255,
+				"z": 255
+			},
+			"customBackgroundColorEnable": false,
+			"customBackgroundColor":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"colorFadingByDistanceEnable": false,
+			"colorFadingDistance": 500,
+			"hDRFlipSwitch": false,
+			"zDepthDistanceEnable": false,
+			"zDepthWhiteDistance": 10,
+			"zDepthBlackDistance": 0,
+			"pathTracingOn": false,
+			"pathTracingSpp": 256,
+			"pathTracingBounces": 6,
+			"highLightLocalExposure": 1,
+			"shadowLocalExposure": 1,
+			"selfDefSunAzimuth": 0,
+			"selfDefSunElevation": 40,
+			"bSelfDefSunSettings": false,
+			"skySaturation": 0,
+			"skyHueShift": 0,
+			"skyTemperatureEnable": 1,
+			"skyColorEffectSwitch": 0,
+			"sunCausticsEnable": false,
+			"sunCausticsStrength": 1,
+			"sunCausticsSoftness": 0,
+			"skySunCausticsEnable": false,
+			"skySunCausticsStrength": 1,
+			"skySunCausticsSoftness": 0,
+			"seasonSwitch": 0,
+			"seasonAllGlobalSwitch": 0,
+			"seasonDate": 0,
+			"seasonDateHasMod": false,
+			"seasonDaySpring": 0,
+			"seasonDaySummer": 0,
+			"seasonDayAutumn": 0,
+			"seasonDayWinter": 0,
+			"skySunIntensity": 0.125,
+			"skySundiskradius": 1,
+			"skyMoonIntensity": 1,
+			"skyMoonSize": 1,
+			"skyStarsIntensity": 0.05000000074505806,
+			"skySystemType": 1,
+			"isCustomizeSun": true,
+			"isCustomizeMoon": false,
+			"moonPhase": 0.5,
+			"moonPhaseRotate": 0,
+			"moonElevation": 20,
+			"moonAzimuth": 90,
+			"moonSize": 1,
+			"moonIntensity": 1,
+			"moonBloomRadius": 1,
+			"moonBloomIntensity": 1,
+			"isCustomizeStars": false,
+			"starsElevationBias": 0,
+			"starsAzimuthBias": 0,
+			"brightStarsIntensity": 0.05000000074505806,
+			"isCustomizeMilkyway": false,
+			"milkyWayIntensity": 1,
+			"milkyWayHorizontalRotation": 0
+		},
+		"camerafov": 90,
+		"isLevel": true,
+		"pureLightMeshHide": true,
+		"lightIconVisible": true,
+		"lightFrameVisible": true,
+		"niagaraIconVisible": true,
+		"splineIconVisible": true,
+		"clipIconVisible": true,
+		"cameraIconVisible": true,
+		"outdoorSetting":
+		{
+			"id": 0,
+			"title": "",
+			"uePath": "",
+			"directionalLightRotation": "",
+			"directionalLightIntensity": 0,
+			"directionalLightLightColor": ""
+		},
+		"effectModeId": 2,
+		"effectDataVersion": 0,
+		"cameraData":
+		{
+			"cameraIndex": 1,
+			"camera3dTransform":
+			{
+				"rotation":
+				{
+					"x": -0.022397810653239404,
+					"y": -0.01518803418523478,
+					"z": -0.82735255093066051,
+					"w": 0.56103067488690761
+				},
+				"translation":
+				{
+					"x": 14976.384781616813,
+					"y": 14733.364860881982,
+					"z": 5038.1880048180028
+				},
+				"scale3D":
+				{
+					"x": 1,
+					"y": 1,
+					"z": 1
+				}
+			},
+			"camera2dLocation":
+			{
+				"x": 0,
+				"y": 0,
+				"z": 1300
+			},
+			"camera45Location":
+			{
+				"x": 14976.384781616813,
+				"y": 14733.364860881982,
+				"z": 5038.1880048180028
+			}
+		},
+		"cameraSpeed": 5,
+		"cameraRoll": 0,
+		"curSceneCoordinate": "World"
+	},
+	"skpTextureImagePath": [],
+	"friendD": "",
+	"friendN": "",
+	"friendO": "",
+	"friendC": "yavuzsenyildiz@gmail.com",
+	"skpFilePath": "",
+	"scenes": [],
+	"plantHub": [
+		{
+			"uePath": "SkeletalMesh'/Game/Furniture/2420220222000054/SM_1.SM_1'",
+			"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+			"fileUrl": "https://usa.asset.d5cdn.com/f2/2420220222000054/1-1782206041285.jpg",
+			"pakUrl": "f2/2420220222000054/1.pak",
+			"productData":
+			{
+				"id": "1143ac13a9f44e4bbf598c0450274bc9",
+				"assetId": "1601150813687582722",
+				"title": "Electric SUV 01",
+				"description": "",
+				"skuid": "",
+				"price": 0,
+				"priceAfterSale": 0,
+				"createTime": 0,
+				"updateTime": 0,
+				"brand": "",
+				"brandId": 0,
+				"source": 0,
+				"productType": 1,
+				"isForSale": 0,
+				"isPublished": false,
+				"isPrivate": false,
+				"isDel": false,
+				"userId": 0,
+				"companyid": 0,
+				"foldername": "2420220222000054",
+				"sync_status": 0,
+				"classifyId": 524,
+				"filterType": 2,
+				"buyUrl": "",
+				"productCode": "",
+				"isInPlaceAnimation": false,
+				"animationSpeed": 9,
+				"dependent_pak_list": [],
+				"d5AUrl": "",
+				"logoUrl": "",
+				"min_distance": 0
+			},
+			"furnitureSelfData":
+			{
+				"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+				"uePath": "SkeletalMesh'/Game/Furniture/2420220222000054/SM_1.SM_1'",
+				"pakUrl": "f2/2420220222000054/1.pak",
+				"length": 0,
+				"depth": 0,
+				"height": 0,
+				"isInteractive": true,
+				"intelligentType": 1,
+				"furnitureStyleId": 0,
+				"furnitureMainMaterialId": 0,
+				"detailInfo": "{\"detailVersion\":1,\"otherDetails\":\"\",\"originalScale\":{\"x\":1,\"y\":1,\"z\":1},\"styleDatas\":[{\"elements\":[{\"materialIndex\":0,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":1,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":2,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":3,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":4,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":5,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":6,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":7,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":8,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":9,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":10,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":11,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":12,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}}],\"thumbnailPath\":\"f2/2420220222000054/1-1782206041285.jpg\",\"bActive\":true}],\"customDetails\":\"\",\"furnitureId\":\"1143ac13a9f44e4bbf598c0450274bc9\",\"fileList\":[]}",
+				"materialGroup": "",
+				"material_MapKey": [],
+				"infoVersion": 23,
+				"useDccZeroPoint": false,
+				"instanceIdArray": [],
+				"isVAT": false,
+				"bUseCustomPivotOffset": false,
+				"customPivotOffset":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"customPivotRotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				}
+			},
+			"plantSelfData":
+			{
+				"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+				"uePath": "SkeletalMesh'/Game/Furniture/2420220222000054/SM_1.SM_1'",
+				"pakUrl": "f2/2420220222000054/1.pak",
+				"length": 0,
+				"depth": 0,
+				"height": 0,
+				"isInteractive": true,
+				"intelligentType": 1,
+				"furnitureStyleId": 0,
+				"furnitureMainMaterialId": 0,
+				"detailInfo": "{\"detailVersion\":1,\"furnitureId\":\"1143ac13a9f44e4bbf598c0450274bc9\",\"otherDetails\":\"\",\"lightDatas\":[],\"styleDatas\":[{\"bActive\":true,\"styleId\":\"92400F044C779BD85A2B9BB09CD6BC7E\",\"thumbnailPath\":\"f2/2420220222000054/1-1782206041285.jpg\",\"elements\":[{\"materialIndex\":0,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\",\"title\":\"\",\"uePath\":\"\",\"matInfo\":\"[{\\\"name\\\":\\\"ScatteringColor\\\",\\\"type\\\":2,\\\"value\\\":\\\"(R=1.000000,G=1.000000,B=1.000000,A=1.000000)\\\",\\\"group\\\":\\\"ScatteringColor\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"DiffuseMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=1.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"DiffuseMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"NormalMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"NormalMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"SpecularMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"SpecularMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"RoughnessMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"RoughnessMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"MetallicMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"MetallicMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"OpacityMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"OpacityMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"HeightMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"HeightMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"SubsurfaceMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=1.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"SubsurfaceMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"AOMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=1.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"AOMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"EmissiveMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"EmissiveMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"DiffuseColorStrength\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=1.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"DiffuseColorStrength\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"LimitColorEnable\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"LimitColorEnable\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"EmissiveTemperature\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=6500.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"EmissiveTemperature\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"CastShadow\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=1.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"CastShadow\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"EmissiveTempEnable\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"EmissiveTempEnable\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"ThicknessMap_GammaMode\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"ThicknessMap_GammaMode\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"UDIMBreak\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"UDIMBreak\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0},{\\\"name\\\":\\\"PersistentID\\\",\\\"type\\\":1,\\\"value\\\":\\\"X=0.000000 Y=0.000000 Z=0.000000\\\",\\\"group\\\":\\\"PersistentID\\\",\\\"default\\\":false,\\\"fromPlugin\\\":0}]\",\"matInfo2\":\"\",\"landscapeGrassParameter\":\"\",\"thumbnailUrl\":\"\",\"isDel\":false,\"isPrivate\":false,\"userId\":0,\"companyid\":0,\"createTime\":0,\"updateTime\":0,\"categoryId\":0,\"brand\":\"\",\"code\":\"\",\"collection\":\"\",\"color\":\"\",\"metallic\":0,\"roughness\":0,\"emissiveColor\":0,\"type\":0,\"isRepeat\":false,\"isSubmit\":false,\"source\":0,\"isPublished\":false,\"sync_status\":0,\"pak_url\":\"\",\"dependent_pak_lists\":[\"\"],\"appendColor\":{\"x\":0,\"y\":0,\"z\":0},\"emissiveAppendColor\":{\"x\":0,\"y\":0,\"z\":0},\"fromPlugin\":0,\"fromReplace\":false,\"keyForFurniture\":\"\",\"isD5AIGenerated\":false,\"bFromAiMaterialUi\":false,\"func_name\":\"\",\"func_version\":\"\"}},{\"materialIndex\":1,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":2,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":3,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":4,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":5,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":6,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":7,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":8,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":9,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":10,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":11,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}},{\"materialIndex\":12,\"elementName\":\"\",\"materialData\":{\"id\":\"-2\"}}]}],\"customDetails\":\"\",\"fileList\":[],\"originalScale\":{\"x\":1,\"y\":1,\"z\":1},\"loadOriginalScale\":{\"x\":1,\"y\":1,\"z\":1},\"classifyId\":0,\"filterType\":0}",
+				"materialGroup": "",
+				"material_MapKey": [],
+				"infoVersion": 23,
+				"useDccZeroPoint": false,
+				"instanceIdArray": [],
+				"isVAT": false,
+				"bUseCustomPivotOffset": false,
+				"customPivotOffset":
+				{
+					"x": 0,
+					"y": 0,
+					"z": 0
+				},
+				"customPivotRotation":
+				{
+					"pitch": 0,
+					"yaw": 0,
+					"roll": 0
+				}
+			},
+			"time": 0,
+			"seasonFlag": 0
+		}
+	],
+	"selectedIdx": 0,
+	"skpProxy":
+	{
+	},
+	"recentHub": [],
+	"recentProduct": [
+		{
+			"productId": "1143ac13a9f44e4bbf598c0450274bc9",
+			"time": 1789051383
+		}
+	],
+	"resourceHub": [
+		{
+			"resourceId": "ba8bb8a44ad54301a6348579a4faaaa1",
+			"resourceName": "3dmodel3.skp",
+			"resourceStatus": 0,
+			"d5aPath": "ba8bb8a44ad54301a6348579a4faaaa1.d5a",
+			"syncFile": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/3dmodel3.skp",
+			"resourceOrder": 1,
+			"hidden": false
+		}
+	],
+	"recentMaterial": [
+		{
+			"id": "ddb25e90f88141958360f83148a1f4c1",
+			"categoryId": 0,
+			"time": 1789072487,
+			"title": ""
+		},
+		{
+			"id": "28d316f9692442fb86c911fb5fb9af89",
+			"categoryId": 0,
+			"time": 1789072340,
+			"title": ""
+		}
+	],
+	"scenceInfo":
+	{
+		"modelNumber": 3,
+		"lightNumber": 0,
+		"trianglesNumber": 6350897
+	},
+	"dCCPluginData": [],
+	"layerStatus":
+	{
+		"fusionLayers": [
+			{
+				"layerId": "default0d50layer0id0000000000000",
+				"parentLayerId": "",
+				"displayName": "",
+				"isHide": false,
+				"isLock": false,
+				"workSetId": "",
+				"isWorkSetDefaultLayer": false,
+				"isOnlyVisibleForWorkSetOwner": false,
+				"bIsVisibleInVideo": true
+			}
+		],
+		"activeLayerId": "default0d50layer0id0000000000000",
+		"selectedLayerId": ""
+	},
+	"textureMapPath": [
+		{
+			"des": "um/d17ba92d72a886090129e0d429543be6/5CB16F9C4B5EE1B4C4DA82BCC21AE774.jpg",
+			"src": "../../../resources/landscape/lslayer01.jpg"
+		},
+		{
+			"des": "um/53e3d410e6fed8a43ad81fff524d1062/FBFC305B4EFC46A381982D9EBD28FADD.jpg",
+			"src": "../../../resources/landscape/mountain_top.jpg"
+		},
+		{
+			"des": "um/e7319fdf6255bbb2f24b98dde2f9222d/1A8E97DF406AE757611E6D87EDCC7475.jpg",
+			"src": "../../../resources/landscape/slope.jpg"
+		}
+	],
+	"renderingSettings":
+	{
+		"lODEnable": true,
+		"realtimeEndCullDistance": 5000,
+		"renderEndCullDistance": 100000,
+		"tyndallBeamCount": 32,
+		"twoPointPerspectiveCompatibleMode": "NoCompatibleAndNoDisplay",
+		"glassReflectionEnable": false,
+		"atmosphericPerspectiveEnable": true,
+		"useNewMetrics": false,
+		"outsideCullRadius": 5000,
+		"gISettings":
+		{
+			"bEnableDiy": false,
+			"bGIdenoise": false,
+			"gIBounces": 1,
+			"gIReflectionMaxBounces": 1,
+			"accumFrames": 64,
+			"gIRoughness": 0.5
+		},
+		"hdriResolution": "Adaptive",
+		"colorSpace": "LinearRGB",
+		"cloudAndFogBlendingCompatibleMode": false,
+		"vRFine": false
+	},
+	"landscape":
+	{
+		"lsStyle":
+		{
+			"slope_noise_amount": 6,
+			"slope_sharpness": 6,
+			"mountain_height_offset": 30,
+			"mountain_height": 5000,
+			"mountain_mask_tiling": 2,
+			"mountain_edge_amount": 10,
+			"default_slope_noise_amount": 6,
+			"default_slope_sharpness": 6,
+			"default_mountain_height_offset": 30,
+			"default_mountain_height": 5000,
+			"default_mountain_mask_tiling": 2,
+			"default_mountain_edge_amount": 10,
+			"lscp_material_set":
+			{
+				"slope":
+				{
+					"has_data": true,
+					"title": "Rock 08",
+					"is_locked": false,
+					"icon_image": "um/e7319fdf6255bbb2f24b98dde2f9222d/1A8E97DF406AE757611E6D87EDCC7475.jpg",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 0.40000000596046448,
+						"g": 0.40000000596046448,
+						"b": 0.40000000596046448,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 0.5,
+					"uv_rotate": 0,
+					"height_blend_intensity": 0,
+					"random_uv": 0,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 0.5,
+					"default_height_blend_intensity": 0,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"mountain_top":
+				{
+					"has_data": true,
+					"title": "Snowfield 11",
+					"is_locked": false,
+					"icon_image": "um/53e3d410e6fed8a43ad81fff524d1062/FBFC305B4EFC46A381982D9EBD28FADD.jpg",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer01":
+				{
+					"has_data": true,
+					"title": "Grassland 05",
+					"is_locked": false,
+					"icon_image": "um/d17ba92d72a886090129e0d429543be6/5CB16F9C4B5EE1B4C4DA82BCC21AE774.jpg",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer02":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer03":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer04":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer05":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"lslayer06":
+				{
+					"has_data": false,
+					"title": "",
+					"is_locked": false,
+					"icon_image": "",
+					"diffuse_map": "",
+					"diffuse_color":
+					{
+						"r": 1,
+						"g": 1,
+						"b": 1,
+						"a": 1
+					},
+					"roughness_map": "",
+					"normal_map": "",
+					"height_map": "",
+					"uv_scale": 1,
+					"normal_value": 1,
+					"uv_rotate": 0,
+					"height_blend_intensity": 1,
+					"random_uv": 1,
+					"projection_smoothness": 0,
+					"default_uv_scale": 1,
+					"default_uv_rotate": 0,
+					"default_normal_value": 1,
+					"default_height_blend_intensity": 1,
+					"default_projection_smoothness": 0,
+					"asset_id": "",
+					"is_for_sale": 0
+				},
+				"modify_key": ""
+			},
+			"erosion_setting":
+			{
+				"use_erosion": false,
+				"erosion_bias": 6,
+				"erosion_intensity": 1.5,
+				"erosion_range": 200,
+				"base_erosion_color":
+				{
+					"r": 0.80000001192092896,
+					"g": 0.80000001192092896,
+					"b": 0.80000001192092896,
+					"a": 1
+				},
+				"slope_erosion_color":
+				{
+					"r": 0.10000000149011612,
+					"g": 0.10000000149011612,
+					"b": 0.10000000149011612,
+					"a": 1
+				},
+				"mountain_erosion_color":
+				{
+					"r": 0.020834000781178474,
+					"g": 0.020834000781178474,
+					"b": 0.020834000781178474,
+					"a": 1
+				},
+				"ls_color_alpha": 0,
+				"mountain_color_alpha": 1,
+				"slope_color_alpha": 1,
+				"default_erosion_intensity": 1.5,
+				"default_erosion_range": 200,
+				"default_erosion_bias": 6,
+				"default_ls_color_alpha": 0,
+				"default_mountain_color_alpha": 1,
+				"default_slope_color_alpha": 1,
+				"modify_key": ""
+			}
+		},
+		"uniqueActorId": "32D323094EA0D2629A90E28B48E5816A",
+		"isLandscapeEnabled": true,
+		"isHide": false,
+		"deleteInsteadOfHiding": false,
+		"displayHeightMapPath": "",
+		"displayHeightMapOffset": 0,
+		"displayMaxHeightMap": 0,
+		"landscapeOffset": -3,
+		"worldSize":
+		{
+			"x": 4000,
+			"y": 4000
+		},
+		"hISMInfo_V2": [],
+		"brushInfo": [],
+		"styleData":
+		{
+		}
+	},
+	"watermarkPhoto":
+	{
+		"watermarkType": 0,
+		"watermarkScale": 0,
+		"viewportWidth": 0,
+		"viewportHeight": 0
+	},
+	"watermarkVideo":
+	{
+		"watermarkType": 0,
+		"watermarkScale": 0,
+		"viewportWidth": 0,
+		"viewportHeight": 0
+	},
+	"customActorData": [],
+	"groupScenes": []
+}

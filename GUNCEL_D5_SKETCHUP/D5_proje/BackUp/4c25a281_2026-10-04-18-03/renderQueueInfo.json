@@ -1,0 +1,1269 @@
+{
+	"renderQueueVer": 14,
+	"resultFolder": "C:\\Users\\YOGA\\Documents\\D5 Render\\Untitled",
+	"unRendered": [
+		{
+			"objId": "fd03d727-b0b0-9289-a0d1-3618512a9c56",
+			"objName": "Image_1.png",
+			"objType": 1,
+			"filePath": "C:\\Users\\YOGA\\Documents\\D5 Render\\Untitled\\Image_1.png",
+			"thumbnail": "/ThumbnailImage/fd03d727-b0b0-9289-a0d1-3618512a9c56.png",
+			"resultPath": "C:\\Users\\YOGA\\Documents\\D5 Render\\Untitled\\Image_1.png",
+			"objFormatName": ".png",
+			"workSetId": "",
+			"hasRendered": false,
+			"renderFailed": false,
+			"proportion": 3,
+			"channelGraph": false,
+			"bStereoscopicPano": false,
+			"ipd": 62,
+			"numHorizontalSteps": 0,
+			"splineParam":
+			{
+				"id": "fd03d727-b0b0-9289-a0d1-3618512a9c56",
+				"workSetId": "",
+				"sceneName": "",
+				"updated": true,
+				"renamed": false,
+				"source": "",
+				"spinePoint":
+				{
+					"fOV": 90,
+					"isLevel": true,
+					"position":
+					{
+						"x": 5205.3716799526446,
+						"y": -6685.3031360173964,
+						"z": 506.7367759229931
+					},
+					"rotation":
+					{
+						"pitch": 0,
+						"yaw": 21.466690585021375,
+						"roll": 9.6016944178354583e-14
+					},
+					"advancedIntensity": false,
+					"atmosphereLuminance": 15,
+					"skyLightIntensity": 1,
+					"advancedIntensitySelf": false,
+					"atmosphereLuminanceSelf": 15,
+					"skyLightIntensitySelf": 1,
+					"sunIntensity": 1,
+					"sunshineheight": 40,
+					"sundiskradius": 1,
+					"sunAngle": 0,
+					"sunTemperature": 0.54166668653488159,
+					"shadowradius": 5,
+					"skyIntensity": 0.5,
+					"backgroundIntensity": 0.5,
+					"seperateBackgroundIntensity": false,
+					"skyTemperature": 0.54166668653488159,
+					"time": 0,
+					"bTwoPointPerspective": false,
+					"autoExposure": true,
+					"exposure": 0.5,
+					"exposureOffset": 0,
+					"contrast": 1,
+					"hightlevelmapbright": 0.30000001192092896,
+					"hightleveldark": 0.5,
+					"hightlevelmapcontrast": 0.80000001192092896,
+					"whiteBalanceTemp": 6500,
+					"bloom": 0.20000000298023224,
+					"saturation": 1,
+					"viewMode": 0,
+					"crepuscularraysdensity": 0.0010000000474974513,
+					"crepuscularraysscattering": 0.5,
+					"crepuscularraysheight": 0.20000000298023224,
+					"crepuscularraysheightNewHandle": true,
+					"crepuscularraysheightfalloff": 0.40000000596046448,
+					"crepuscularraysstartdistance": 0,
+					"crepuscularrayscolorh": 0,
+					"crepuscularrayscolors": 0,
+					"crepuscularrayscolorv": 100,
+					"bDepthOfFocus": false,
+					"depthOfFocus": 0,
+					"depthOfFieldFocalDistance": 0,
+					"sourcecubemapangle": 0,
+					"cameraClip": 0,
+					"projectionMode": 0,
+					"displayMode": 0,
+					"orthoWidth": 1536,
+					"bUseOrthoHeight": false,
+					"windEnable": 0,
+					"windStrength": 0.10000000149011612,
+					"windDirection": 0,
+					"sunEnable": 0,
+					"followHDR": 1,
+					"fogEnable": 0,
+					"autoFogBrightnessEnable": 1,
+					"tydallEnable": 0,
+					"lensFlare": 0,
+					"lensFlareHalo": 0,
+					"outsideUrl": "",
+					"cameraRoll": 9.6016944395316273e-14,
+					"hideElements": [],
+					"hideCityElements": [],
+					"skySystemEnable": 1,
+					"sky_Time": 1624298400,
+					"longitude": 118.80000305175781,
+					"latitude": 32,
+					"northOffset": 0,
+					"lutState": 0,
+					"lutIntensity": 1,
+					"lutFile": "",
+					"lutIndex": 0,
+					"sky_Month": 6,
+					"sky_Day": 21,
+					"cloudPreset": 1,
+					"cloudRotation": 0,
+					"cloudUVOffsetX": 1.6499999761581421,
+					"cloudUVOffsetY": 0,
+					"cloudBaseWindOffsetX": 0,
+					"cloudBaseWindOffsetY": 2383085.75,
+					"cloudDissipationType": 0,
+					"cloudExtinction": 0.44999998807907104,
+					"cloudSpeed": 0.0099999997764825821,
+					"cloudDirection": 0,
+					"cloudEnable": 1,
+					"cloudHeight": 0.5,
+					"cloudThickness": 0.89999997615814209,
+					"cloudDensity": 0.62999999523162842,
+					"cloudCastShadow": false,
+					"cloudCurl": 0.74000000953674316,
+					"cloudAltocumulus": 0,
+					"cloudStorm": 0.23999999463558197,
+					"cloudCirrus": 0.05000000074505806,
+					"cloudRandomSeed": 0.2800000011920929,
+					"sunlightIntensity": 0.125,
+					"globalGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"shadowGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"midToneGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"highLightGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"globalGainValid": true,
+					"shadowGainValid": true,
+					"midToneGainValid": true,
+					"highLightGainValid": true,
+					"precipEnable": 0,
+					"precipitation": 0,
+					"precipIntensity": 0.5,
+					"waterAccumulated": 0.5,
+					"waterAccumulatedSize": 1,
+					"waterAccumulatedOffsetX": 0,
+					"waterAccumulatedOffsetY": 0,
+					"snowFlakeSize": 0.5,
+					"rainTransparency": 1,
+					"waterMistEnable": false,
+					"waterMistDensity": 0.5,
+					"vignette": 0,
+					"fringe": 0,
+					"whiteBalanceTint": 0,
+					"autoFocus": true,
+					"layerStatus":
+					{
+						"fusionLayers": [
+							{
+								"layerId": "default0d50layer0id0000000000000",
+								"parentLayerId": "",
+								"displayName": "",
+								"isHide": false,
+								"isLock": false,
+								"workSetId": "",
+								"isWorkSetDefaultLayer": false,
+								"isOnlyVisibleForWorkSetOwner": false,
+								"bIsVisibleInVideo": true
+							}
+						],
+						"activeLayerId": "default0d50layer0id0000000000000",
+						"selectedLayerId": ""
+					},
+					"fixPointLoc":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"aoIntensity": 350,
+					"aoModeEnable": false,
+					"aoBlendGiScale": 2,
+					"aoBlendGiEnable": false,
+					"sketchEnable": false,
+					"innerBorderEnable": false,
+					"highLevelOutlineBorderOpacity": 1,
+					"highLevelOutlineBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelOutlineBorderWidth": 50,
+					"highLevelInnerBorderOpacity": 1,
+					"highLevelInnerBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelInnerBorderWidth": 50,
+					"borderWidthByDistance": 0,
+					"highLevelNormalThreshold": 0,
+					"backgroundEnable": false,
+					"backGroundColor":
+					{
+						"x": 255,
+						"y": 255,
+						"z": 255
+					},
+					"customBackgroundEnable": false,
+					"customBackgroundColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"colorFadingByDistanceEnable": false,
+					"colorFadingDistance": 500,
+					"isHdrFlipSwitch": false,
+					"twoPointPerspective_Shift":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_ViewPlaneScale": 1,
+					"twoPointPerspective_PreviousMouseScreenPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_PreviousMouseOriginPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"zDepthDistanceEnable": false,
+					"zDepthWhiteDistance": 10,
+					"zDepthBlackDistance": 0,
+					"cameraAspectRatioVec":
+					{
+						"x": 1920,
+						"y": 1080,
+						"z": 0
+					},
+					"isD5CameraActiveOnSceneAdded": false,
+					"activeD5CameraId": "",
+					"d5CameraList": [],
+					"pathTracingOn": false,
+					"pathTracingSpp": 256,
+					"pathTracingBounces": 6,
+					"highLightLocalExposure": 1,
+					"shadowLocalExposure": 1,
+					"previewViewSize":
+					{
+						"x": 988,
+						"y": 840
+					},
+					"sceneCameraId": "",
+					"bSelfDefSunSettings": false,
+					"selfDefSunAzimuth": 0,
+					"selfDefSunElevation": 40,
+					"skySaturation": 0,
+					"skyHueShift": 0,
+					"skyTemperatureEnable": 1,
+					"skyColorEffectSwitch": 0,
+					"sunCausticsEnable": false,
+					"sunCausticsStrength": 1,
+					"sunCausticsSoftness": 0,
+					"skySunCausticsEnable": false,
+					"skySunCausticsStrength": 1,
+					"skySunCausticsSoftness": 0,
+					"seasonSwitch": 0,
+					"seasonAllGlobalSwitch": 0,
+					"seasonDateHasMod": false,
+					"seasonDate": 0,
+					"seasonDaySpring": 90,
+					"seasonDaySummer": 110,
+					"seasonDayAutumn": 270,
+					"seasonDayWinter": 365,
+					"skySunIntensity": 0.125,
+					"skySundiskradius": 1,
+					"skyMoonIntensity": 1,
+					"skyMoonSize": 1,
+					"skyStarsIntensity": 0.05000000074505806,
+					"skySystemType": 1,
+					"isCustomizeSun": true,
+					"isCustomizeMoon": false,
+					"moonPhase": 0.5,
+					"moonPhaseRotate": 0,
+					"moonElevation": 20,
+					"moonAzimuth": 90,
+					"moonSize": 1,
+					"moonIntensity": 1,
+					"moonBloomRadius": 1,
+					"moonBloomIntensity": 1,
+					"isCustomizeStars": false,
+					"starsElevationBias": 0,
+					"starsAzimuthBias": 0,
+					"brightStarsIntensity": 0.05000000074505806,
+					"isCustomizeMilkyway": false,
+					"milkyWayIntensity": 1,
+					"milkyWayHorizontalRotation": 0,
+					"gISettings":
+					{
+						"bEnableDiy": false,
+						"bGIdenoise": false,
+						"gIBounces": 1,
+						"gIReflectionMaxBounces": 1,
+						"accumFrames": 64,
+						"gIRoughness": 0.5
+					}
+				},
+				"dimensionMode": 0,
+				"imagePath": "",
+				"lensHeight": 160,
+				"renderParam":
+				{
+					"photoType": 1,
+					"aspectRatio": 0,
+					"ratioInverse": false,
+					"sceneScale": 0,
+					"width": 0,
+					"height": 0,
+					"channelGraph": false,
+					"format": 1,
+					"channelGraphChoose": [],
+					"bStereoscopicPano": false,
+					"ipd": 62,
+					"numHorizontalSteps": 60
+				},
+				"hasEffectDataFromDcc": false
+			},
+			"clip":
+			{
+				"id": "",
+				"workSetId": "",
+				"name": "",
+				"selectId": "",
+				"keyFrames": [],
+				"actorKeyFramesForJson":
+				{
+				},
+				"layerKeyFramesForJson":
+				{
+				},
+				"shots":
+				{
+					"selectId": "",
+					"data": []
+				},
+				"pathData": [],
+				"growthAnimationJson": [],
+				"isRenderClip": false
+			},
+			"aspectRatio": 1,
+			"realScale": 4,
+			"viewportWidth": 1200,
+			"viewportHeight": 1020,
+			"renderTime": 0,
+			"renderedPath":
+			{
+				"mMaterialIdPath": "",
+				"mAmbientOcclusionPath": "",
+				"mRTReflectionPath": "",
+				"mAlphaMaskPath": "",
+				"mNewAlphaPath": "",
+				"mTransMaskPath": "",
+				"mZDepthPath": "",
+				"mNormalPath": "",
+				"mAIMaterialPath": "",
+				"mAINormalPath": "",
+				"mAIAlbedoPath": ""
+			},
+			"watermarkParam":
+			{
+				"watermarkType": 0,
+				"watermarkScale": 0,
+				"viewportWidth": 988,
+				"viewportHeight": 840
+			},
+			"id": "",
+			"resolution": 3,
+			"width": 2560,
+			"height": 2176,
+			"channelGraphChoose": 64,
+			"objExrChoose": "Invalid",
+			"frameRate": 30,
+			"frameStartTime": 0,
+			"frameEndTime": 0,
+			"eFrameRange": 0,
+			"frameType": 0,
+			"bExportCameraParams": false
+		},
+		{
+			"objId": "d4f92e14-2a85-bfd2-8f9e-8b2f46717fef",
+			"objName": "Image.png",
+			"objType": 1,
+			"filePath": "C:\\Users\\YOGA\\Documents\\D5 Render\\Untitled\\Image.png",
+			"thumbnail": "/ThumbnailImage/d4f92e14-2a85-bfd2-8f9e-8b2f46717fef.png",
+			"resultPath": "C:\\Users\\YOGA\\Documents\\D5 Render\\Untitled\\Image.png",
+			"objFormatName": ".png",
+			"workSetId": "",
+			"hasRendered": false,
+			"renderFailed": false,
+			"proportion": 3,
+			"channelGraph": false,
+			"bStereoscopicPano": false,
+			"ipd": 62,
+			"numHorizontalSteps": 0,
+			"splineParam":
+			{
+				"id": "d4f92e14-2a85-bfd2-8f9e-8b2f46717fef",
+				"workSetId": "",
+				"sceneName": "",
+				"updated": true,
+				"renamed": false,
+				"source": "",
+				"spinePoint":
+				{
+					"fOV": 90,
+					"isLevel": true,
+					"position":
+					{
+						"x": 4293.47607421875,
+						"y": -6322.81005859375,
+						"z": 547.0933837890625
+					},
+					"rotation":
+					{
+						"pitch": 0,
+						"yaw": 21.466690585021375,
+						"roll": 9.6016944178354583e-14
+					},
+					"advancedIntensity": false,
+					"atmosphereLuminance": 15,
+					"skyLightIntensity": 1,
+					"advancedIntensitySelf": false,
+					"atmosphereLuminanceSelf": 15,
+					"skyLightIntensitySelf": 1,
+					"sunIntensity": 1,
+					"sunshineheight": 40,
+					"sundiskradius": 1,
+					"sunAngle": 0,
+					"sunTemperature": 0.54166668653488159,
+					"shadowradius": 5,
+					"skyIntensity": 0.5,
+					"backgroundIntensity": 0.5,
+					"seperateBackgroundIntensity": false,
+					"skyTemperature": 0.54166668653488159,
+					"time": 0,
+					"bTwoPointPerspective": false,
+					"autoExposure": true,
+					"exposure": 0.5,
+					"exposureOffset": 0,
+					"contrast": 1,
+					"hightlevelmapbright": 0.30000001192092896,
+					"hightleveldark": 0.5,
+					"hightlevelmapcontrast": 0.80000001192092896,
+					"whiteBalanceTemp": 6500,
+					"bloom": 0.20000000298023224,
+					"saturation": 1,
+					"viewMode": 0,
+					"crepuscularraysdensity": 0.0010000000474974513,
+					"crepuscularraysscattering": 0.5,
+					"crepuscularraysheight": 0.20000000298023224,
+					"crepuscularraysheightNewHandle": true,
+					"crepuscularraysheightfalloff": 0.40000000596046448,
+					"crepuscularraysstartdistance": 0,
+					"crepuscularrayscolorh": 0,
+					"crepuscularrayscolors": 0,
+					"crepuscularrayscolorv": 100,
+					"bDepthOfFocus": false,
+					"depthOfFocus": 0,
+					"depthOfFieldFocalDistance": 0,
+					"sourcecubemapangle": 0,
+					"cameraClip": 0,
+					"projectionMode": 0,
+					"displayMode": 0,
+					"orthoWidth": 1536,
+					"bUseOrthoHeight": false,
+					"windEnable": 0,
+					"windStrength": 0.10000000149011612,
+					"windDirection": 0,
+					"sunEnable": 0,
+					"followHDR": 1,
+					"fogEnable": 0,
+					"autoFogBrightnessEnable": 1,
+					"tydallEnable": 0,
+					"lensFlare": 0,
+					"lensFlareHalo": 0,
+					"outsideUrl": "",
+					"cameraRoll": 9.6016944395316273e-14,
+					"hideElements": [],
+					"hideCityElements": [],
+					"skySystemEnable": 1,
+					"sky_Time": 1624298400,
+					"longitude": 118.80000305175781,
+					"latitude": 32,
+					"northOffset": 0,
+					"lutState": 0,
+					"lutIntensity": 1,
+					"lutFile": "",
+					"lutIndex": 0,
+					"sky_Month": 6,
+					"sky_Day": 21,
+					"cloudPreset": 1,
+					"cloudRotation": 0,
+					"cloudUVOffsetX": 1.6499999761581421,
+					"cloudUVOffsetY": 0,
+					"cloudBaseWindOffsetX": 0,
+					"cloudBaseWindOffsetY": 2383085.75,
+					"cloudDissipationType": 0,
+					"cloudExtinction": 0.44999998807907104,
+					"cloudSpeed": 0.0099999997764825821,
+					"cloudDirection": 0,
+					"cloudEnable": 1,
+					"cloudHeight": 0.5,
+					"cloudThickness": 0.89999997615814209,
+					"cloudDensity": 0.62999999523162842,
+					"cloudCastShadow": false,
+					"cloudCurl": 0.74000000953674316,
+					"cloudAltocumulus": 0,
+					"cloudStorm": 0.23999999463558197,
+					"cloudCirrus": 0.05000000074505806,
+					"cloudRandomSeed": 0.2800000011920929,
+					"sunlightIntensity": 0.125,
+					"globalGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"shadowGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"midToneGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"highLightGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"globalGainValid": true,
+					"shadowGainValid": true,
+					"midToneGainValid": true,
+					"highLightGainValid": true,
+					"precipEnable": 0,
+					"precipitation": 0,
+					"precipIntensity": 0.5,
+					"waterAccumulated": 0.5,
+					"waterAccumulatedSize": 1,
+					"waterAccumulatedOffsetX": 0,
+					"waterAccumulatedOffsetY": 0,
+					"snowFlakeSize": 0.5,
+					"rainTransparency": 1,
+					"waterMistEnable": false,
+					"waterMistDensity": 0.5,
+					"vignette": 0,
+					"fringe": 0,
+					"whiteBalanceTint": 0,
+					"autoFocus": true,
+					"layerStatus":
+					{
+						"fusionLayers": [
+							{
+								"layerId": "default0d50layer0id0000000000000",
+								"parentLayerId": "",
+								"displayName": "",
+								"isHide": false,
+								"isLock": false,
+								"workSetId": "",
+								"isWorkSetDefaultLayer": false,
+								"isOnlyVisibleForWorkSetOwner": false,
+								"bIsVisibleInVideo": true
+							}
+						],
+						"activeLayerId": "default0d50layer0id0000000000000",
+						"selectedLayerId": ""
+					},
+					"fixPointLoc":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"aoIntensity": 350,
+					"aoModeEnable": false,
+					"aoBlendGiScale": 2,
+					"aoBlendGiEnable": false,
+					"sketchEnable": false,
+					"innerBorderEnable": false,
+					"highLevelOutlineBorderOpacity": 1,
+					"highLevelOutlineBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelOutlineBorderWidth": 50,
+					"highLevelInnerBorderOpacity": 1,
+					"highLevelInnerBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelInnerBorderWidth": 50,
+					"borderWidthByDistance": 0,
+					"highLevelNormalThreshold": 0,
+					"backgroundEnable": false,
+					"backGroundColor":
+					{
+						"x": 255,
+						"y": 255,
+						"z": 255
+					},
+					"customBackgroundEnable": false,
+					"customBackgroundColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"colorFadingByDistanceEnable": false,
+					"colorFadingDistance": 500,
+					"isHdrFlipSwitch": false,
+					"twoPointPerspective_Shift":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_ViewPlaneScale": 1,
+					"twoPointPerspective_PreviousMouseScreenPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_PreviousMouseOriginPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"zDepthDistanceEnable": false,
+					"zDepthWhiteDistance": 10,
+					"zDepthBlackDistance": 0,
+					"cameraAspectRatioVec":
+					{
+						"x": 1920,
+						"y": 1080,
+						"z": 0
+					},
+					"isD5CameraActiveOnSceneAdded": false,
+					"activeD5CameraId": "",
+					"d5CameraList": [],
+					"pathTracingOn": false,
+					"pathTracingSpp": 256,
+					"pathTracingBounces": 6,
+					"highLightLocalExposure": 1,
+					"shadowLocalExposure": 1,
+					"previewViewSize":
+					{
+						"x": 988,
+						"y": 840
+					},
+					"sceneCameraId": "",
+					"bSelfDefSunSettings": false,
+					"selfDefSunAzimuth": 0,
+					"selfDefSunElevation": 40,
+					"skySaturation": 0,
+					"skyHueShift": 0,
+					"skyTemperatureEnable": 1,
+					"skyColorEffectSwitch": 0,
+					"sunCausticsEnable": false,
+					"sunCausticsStrength": 1,
+					"sunCausticsSoftness": 0,
+					"skySunCausticsEnable": false,
+					"skySunCausticsStrength": 1,
+					"skySunCausticsSoftness": 0,
+					"seasonSwitch": 0,
+					"seasonAllGlobalSwitch": 0,
+					"seasonDateHasMod": false,
+					"seasonDate": 0,
+					"seasonDaySpring": 90,
+					"seasonDaySummer": 110,
+					"seasonDayAutumn": 270,
+					"seasonDayWinter": 365,
+					"skySunIntensity": 0.125,
+					"skySundiskradius": 1,
+					"skyMoonIntensity": 1,
+					"skyMoonSize": 1,
+					"skyStarsIntensity": 0.05000000074505806,
+					"skySystemType": 1,
+					"isCustomizeSun": true,
+					"isCustomizeMoon": false,
+					"moonPhase": 0.5,
+					"moonPhaseRotate": 0,
+					"moonElevation": 20,
+					"moonAzimuth": 90,
+					"moonSize": 1,
+					"moonIntensity": 1,
+					"moonBloomRadius": 1,
+					"moonBloomIntensity": 1,
+					"isCustomizeStars": false,
+					"starsElevationBias": 0,
+					"starsAzimuthBias": 0,
+					"brightStarsIntensity": 0.05000000074505806,
+					"isCustomizeMilkyway": false,
+					"milkyWayIntensity": 1,
+					"milkyWayHorizontalRotation": 0,
+					"gISettings":
+					{
+						"bEnableDiy": false,
+						"bGIdenoise": false,
+						"gIBounces": 1,
+						"gIReflectionMaxBounces": 1,
+						"accumFrames": 64,
+						"gIRoughness": 0.5
+					}
+				},
+				"dimensionMode": 0,
+				"imagePath": "",
+				"lensHeight": 160,
+				"renderParam":
+				{
+					"photoType": 1,
+					"aspectRatio": 0,
+					"ratioInverse": false,
+					"sceneScale": 0,
+					"width": 0,
+					"height": 0,
+					"channelGraph": false,
+					"format": 1,
+					"channelGraphChoose": [],
+					"bStereoscopicPano": false,
+					"ipd": 62,
+					"numHorizontalSteps": 60
+				},
+				"hasEffectDataFromDcc": false
+			},
+			"clip":
+			{
+				"id": "",
+				"workSetId": "",
+				"name": "",
+				"selectId": "",
+				"keyFrames": [],
+				"actorKeyFramesForJson":
+				{
+				},
+				"layerKeyFramesForJson":
+				{
+				},
+				"shots":
+				{
+					"selectId": "",
+					"data": []
+				},
+				"pathData": [],
+				"growthAnimationJson": [],
+				"isRenderClip": false
+			},
+			"aspectRatio": 1,
+			"realScale": 4,
+			"viewportWidth": 1200,
+			"viewportHeight": 1020,
+			"renderTime": 0,
+			"renderedPath":
+			{
+				"mMaterialIdPath": "",
+				"mAmbientOcclusionPath": "",
+				"mRTReflectionPath": "",
+				"mAlphaMaskPath": "",
+				"mNewAlphaPath": "",
+				"mTransMaskPath": "",
+				"mZDepthPath": "",
+				"mNormalPath": "",
+				"mAIMaterialPath": "",
+				"mAINormalPath": "",
+				"mAIAlbedoPath": ""
+			},
+			"watermarkParam":
+			{
+				"watermarkType": 0,
+				"watermarkScale": 0,
+				"viewportWidth": 988,
+				"viewportHeight": 840
+			},
+			"id": "",
+			"resolution": 3,
+			"width": 2560,
+			"height": 2176,
+			"channelGraphChoose": 64,
+			"objExrChoose": "Invalid",
+			"frameRate": 30,
+			"frameStartTime": 0,
+			"frameEndTime": 0,
+			"eFrameRange": 0,
+			"frameType": 0,
+			"bExportCameraParams": false
+		}
+	],
+	"rendered": [
+		{
+			"objId": "6603544e-1024-8ef1-ae03-f7e6eac6ae07",
+			"objName": "Image(1)",
+			"objType": 1,
+			"filePath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/d5 render/Image(1).png",
+			"thumbnail": "/ThumbnailImage/6603544e-1024-8ef1-ae03-f7e6eac6ae07.png",
+			"resultPath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/d5 render/Image(1).png",
+			"objFormatName": ".png",
+			"workSetId": "",
+			"hasRendered": false,
+			"renderFailed": false,
+			"proportion": 3,
+			"channelGraph": false,
+			"bStereoscopicPano": false,
+			"ipd": 62,
+			"numHorizontalSteps": 0,
+			"splineParam":
+			{
+				"id": "6603544e-1024-8ef1-ae03-f7e6eac6ae07",
+				"workSetId": "",
+				"sceneName": "",
+				"updated": true,
+				"renamed": false,
+				"source": "",
+				"spinePoint":
+				{
+					"fOV": 90,
+					"isLevel": true,
+					"position":
+					{
+						"x": 5205.3716799526446,
+						"y": -6685.3031360173964,
+						"z": 506.7367759229931
+					},
+					"rotation":
+					{
+						"pitch": 0,
+						"yaw": 21.466690585021375,
+						"roll": 9.6016944178354583e-14
+					},
+					"advancedIntensity": false,
+					"atmosphereLuminance": 15,
+					"skyLightIntensity": 1,
+					"advancedIntensitySelf": false,
+					"atmosphereLuminanceSelf": 15,
+					"skyLightIntensitySelf": 1,
+					"sunIntensity": 1,
+					"sunshineheight": 40,
+					"sundiskradius": 1,
+					"sunAngle": 0,
+					"sunTemperature": 0.54166668653488159,
+					"shadowradius": 5,
+					"skyIntensity": 0.5,
+					"backgroundIntensity": 0.5,
+					"seperateBackgroundIntensity": false,
+					"skyTemperature": 0.54166668653488159,
+					"time": 0,
+					"bTwoPointPerspective": false,
+					"autoExposure": true,
+					"exposure": 0.5,
+					"exposureOffset": 0,
+					"contrast": 1,
+					"hightlevelmapbright": 0.30000001192092896,
+					"hightleveldark": 0.5,
+					"hightlevelmapcontrast": 0.80000001192092896,
+					"whiteBalanceTemp": 6500,
+					"bloom": 0.20000000298023224,
+					"saturation": 1,
+					"viewMode": 0,
+					"crepuscularraysdensity": 0.0010000000474974513,
+					"crepuscularraysscattering": 0.5,
+					"crepuscularraysheight": 0.20000000298023224,
+					"crepuscularraysheightNewHandle": true,
+					"crepuscularraysheightfalloff": 0.40000000596046448,
+					"crepuscularraysstartdistance": 0,
+					"crepuscularrayscolorh": 0,
+					"crepuscularrayscolors": 0,
+					"crepuscularrayscolorv": 100,
+					"bDepthOfFocus": false,
+					"depthOfFocus": 0,
+					"depthOfFieldFocalDistance": 0,
+					"sourcecubemapangle": 0,
+					"cameraClip": 0,
+					"projectionMode": 0,
+					"displayMode": 0,
+					"orthoWidth": 1536,
+					"bUseOrthoHeight": false,
+					"windEnable": 0,
+					"windStrength": 0.10000000149011612,
+					"windDirection": 0,
+					"sunEnable": 0,
+					"followHDR": 1,
+					"fogEnable": 0,
+					"autoFogBrightnessEnable": 1,
+					"tydallEnable": 0,
+					"lensFlare": 0,
+					"lensFlareHalo": 0,
+					"outsideUrl": "",
+					"cameraRoll": 9.6016944395316273e-14,
+					"hideElements": [],
+					"hideCityElements": [],
+					"skySystemEnable": 1,
+					"sky_Time": 1624298400,
+					"longitude": 118.80000305175781,
+					"latitude": 32,
+					"northOffset": 0,
+					"lutState": 0,
+					"lutIntensity": 1,
+					"lutFile": "",
+					"lutIndex": 0,
+					"sky_Month": 6,
+					"sky_Day": 21,
+					"cloudPreset": 1,
+					"cloudRotation": 0,
+					"cloudUVOffsetX": 1.6499999761581421,
+					"cloudUVOffsetY": 0,
+					"cloudBaseWindOffsetX": 0,
+					"cloudBaseWindOffsetY": 2383085.75,
+					"cloudDissipationType": 0,
+					"cloudExtinction": 0.44999998807907104,
+					"cloudSpeed": 0.0099999997764825821,
+					"cloudDirection": 0,
+					"cloudEnable": 1,
+					"cloudHeight": 0.5,
+					"cloudThickness": 0.89999997615814209,
+					"cloudDensity": 0.62999999523162842,
+					"cloudCastShadow": false,
+					"cloudCurl": 0.74000000953674316,
+					"cloudAltocumulus": 0,
+					"cloudStorm": 0.23999999463558197,
+					"cloudCirrus": 0.05000000074505806,
+					"cloudRandomSeed": 0.2800000011920929,
+					"sunlightIntensity": 0.125,
+					"globalGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"shadowGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"midToneGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"highLightGain":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 1,
+						"w": 1
+					},
+					"globalGainValid": true,
+					"shadowGainValid": true,
+					"midToneGainValid": true,
+					"highLightGainValid": true,
+					"precipEnable": 0,
+					"precipitation": 0,
+					"precipIntensity": 0.5,
+					"waterAccumulated": 0.5,
+					"waterAccumulatedSize": 1,
+					"waterAccumulatedOffsetX": 0,
+					"waterAccumulatedOffsetY": 0,
+					"snowFlakeSize": 0.5,
+					"rainTransparency": 1,
+					"waterMistEnable": false,
+					"waterMistDensity": 0.5,
+					"vignette": 0,
+					"fringe": 0,
+					"whiteBalanceTint": 0,
+					"autoFocus": true,
+					"layerStatus":
+					{
+						"fusionLayers": [
+							{
+								"layerId": "default0d50layer0id0000000000000",
+								"parentLayerId": "",
+								"displayName": "",
+								"isHide": false,
+								"isLock": false,
+								"workSetId": "",
+								"isWorkSetDefaultLayer": false,
+								"isOnlyVisibleForWorkSetOwner": false,
+								"bIsVisibleInVideo": true
+							}
+						],
+						"activeLayerId": "default0d50layer0id0000000000000",
+						"selectedLayerId": ""
+					},
+					"fixPointLoc":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"aoIntensity": 350,
+					"aoModeEnable": false,
+					"aoBlendGiScale": 2,
+					"aoBlendGiEnable": false,
+					"sketchEnable": false,
+					"innerBorderEnable": false,
+					"highLevelOutlineBorderOpacity": 1,
+					"highLevelOutlineBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelOutlineBorderWidth": 50,
+					"highLevelInnerBorderOpacity": 1,
+					"highLevelInnerBorderColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"highLevelInnerBorderWidth": 50,
+					"borderWidthByDistance": 0,
+					"highLevelNormalThreshold": 0,
+					"backgroundEnable": false,
+					"backGroundColor":
+					{
+						"x": 255,
+						"y": 255,
+						"z": 255
+					},
+					"customBackgroundEnable": false,
+					"customBackgroundColor":
+					{
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"colorFadingByDistanceEnable": false,
+					"colorFadingDistance": 500,
+					"isHdrFlipSwitch": false,
+					"twoPointPerspective_Shift":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_ViewPlaneScale": 1,
+					"twoPointPerspective_PreviousMouseScreenPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"twoPointPerspective_PreviousMouseOriginPosition":
+					{
+						"x": 0,
+						"y": 0
+					},
+					"zDepthDistanceEnable": false,
+					"zDepthWhiteDistance": 10,
+					"zDepthBlackDistance": 0,
+					"cameraAspectRatioVec":
+					{
+						"x": 1920,
+						"y": 1080,
+						"z": 0
+					},
+					"isD5CameraActiveOnSceneAdded": false,
+					"activeD5CameraId": "",
+					"d5CameraList": [],
+					"pathTracingOn": false,
+					"pathTracingSpp": 256,
+					"pathTracingBounces": 6,
+					"highLightLocalExposure": 1,
+					"shadowLocalExposure": 1,
+					"previewViewSize":
+					{
+						"x": 988,
+						"y": 840
+					},
+					"sceneCameraId": "",
+					"bSelfDefSunSettings": false,
+					"selfDefSunAzimuth": 0,
+					"selfDefSunElevation": 40,
+					"skySaturation": 0,
+					"skyHueShift": 0,
+					"skyTemperatureEnable": 1,
+					"skyColorEffectSwitch": 0,
+					"sunCausticsEnable": false,
+					"sunCausticsStrength": 1,
+					"sunCausticsSoftness": 0,
+					"skySunCausticsEnable": false,
+					"skySunCausticsStrength": 1,
+					"skySunCausticsSoftness": 0,
+					"seasonSwitch": 0,
+					"seasonAllGlobalSwitch": 0,
+					"seasonDateHasMod": false,
+					"seasonDate": 0,
+					"seasonDaySpring": 90,
+					"seasonDaySummer": 110,
+					"seasonDayAutumn": 270,
+					"seasonDayWinter": 365,
+					"skySunIntensity": 0.125,
+					"skySundiskradius": 1,
+					"skyMoonIntensity": 1,
+					"skyMoonSize": 1,
+					"skyStarsIntensity": 0.05000000074505806,
+					"skySystemType": 1,
+					"isCustomizeSun": true,
+					"isCustomizeMoon": false,
+					"moonPhase": 0.5,
+					"moonPhaseRotate": 0,
+					"moonElevation": 20,
+					"moonAzimuth": 90,
+					"moonSize": 1,
+					"moonIntensity": 1,
+					"moonBloomRadius": 1,
+					"moonBloomIntensity": 1,
+					"isCustomizeStars": false,
+					"starsElevationBias": 0,
+					"starsAzimuthBias": 0,
+					"brightStarsIntensity": 0.05000000074505806,
+					"isCustomizeMilkyway": false,
+					"milkyWayIntensity": 1,
+					"milkyWayHorizontalRotation": 0,
+					"gISettings":
+					{
+						"bEnableDiy": false,
+						"bGIdenoise": false,
+						"gIBounces": 1,
+						"gIReflectionMaxBounces": 1,
+						"accumFrames": 64,
+						"gIRoughness": 0.5
+					}
+				},
+				"dimensionMode": 0,
+				"imagePath": "",
+				"lensHeight": 160,
+				"renderParam":
+				{
+					"photoType": 1,
+					"aspectRatio": 0,
+					"ratioInverse": false,
+					"sceneScale": 0,
+					"width": 0,
+					"height": 0,
+					"channelGraph": false,
+					"format": 1,
+					"channelGraphChoose": [],
+					"bStereoscopicPano": false,
+					"ipd": 62,
+					"numHorizontalSteps": 60
+				},
+				"hasEffectDataFromDcc": false
+			},
+			"clip":
+			{
+				"id": "",
+				"workSetId": "",
+				"name": "",
+				"selectId": "",
+				"keyFrames": [],
+				"actorKeyFramesForJson":
+				{
+				},
+				"layerKeyFramesForJson":
+				{
+				},
+				"shots":
+				{
+					"selectId": "",
+					"data": []
+				},
+				"pathData": [],
+				"growthAnimationJson": [],
+				"isRenderClip": false
+			},
+			"aspectRatio": 1,
+			"realScale": 4,
+			"viewportWidth": 0,
+			"viewportHeight": 0,
+			"renderTime": 369289,
+			"renderedPath":
+			{
+				"mMaterialIdPath": "",
+				"mAmbientOcclusionPath": "",
+				"mRTReflectionPath": "",
+				"mAlphaMaskPath": "",
+				"mNewAlphaPath": "",
+				"mTransMaskPath": "",
+				"mZDepthPath": "",
+				"mNormalPath": "",
+				"mAIMaterialPath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/d5 render/Image(1)_AI_Material.png",
+				"mAINormalPath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/d5 render/Image(1)_AI_Normal.png",
+				"mAIAlbedoPath": "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/d5 render/Image(1)_AI_Albedo.png"
+			},
+			"watermarkParam":
+			{
+				"watermarkType": 0,
+				"watermarkScale": 0,
+				"viewportWidth": 988,
+				"viewportHeight": 840
+			},
+			"id": "",
+			"resolution": 3,
+			"width": 2560,
+			"height": 2176,
+			"channelGraphChoose": 64,
+			"objExrChoose": "Invalid",
+			"frameRate": 30,
+			"frameStartTime": 0,
+			"frameEndTime": 0,
+			"eFrameRange": 0,
+			"frameType": 0,
+			"bExportCameraParams": false
+		}
+	],
+	"workSetResultFolders":
+	{
+	},
+	"outPrefix": ""
+}

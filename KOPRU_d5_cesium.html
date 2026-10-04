@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D5 ↔ Cesium Köprüsü — CİNCİN Ada 189 (115/116/117)</title>
+<script>window.CESIUM_BASE_URL='https://cdnjs.cloudflare.com/ajax/libs/cesium/1.118.0/';</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.118.0/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cesium/1.118.0/Cesium.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.11.0/proj4.js"></script>
+<style>
+  :root{ color-scheme:dark; }
+  html,body{ margin:0; height:100%; font:13px/1.45 system-ui,Segoe UI,Roboto,sans-serif; background:#0b0e13; color:#e6e9ef; }
+  #cesiumContainer{ position:fixed; inset:0; }
+  #d5fg{ position:fixed; inset:0; margin:auto; max-width:100%; max-height:100%;
+         object-fit:contain; pointer-events:none; display:none; z-index:5; }
+  #panel{ position:fixed; top:0; right:0; width:340px; max-height:100vh; overflow-y:auto;
+          background:rgba(14,18,26,.94); border-left:1px solid #2a3444; z-index:10;
+          padding:12px 14px 40px; backdrop-filter:blur(4px); }
+  #panel h1{ font-size:14px; margin:0 0 2px; }
+  #panel .sub{ color:#8b97a8; font-size:11px; margin-bottom:10px; }
+  fieldset{ border:1px solid #2a3444; border-radius:8px; margin:0 0 10px; padding:8px 10px 10px; }
+  legend{ padding:0 6px; color:#9fb3ce; font-weight:600; font-size:12px; }
+  label.row{ display:flex; align-items:center; gap:6px; margin:5px 0; }
+  label.row span:first-child{ flex:0 0 96px; color:#b7c1d1; }
+  input[type=range]{ flex:1; }
+  input[type=number],select,input[type=text]{ background:#0f151e; color:#e6e9ef; border:1px solid #33405280;
+        border-radius:5px; padding:3px 5px; font:inherit; width:100%; }
+  .val{ flex:0 0 58px; text-align:right; color:#7fd6a8; font-variant-numeric:tabular-nums; }
+  button{ background:#1b2735; color:#e6e9ef; border:1px solid #384a63;
+          border-radius:6px; padding:5px 9px; font:inherit; cursor:pointer; }
+  button:hover{ background:#26374b; }
+  button.primary{ background:#1d5c3f; border-color:#2e7d55; }
+  button.primary:hover{ background:#237049; }
+  .btnrow{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 2px; }
+  .nudge{ display:grid; grid-template-columns:repeat(3,1fr); gap:4px; width:140px; margin:4px 0; }
+  .nudge button{ padding:4px 0; }
+  .hint{ color:#8b97a8; font-size:11px; margin:4px 0 0; }
+  #readout{ white-space:pre-wrap; font:11px/1.4 ui-monospace,Consolas,monospace; color:#9fe6c2;
+            background:#0c1219; border:1px solid #24303f; border-radius:6px; padding:6px; margin-top:6px; }
+  #crsMsg{ font-size:11px; margin-top:4px; }
+  .ok{ color:#7fd6a8; } .warn{ color:#e6b16b; }
+  #toggleBtn{ position:fixed; top:8px; right:352px; z-index:11; }
+  @media(max-width:720px){ #panel{ width:100%; } #toggleBtn{ right:8px; } }
+</style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<img id="d5fg" alt="D5 render (ön plan)">
+<button id="toggleBtn">☰ Panel</button>
+
+<div id="panel">
+  <h1>D5 ↔ Cesium Köprüsü</h1>
+  <div class="sub">CİNCİN Ada 189 · Parsel 115 / 116 / 117 — röleve koordinatını (Easting/Northing) Cesium uydu görüntüsüne oturtur.</div>
+
+  <fieldset>
+    <legend>1 · Koordinat sistemi</legend>
+    <label class="row"><span>Kaynak CRS</span>
+      <select id="crs">
+        <option value="tm27" selected>TUREF/ITRF96 TM 3° DOM 27 — kadastro (EPSG:5253)</option>
+        <option value="32635">UTM 35N / WGS84 (EPSG:32635)</option>
+        <option value="32636">UTM 36N / WGS84 (EPSG:32636)</option>
+        <option value="32637">UTM 37N / WGS84 (EPSG:32637)</option>
+        <option value="tm30">Türkiye TM 3° — DOM 30°</option>
+        <option value="tm33">Türkiye TM 3° — DOM 33°</option>
+        <option value="tm36">Türkiye TM 3° — DOM 36°</option>
+      </select>
+    </label>
+    <div class="btnrow">
+      <button id="autoCrs">Otomatik dene</button>
+      <button id="flySite" class="primary">Araziye uç</button>
+    </div>
+    <div id="crsMsg"></div>
+    <p class="hint">Doğru CRS bilinmiyorsa: “Otomatik dene” Türkiye sınırlarına düşen zonu seçer, sonra uydu görüntüsünde parsel sınırı arsaya oturana kadar listeden değiştir.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>2 · Altlık & arazi</legend>
+    <label class="row"><span>Uydu altlık</span>
+      <select id="basemap">
+        <option value="esri" selected>Esri World Imagery (anahtarsız)</option>
+        <option value="osm">OpenStreetMap</option>
+        <option value="ion">Cesium ion (token gerekir)</option>
+      </select>
+    </label>
+    <label class="row"><span>ion token</span><input type="text" id="ionTok" placeholder="opsiyonel — arazi + Bing/Sentinel"></label>
+    <label class="row"><span><input type="checkbox" id="terrain"> Dünya arazisi</span></label>
+    <label class="row"><span><input type="checkbox" id="showParcel" checked> Parsel sınırı</span></label>
+    <label class="row"><span><input type="checkbox" id="showPts"> Kot noktaları</span></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>3 · D5 render örtüsü (zemin)</legend>
+    <label class="row"><span>Görüntü</span>
+      <select id="d5src">
+        <option value="d5 render/Image.png">d5 render/Image.png</option>
+        <option value="d5 render/Image(1).png">d5 render/Image(1).png</option>
+        <option value="d5 render/Image(1)_style_transfer02.png">Image(1)_style_transfer02.png</option>
+        <option value="__file">— dosya seç —</option>
+      </select>
+    </label>
+    <input type="file" id="d5file" accept="image/*" style="display:none">
+    <label class="row"><span>Görünürlük</span><input type="range" id="opacity" min="0" max="1" step="0.02" value="0.6"><span class="val" id="opacityV">0.60</span></label>
+    <label class="row"><span>Genişlik (m)</span><input type="range" id="w" min="10" max="600" step="1" value="170"><span class="val" id="wV">170</span></label>
+    <label class="row"><span>Boy (m)</span><input type="range" id="h" min="10" max="600" step="1" value="150"><span class="val" id="hV">150</span></label>
+    <label class="row"><span>Dönüş (°)</span><input type="range" id="rot" min="-180" max="180" step="0.5" value="0"><span class="val" id="rotV">0</span></label>
+    <div class="hint">Merkez konumu: haritaya tıkla (aşağıdaki mod açıkken) ya da ok tuşları.</div>
+    <label class="row"><span>Tıklama modu</span>
+      <select id="clickMode">
+        <option value="off" selected>kapalı</option>
+        <option value="overlay">D5 örtü merkezi</option>
+        <option value="camera">D5 kamera konumu</option>
+      </select>
+    </label>
+    <label class="row"><span>Adım (m)</span><input type="number" id="step" value="2" min="0.1" step="0.1" style="width:70px"></label>
+    <div class="nudge">
+      <span></span><button data-n="N">▲</button><span></span>
+      <button data-n="W">◀</button><button id="fitParcel">arsa</button><button data-n="E">▶</button>
+      <span></span><button data-n="S">▼</button><span></span>
+    </div>
+    <div class="btnrow">
+      <button data-r="-1">⟲ 1°</button><button data-r="1">1° ⟳</button>
+      <button data-r="-0.1">⟲ .1°</button><button data-r="0.1">.1° ⟳</button>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>4 · Kamera eşleme (ön plan)</legend>
+    <label class="row"><span><input type="checkbox" id="fgOn"> D5 render'ı ön planda göster</span></label>
+    <label class="row"><span>Ön plan α</span><input type="range" id="fgA" min="0" max="1" step="0.02" value="0.5"><span class="val" id="fgAV">0.50</span></label>
+    <label class="row"><span>Yön / heading</span><input type="range" id="camH" min="0" max="360" step="0.5" value="21.5"><span class="val" id="camHV">21.5</span></label>
+    <label class="row"><span>Eğim / pitch</span><input type="range" id="camP" min="-89" max="10" step="0.5" value="-12"><span class="val" id="camPV">-12</span></label>
+    <label class="row"><span>Göz yük. (m)</span><input type="range" id="camZ" min="1" max="200" step="1" value="12"><span class="val" id="camZV">12</span></label>
+    <label class="row"><span>FOV dik (°)</span><input type="range" id="camF" min="20" max="100" step="0.5" value="58.7"><span class="val" id="camFV">58.7</span></label>
+    <div class="btnrow">
+      <button id="camApply">Kamerayı uygula</button>
+      <button id="camFromView">Görünümden al</button>
+    </div>
+    <p class="hint">D5 sahnesi: yaw ≈ 21,47° · yatay FOV 90° (≈ dik 58,7° / 16:9). Kamera konumu için “Tıklama modu → D5 kamera konumu” seç, zemine tıkla, sonra kaydırıcılarla ön plandaki render arka plana oturana kadar ayarla.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>5 · Köprüyü dışa aktar</legend>
+    <div class="btnrow">
+      <button id="saveState" class="primary">Ayarı kaydet (JSON)</button>
+      <button id="loadState">Yükle</button>
+      <input type="file" id="loadFile" accept="application/json" style="display:none">
+    </div>
+    <div class="btnrow">
+      <button id="expGeo">Georef + GeoJSON kopyala</button>
+      <button id="dlGeo">indir</button>
+    </div>
+    <div id="readout">hazır.</div>
+  </fieldset>
+</div>
+
+<script>
+"use strict";
+// ---------- röleve verisi (arazi_su.py / APLIKASYON_KROKISI_KOORDINAT.txt) ----------
+const DATA = {"points":{"872":[566396.58,4178580.33,114.9],"871":[566400.39,4178582.76,115.0],"870":[566405.21,4178583.03,113.7],"869":[566423.73,4178585.09,110.2],"868":[566433.94,4178586.78,110.4],"867":[566448.56,4178587.19,108.6],"866":[566462.47,4178588.47,108.4],"865":[566473.15,4178586.97,110.3],"864":[566489.1,4178587.0,109.4],"934":[566502.79,4178588.14,108.0],"933":[566517.43,4178589.36,105.4],"932":[566526.71,4178590.24,103.8],"931":[566541.99,4178590.72,102.7],"930":[566544.13,4178583.49,100.7],"929":[566549.08,4178577.42,97.4],"937":[566542.44,4178573.64,97.6],"938":[566526.94,4178566.45,99.4],"939":[566516.94,4178558.2,102.8],"940":[566508.47,4178552.98,102.2],"941":[566493.09,4178541.93,101.2],"942":[566486.28,4178536.71,100.9],"943":[566476.3,4178543.48,102.0],"944":[566463.8,4178550.41,105.5],"945":[566455.39,4178543.76,106.5],"946":[566446.28,4178534.52,107.8],"947":[566439.05,4178526.23,108.7],"948":[566435.89,4178520.41,108.8],"949":[566432.46,4178537.17,110.2],"950":[566428.54,4178544.88,110.6],"935":[566416.46,4178559.62,110.8],"936":[566404.45,4178571.7,112.0],"1":[566407.16,4178568.98,111.6],"2":[566419.7,4178555.67,110.0],"3":[566521.31,4178561.81,102.9]},
+"rings":{"115":[872,871,870,869,868,867,866,865,864,934,933,932,931,930,929,1,936],"116":[1,929,937,938,3,2,935],"117":[2,3,939,940,941,942,943,944,945,946,947,948,949,950]}};
+const RING_COLOR = {"115":"#e05a5a","116":"#5a97e0","117":"#78c878"};
+
+const CRS_DEF = {
+  "tm27":"+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs",
+  "32635":"+proj=utm +zone=35 +datum=WGS84 +units=m +no_defs",
+  "32636":"+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs",
+  "32637":"+proj=utm +zone=37 +datum=WGS84 +units=m +no_defs",
+  "tm30":"+proj=tmerc +lat_0=0 +lon_0=30 +k=1 +x_0=500000 +y_0=0 +datum=WGS84 +units=m +no_defs",
+  "tm33":"+proj=tmerc +lat_0=0 +lon_0=33 +k=1 +x_0=500000 +y_0=0 +datum=WGS84 +units=m +no_defs",
+  "tm36":"+proj=tmerc +lat_0=0 +lon_0=36 +k=1 +x_0=500000 +y_0=0 +datum=WGS84 +units=m +no_defs",
+};
+proj4.defs("WGS84","+proj=longlat +datum=WGS84 +no_defs");
+let curCrs = "tm27"; // aplikasyon krokisi: ITRF96, DOM 27 (k=1). UTM35N ~1.67 km kuzeye kayiyordu
+const toLL = (E,N)=>proj4(CRS_DEF[curCrs],"WGS84",[E,N]); // -> [lon,lat]
+
+// site centroid (EN)
+const allEN = Object.values(DATA.points);
+const cE = allEN.reduce((s,p)=>s+p[0],0)/allEN.length;
+const cN = allEN.reduce((s,p)=>s+p[1],0)/allEN.length;
+
+// ---------- Cesium viewer ----------
+if (window.Cesium && Cesium.Ion) Cesium.Ion.defaultAccessToken = "";
+const viewer = new Cesium.Viewer("cesiumContainer",{
+  baseLayer:false, baseLayerPicker:false, geocoder:false, homeButton:false,
+  sceneModePicker:false, navigationHelpButton:false, timeline:false, animation:false,
+  infoBox:false, selectionIndicator:false, fullscreenButton:false
+});
+viewer.scene.globe.depthTestAgainstTerrain = true;
+const $ = s=>document.querySelector(s);
+const readout = $("#readout");
+function log(msg){ readout.textContent = msg; }
+
+// ---------- basemap ----------
+let baseLayer=null;
+async function setBasemap(kind, token){
+  try{
+    if (baseLayer){ viewer.imageryLayers.remove(baseLayer,true); baseLayer=null; }
+    let prov;
+    if (kind==="osm"){
+      prov = new Cesium.OpenStreetMapImageryProvider({url:"https://tile.openstreetmap.org/"});
+    } else if (kind==="ion"){
+      if (!token){ log("ion altlık için token gir."); return; }
+      Cesium.Ion.defaultAccessToken = token;
+      prov = await Cesium.IonImageryProvider.fromAssetId(2); // Bing Aerial
+    } else {
+      prov = await Cesium.ArcGisMapServerImageryProvider.fromUrl(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+        {enablePickFeatures:false});
+    }
+    baseLayer = viewer.imageryLayers.addImageryProvider(prov);
+    viewer.imageryLayers.lowerToBottom(baseLayer);
+  }catch(e){ log("altlık hatası: "+e.message); }
+}
+setBasemap("esri");
+
+async function setTerrain(on, token){
+  try{
+    if (on){
+      if (token) Cesium.Ion.defaultAccessToken = token;
+      viewer.terrainProvider = await Cesium.createWorldTerrainAsync();
+    } else {
+      viewer.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+    }
+  }catch(e){ log("arazi hatası: "+e.message+" (ion token gerekir)"); }
+}
+
+// ---------- parcels ----------
+let parcelEnts=[], ptEnts=[];
+function ringPositions(ids){
+  return ids.map(id=>{ const p=DATA.points[id]; const ll=toLL(p[0],p[1]);
+    return Cesium.Cartesian3.fromDegrees(ll[0],ll[1]); });
+}
+function rebuildParcels(){
+  parcelEnts.forEach(e=>viewer.entities.remove(e)); parcelEnts=[];
+  ptEnts.forEach(e=>viewer.entities.remove(e)); ptEnts=[];
+  for (const [nm,ids] of Object.entries(DATA.rings)){
+    const pos = ringPositions(ids);
+    const col = Cesium.Color.fromCssColorString(RING_COLOR[nm]);
+    parcelEnts.push(viewer.entities.add({
+      polygon:{ hierarchy:pos, material:col.withAlpha(0.12),
+        classificationType:Cesium.ClassificationType.BOTH },
+      polyline:undefined
+    }));
+    parcelEnts.push(viewer.entities.add({
+      polyline:{ positions:pos.concat([pos[0]]), width:3, clampToGround:true, material:col }
+    }));
+    const c = Cesium.BoundingSphere.fromPoints(pos).center;
+    parcelEnts.push(viewer.entities.add({ position:c,
+      label:{ text:"P"+nm, font:"bold 14px system-ui", fillColor:col,
+        outlineColor:Cesium.Color.BLACK, outlineWidth:3,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE,
+        disableDepthTestDistance:Number.POSITIVE_INFINITY } }));
+  }
+  for (const [id,p] of Object.entries(DATA.points)){
+    const ll=toLL(p[0],p[1]);
+    ptEnts.push(viewer.entities.add({
+      position:Cesium.Cartesian3.fromDegrees(ll[0],ll[1]),
+      point:{ pixelSize:5, color:Cesium.Color.YELLOW, outlineColor:Cesium.Color.BLACK,
+        outlineWidth:1, disableDepthTestDistance:Number.POSITIVE_INFINITY },
+      label:{ text:p[2].toFixed(1), font:"10px system-ui", pixelOffset:new Cesium.Cartesian2(0,-12),
+        fillColor:Cesium.Color.WHITE, outlineColor:Cesium.Color.BLACK, outlineWidth:2,
+        style:Cesium.LabelStyle.FILL_AND_OUTLINE, disableDepthTestDistance:Number.POSITIVE_INFINITY }
+    }));
+  }
+  applyToggles();
+}
+function applyToggles(){
+  const sp=$("#showParcel").checked, st=$("#showPts").checked;
+  parcelEnts.forEach(e=>e.show=sp);
+  ptEnts.forEach(e=>e.show=st);
+}
+
+function siteSphere(){
+  const pts=[];
+  for (const p of allEN){ const ll=toLL(p[0],p[1]); pts.push(Cesium.Cartesian3.fromDegrees(ll[0],ll[1])); }
+  return Cesium.BoundingSphere.fromPoints(pts);
+}
+function flySite(){
+  viewer.camera.flyToBoundingSphere(siteSphere(),{duration:1.5,
+    offset:new Cesium.HeadingPitchRange(Cesium.Math.toRadians(21.5),Cesium.Math.toRadians(-35),320)});
+}
+
+// ---------- D5 ground overlay ----------
+const ov = { lon:null, lat:null, w:170, h:150, rot:0, opacity:0.6, url:"d5 render/Image.png" };
+function resolveUrl(u){ return u.indexOf("blob:")===0 ? u : encodeURI(u); }
+let d5Ent=null;
+function ovRect(){
+  if (ov.lon==null) return Cesium.Rectangle.fromDegrees(0,0,0.0001,0.0001);
+  const latR = ov.lat*Math.PI/180;
+  const dLat = (ov.h/2)/111320;
+  const dLon = (ov.w/2)/(111320*Math.cos(latR));
+  return Cesium.Rectangle.fromDegrees(ov.lon-dLon, ov.lat-dLat, ov.lon+dLon, ov.lat+dLat);
+}
+function buildD5(){
+  if (d5Ent) viewer.entities.remove(d5Ent);
+  d5Ent = viewer.entities.add({
+    rectangle:{
+      coordinates:new Cesium.CallbackProperty(ovRect,false),
+      rotation:new Cesium.CallbackProperty(()=>Cesium.Math.toRadians(-ov.rot),false),
+      stRotation:new Cesium.CallbackProperty(()=>Cesium.Math.toRadians(-ov.rot),false),
+      material:new Cesium.ImageMaterialProperty({
+        image:resolveUrl(ov.url), transparent:true,
+        color:new Cesium.CallbackProperty(()=>Cesium.Color.WHITE.withAlpha(ov.opacity),false) }),
+      classificationType:Cesium.ClassificationType.BOTH
+    }
+  });
+}
+function reloadD5Image(){ if(d5Ent){ d5Ent.rectangle.material = new Cesium.ImageMaterialProperty({
+  image:resolveUrl(ov.url), transparent:true,
+  color:new Cesium.CallbackProperty(()=>Cesium.Color.WHITE.withAlpha(ov.opacity),false) }); } }
+function fitParcelExtent(){
+  let mnE=1e15,mnN=1e15,mxE=-1e15,mxN=-1e15;
+  for (const p of allEN){ mnE=Math.min(mnE,p[0]); mxE=Math.max(mxE,p[0]); mnN=Math.min(mnN,p[1]); mxN=Math.max(mxN,p[1]); }
+  const ll=toLL((mnE+mxE)/2,(mnN+mxN)/2);
+  ov.lon=ll[0]; ov.lat=ll[1];
+  ov.w = Math.round((mxE-mnE)+20); ov.h = Math.round((mxN-mnN)+20);
+  $("#w").value=Math.min(600,ov.w); $("#wV").textContent=ov.w;
+  $("#h").value=Math.min(600,ov.h); $("#hV").textContent=ov.h;
+}
+function nudge(dir){
+  const s=parseFloat($("#step").value)||1;
+  if (ov.lon==null) fitParcelExtent();
+  const latR=ov.lat*Math.PI/180;
+  if (dir==="N") ov.lat += s/111320;
+  if (dir==="S") ov.lat -= s/111320;
+  if (dir==="E") ov.lon += s/(111320*Math.cos(latR));
+  if (dir==="W") ov.lon -= s/(111320*Math.cos(latR));
+}
+
+// rotated footprint corners -> [ [lon,lat] x4 ]
+function ovCorners(){
+  const latR=ov.lat*Math.PI/180, a=ov.rot*Math.PI/180;
+  const hw=ov.w/2, hh=ov.h/2;
+  const loc=[[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]];
+  return loc.map(([x,y])=>{
+    const e = x*Math.cos(a) + y*Math.sin(a);
+    const n = -x*Math.sin(a) + y*Math.cos(a);
+    return [ ov.lon + e/(111320*Math.cos(latR)), ov.lat + n/111320 ];
+  });
+}
+
+// ---------- camera match ----------
+const cam = { lon:null, lat:null };
+function applyCam(){
+  if (cam.lon==null){ const ll=toLL(cE,cN); cam.lon=ll[0]; cam.lat=ll[1]; }
+  const hpr = new Cesium.HeadingPitchRoll(
+    Cesium.Math.toRadians(parseFloat($("#camH").value)),
+    Cesium.Math.toRadians(parseFloat($("#camP").value)), 0);
+  viewer.camera.setView({
+    destination:Cesium.Cartesian3.fromDegrees(cam.lon,cam.lat, terrainH(cam.lon,cam.lat)+parseFloat($("#camZ").value)),
+    orientation:hpr });
+  viewer.camera.frustum.fov = Cesium.Math.toRadians(parseFloat($("#camF").value));
+}
+function terrainH(lon,lat){
+  // best-effort: sample globe height, fallback ~105 m (site kot ortalaması)
+  const c = viewer.scene.globe.getHeight(Cesium.Cartographic.fromDegrees(lon,lat));
+  return (c!=null && isFinite(c)) ? c : 105;
+}
+function camFromView(){
+  const c = viewer.camera.positionCartographic;
+  cam.lon = Cesium.Math.toDegrees(c.longitude); cam.lat = Cesium.Math.toDegrees(c.latitude);
+  $("#camH").value = (Cesium.Math.toDegrees(viewer.camera.heading)).toFixed(1); $("#camHV").textContent=$("#camH").value;
+  $("#camP").value = (Cesium.Math.toDegrees(viewer.camera.pitch)).toFixed(1); $("#camPV").textContent=$("#camP").value;
+  const z = c.height - terrainH(cam.lon,cam.lat);
+  $("#camZ").value = Math.max(1,Math.round(z)); $("#camZV").textContent=$("#camZ").value;
+  $("#camF").value = Cesium.Math.toDegrees(viewer.camera.frustum.fov).toFixed(1); $("#camFV").textContent=$("#camF").value;
+  log(camReadout());
+}
+function camReadout(){
+  return "KAMERA\n lon "+cam.lon.toFixed(7)+"\n lat "+cam.lat.toFixed(7)+
+    "\n heading "+$("#camH").value+"°  pitch "+$("#camP").value+"°"+
+    "\n göz yük "+$("#camZ").value+" m  FOV(dik) "+$("#camF").value+"°";
+}
+
+// ---------- CRS auto ----------
+function autoCrs(){
+  const cands=[];
+  for (const k of Object.keys(CRS_DEF)){
+    try{
+      const ll = proj4(CRS_DEF[k],"WGS84",[cE,cN]);
+      if (ll[0]>25.5 && ll[0]<45 && ll[1]>35.5 && ll[1]<42.5)
+        cands.push(k+" → "+ll[0].toFixed(4)+", "+ll[1].toFixed(4));
+    }catch(e){}
+  }
+  if (cands.length){
+    const pick = cands[0].split(" ")[0];
+    $("#crs").value = pick; curCrs = pick;
+    rebuildParcels(); flySite();
+    $("#crsMsg").innerHTML = "<span class='ok'>aday: "+cands.join(" · ")+"</span>";
+  } else {
+    $("#crsMsg").innerHTML = "<span class='warn'>hiçbir zon Türkiye sınırına düşmedi — TM tanımını elle gir.</span>";
+  }
+}
+
+// ---------- export ----------
+function collectState(){
+  return {
+    project:"CINCIN Ada 189 - 115/116/117", generated:new Date().toISOString(),
+    crs:curCrs, crs_proj4:CRS_DEF[curCrs],
+    d5_overlay:{ image:ov.url, center_lonlat:[ov.lon,ov.lat], width_m:ov.w, height_m:ov.h,
+      rotation_deg:ov.rot, opacity:ov.opacity, corners_lonlat:ov.lon!=null?ovCorners():null },
+    camera:{ lon:cam.lon, lat:cam.lat, heading_deg:+$("#camH").value, pitch_deg:+$("#camP").value,
+      eye_height_m:+$("#camZ").value, fov_v_deg:+$("#camF").value,
+      d5_reference:{ yaw_deg:21.4667, hfov_deg:90, pos_model_cm:[5205.37,-6685.30,506.74] } }
+  };
+}
+function geojson(){
+  const feats=[];
+  for (const [nm,ids] of Object.entries(DATA.rings)){
+    const ring = ids.map(id=>{ const p=DATA.points[id]; return toLL(p[0],p[1]); });
+    ring.push(ring[0]);
+    feats.push({type:"Feature",properties:{parsel:nm},geometry:{type:"Polygon",coordinates:[ring]}});
+  }
+  if (ov.lon!=null){
+    const c=ovCorners(); c.push(c[0]);
+    feats.push({type:"Feature",properties:{name:"d5_render_footprint",image:ov.url,rotation_deg:ov.rot},
+      geometry:{type:"Polygon",coordinates:[c]}});
+  }
+  return {type:"FeatureCollection",crs:{type:"name",properties:{name:"urn:ogc:def:crs:OGC:1.3:CRS84"}},features:feats};
+}
+function exportGeo(){
+  const out = { georef:collectState(), geojson:geojson() };
+  const txt = JSON.stringify(out,null,2);
+  navigator.clipboard?.writeText(txt).then(()=>log("georef + GeoJSON panoya kopyalandı.\n\n"+txt.slice(0,600)+" …"),
+    ()=>log(txt));
+  return txt;
+}
+function download(name,txt){
+  const b=new Blob([txt],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+// ---------- wire UI ----------
+const bind=(id,fn)=>{ const el=$("#"+id); el.addEventListener("input",()=>{
+  const v=el.type==="checkbox"?el.checked:el.value;
+  const lbl=$("#"+id+"V"); if(lbl) lbl.textContent = (typeof v==="string" && !isNaN(+v)) ? (+v).toFixed(id==="opacity"||id==="fgA"?2:(id==="rot"||id==="camF"||id==="camH"||id==="camP"?1:0)) : v;
+  fn(v); }); };
+
+bind("opacity",v=>ov.opacity=+v);
+bind("w",v=>ov.w=+v);
+bind("h",v=>ov.h=+v);
+bind("rot",v=>ov.rot=+v);
+bind("fgA",v=>$("#d5fg").style.opacity=v);
+bind("camH",()=>{}); bind("camP",()=>{}); bind("camZ",()=>{}); bind("camF",()=>{});
+
+$("#crs").addEventListener("change",e=>{ curCrs=e.target.value; rebuildParcels(); flySite(); });
+$("#autoCrs").addEventListener("click",autoCrs);
+$("#flySite").addEventListener("click",flySite);
+$("#basemap").addEventListener("change",e=>setBasemap(e.target.value,$("#ionTok").value.trim()));
+$("#ionTok").addEventListener("change",()=>{ if($("#basemap").value==="ion") setBasemap("ion",$("#ionTok").value.trim()); });
+$("#terrain").addEventListener("change",e=>setTerrain(e.target.checked,$("#ionTok").value.trim()));
+$("#showParcel").addEventListener("change",applyToggles);
+$("#showPts").addEventListener("change",applyToggles);
+
+$("#d5src").addEventListener("change",e=>{
+  if (e.target.value==="__file"){ $("#d5file").click(); return; }
+  ov.url=e.target.value; reloadD5Image(); $("#d5fg").src=resolveUrl(ov.url);
+});
+$("#d5file").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  ov.url=URL.createObjectURL(f); reloadD5Image(); $("#d5fg").src=ov.url;
+});
+$("#fgOn").addEventListener("change",e=>{ const im=$("#d5fg");
+  im.src=resolveUrl(ov.url); im.style.display=e.target.checked?"block":"none"; });
+
+$("#fitParcel").addEventListener("click",()=>{ fitParcelExtent(); });
+document.querySelectorAll(".nudge button[data-n]").forEach(b=>b.addEventListener("click",()=>nudge(b.dataset.n)));
+document.querySelectorAll("button[data-r]").forEach(b=>b.addEventListener("click",()=>{
+  ov.rot += parseFloat(b.dataset.r);
+  ov.rot = ((ov.rot+180)%360+360)%360 - 180;
+  $("#rot").value=ov.rot; $("#rotV").textContent=ov.rot.toFixed(1);
+}));
+
+$("#camApply").addEventListener("click",()=>{ applyCam(); log(camReadout()); });
+$("#camFromView").addEventListener("click",camFromView);
+
+$("#saveState").addEventListener("click",()=>{
+  const txt=JSON.stringify(collectState(),null,2);
+  localStorage.setItem("kopru_d5_cesium",txt);
+  download("d5_cesium_bridge.json",txt); log("kaydedildi (indirildi + localStorage).");
+});
+$("#loadState").addEventListener("click",()=>$("#loadFile").click());
+$("#loadFile").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  f.text().then(t=>{ try{ applyState(JSON.parse(t)); log("yüklendi."); }catch(err){ log("JSON hatası: "+err.message); } });
+});
+$("#expGeo").addEventListener("click",exportGeo);
+$("#dlGeo").addEventListener("click",()=>download("d5_georef.json",exportGeo()));
+
+function applyState(s){
+  if (s.crs && CRS_DEF[s.crs]){ curCrs=s.crs; $("#crs").value=s.crs; }
+  const o=s.d5_overlay||{};
+  if (o.center_lonlat){ ov.lon=o.center_lonlat[0]; ov.lat=o.center_lonlat[1]; }
+  if (o.width_m){ ov.w=o.width_m; $("#w").value=Math.min(600,ov.w); $("#wV").textContent=ov.w; }
+  if (o.height_m){ ov.h=o.height_m; $("#h").value=Math.min(600,ov.h); $("#hV").textContent=ov.h; }
+  if (o.rotation_deg!=null){ ov.rot=o.rotation_deg; $("#rot").value=ov.rot; $("#rotV").textContent=ov.rot; }
+  if (o.opacity!=null){ ov.opacity=o.opacity; $("#opacity").value=ov.opacity; $("#opacityV").textContent=(+ov.opacity).toFixed(2); }
+  if (o.image){ ov.url=o.image; reloadD5Image(); }
+  const c=s.camera||{};
+  if (c.lon!=null){ cam.lon=c.lon; cam.lat=c.lat; }
+  if (c.heading_deg!=null){ $("#camH").value=c.heading_deg; $("#camHV").textContent=c.heading_deg; }
+  if (c.pitch_deg!=null){ $("#camP").value=c.pitch_deg; $("#camPV").textContent=c.pitch_deg; }
+  if (c.eye_height_m!=null){ $("#camZ").value=c.eye_height_m; $("#camZV").textContent=c.eye_height_m; }
+  if (c.fov_v_deg!=null){ $("#camF").value=c.fov_v_deg; $("#camFV").textContent=c.fov_v_deg; }
+  rebuildParcels();
+}
+
+// map click -> overlay center / camera position
+viewer.screenSpaceEventHandler.setInputAction(ev=>{
+  const mode=$("#clickMode").value; if (mode==="off") return;
+  const ray=viewer.camera.getPickRay(ev.position);
+  const pos=viewer.scene.globe.pick(ray,viewer.scene);
+  if (!pos) return;
+  const cc=Cesium.Cartographic.fromCartesian(pos);
+  const lon=Cesium.Math.toDegrees(cc.longitude), lat=Cesium.Math.toDegrees(cc.latitude);
+  if (mode==="overlay"){ ov.lon=lon; ov.lat=lat; if(!d5Ent) buildD5(); log("örtü merkezi: "+lon.toFixed(7)+", "+lat.toFixed(7)); }
+  else if (mode==="camera"){ cam.lon=lon; cam.lat=lat; applyCam(); log(camReadout()); }
+}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+$("#toggleBtn").addEventListener("click",()=>{
+  const p=$("#panel"); p.style.display = p.style.display==="none"?"block":"none";
+});
+
+// ---------- boot ----------
+(function boot(){
+  const saved = localStorage.getItem("kopru_d5_cesium");
+  rebuildParcels();
+  buildD5();
+  fitParcelExtent();
+  if (saved){ try{ applyState(JSON.parse(saved)); }catch(e){} }
+  $("#d5fg").src = resolveUrl(ov.url);
+  setTimeout(flySite, 600);
+  log("hazır. CRS = "+curCrs+". Parsel arsaya oturmuyorsa CRS listesini değiştir / “Otomatik dene”.");
+})();
+</script>
+</body>
+</html>

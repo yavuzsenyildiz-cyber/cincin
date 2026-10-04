@@ -1,0 +1,313 @@
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
+  <asset>
+    <created>2026-09-09T12:56:16.855246</created>
+    <modified>2026-09-09T12:56:16.855250</modified>
+    <unit name="meter" meter="1.0"/>
+    <up_axis>Z_UP</up_axis>
+  </asset>
+  <library_effects>
+    <effect id="eff0" name="eff0">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.67 0.59 0.47 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float>0.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </lambert>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+    <effect id="eff1" name="eff1">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.82 0.35 0.35 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float>0.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </lambert>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+    <effect id="eff2" name="eff2">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.35 0.59 0.82 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float>0.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </lambert>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+    <effect id="eff3" name="eff3">
+      <profile_COMMON>
+        <technique sid="common">
+          <lambert>
+            <emission>
+              <color>0.0 0.0 0.0 1.0</color>
+            </emission>
+            <ambient>
+              <color>0.0 0.0 0.0 1.0</color>
+            </ambient>
+            <diffuse>
+              <color>0.47 0.78 0.47 1.0</color>
+            </diffuse>
+            <specular>
+              <color>0.0 0.0 0.0 1.0</color>
+            </specular>
+            <shininess>
+              <float>0.0</float>
+            </shininess>
+            <reflective>
+              <color>0.0 0.0 0.0 1.0</color>
+            </reflective>
+            <reflectivity>
+              <float>0.0</float>
+            </reflectivity>
+            <transparent>
+              <color>0.0 0.0 0.0 1.0</color>
+            </transparent>
+            <transparency>
+              <float>1.0</float>
+            </transparency>
+          </lambert>
+        </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>0</double_sided>
+          </technique>
+        </extra>
+      </profile_COMMON>
+    </effect>
+  </library_effects>
+  <library_geometries>
+    <geometry id="geo0" name="ARAZI">
+      <mesh>
+        <source id="v0">
+          <float_array count="240" id="v0-array">115.37 65.14 114.9 119.18 67.57 115 124 67.84 113.7 142.52 69.9 110.2 152.73 71.59 110.4 167.35 72 108.6 181.26 73.28 108.4 191.94 71.78 110.3 207.89 71.81 109.4 221.58 72.95 108 236.22 74.17 105.4 245.5 75.05 103.8 260.78 75.53 102.7 262.92 68.3 100.7 267.87 62.23 97.4 261.23 58.45 97.6 245.73 51.26 99.4 235.73 43.01 102.8 227.26 37.79 102.2 211.88 26.74 101.2 205.07 21.52 100.9 195.09 28.29 102 182.59 35.22 105.5 174.18 28.57 106.5 165.07 19.33 107.8 157.84 11.04 108.7 154.68 5.22 108.8 151.25 21.98 110.2 147.33 29.69 110.6 135.25 44.43 110.8 123.24 56.51 112 125.95 53.79 111.6 138.49 40.48 110 240.1 46.62 102.9 148.79 62.81 108.9 173.79 64.81 107.6 198.79 65.81 107.1 223.79 67.81 105.1 243.79 68.81 104 133.79 60.81 110 218.79 69.81 106.5 153.79 48.81 108.5 176.79 50.81 106.1 196.79 51.81 105.6 218.79 52.81 103.4 230.79 53.81 103 163.79 46.81 107.1 186.79 50.81 105.8 163.79 33.81 108.4 180.79 31.81 106.5 196.79 29.81 104.9 213.79 30.81 103.5 188.79 36.81 105.9 170.79 28.81 107.4 204.79 28.81 103.6 188.79 79.81 112.8 218.79 80.81 113.9 158.79 78.81 111.4 238.79 78.81 112.8 268.79 74.81 106 110.79 59.81 115.6 106.79 44.81 114.7 113.79 29.81 113.4 118.79 14.81 112.3 126.79 4.81 111.6 103.79 69.81 117.9 96.79 56.81 118 100.79 39.81 116.7 168.79 -0.19 107.7 188.79 -3.19 107.6 148.79 -3.19 109.6 208.79 2.81 104.7 218.79 9.81 102.2 226.79 19.81 103.6 218.79 29.81 103.6 258.79 52.81 98.7 253.79 44.81 98.3 263.79 56.81 97.8 248.79 39.81 99.5 238.79 32.81 98.9</float_array>
+          <technique_common>
+            <accessor count="80" source="#v0-array" stride="3">
+              <param type="float" name="X"/>
+              <param type="float" name="Y"/>
+              <param type="float" name="Z"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="v0-vertices">
+          <input semantic="POSITION" source="#v0"/>
+        </vertices>
+        <triangles count="140" material="ms0">
+          <input offset="0" semantic="VERTEX" source="#v0-vertices"/>
+          <p>13 14 59 12 13 59 38 13 12 38 45 16 65 0 1 67 61 66 61 67 62 67 63 62 68 70 69 2 65 1 2 57 65 35 34 46 28 63 64 8 56 55 73 79 18 58 12 59 38 15 13 13 15 14 15 77 14 15 38 16 10 45 38 10 56 9 10 58 56 79 17 18 17 45 18 31 61 62 29 31 62 7 8 55 42 35 46 68 26 70 26 68 25 70 26 64 34 41 46 41 34 29 5 34 35 2 3 57 27 26 25 27 28 64 26 27 64 45 44 18 71 20 69 20 71 72 20 19 54 73 19 72 19 20 72 11 38 12 58 11 12 11 10 38 10 11 58 75 76 77 15 75 77 76 75 16 75 15 16 45 33 16 17 33 45 61 60 66 60 65 66 60 0 65 6 7 55 6 5 35 57 6 55 5 6 57 7 36 8 44 36 43 36 44 8 32 41 29 41 32 28 32 29 62 63 32 62 28 32 63 4 5 57 5 4 34 3 4 57 4 3 34 3 39 34 34 39 29 39 31 29 39 3 2 44 40 8 56 40 9 8 40 56 54 51 43 51 44 43 19 51 54 44 51 18 78 17 79 78 33 17 73 78 79 78 76 16 33 78 16 78 73 72 60 30 0 0 30 1 31 30 61 30 60 61 30 2 1 30 39 2 39 30 31 50 54 43 52 50 43 50 20 54 47 52 43 36 47 43 47 36 7 42 47 35 47 6 35 6 47 7 37 44 45 37 40 44 40 37 9 37 10 9 10 37 45 74 19 73 74 51 19 74 73 18 51 74 18 20 21 69 50 21 20 21 23 69 21 50 52 41 48 46 48 41 28 27 48 28 22 47 42 47 22 52 22 42 46 48 22 46 24 27 25 24 48 27 68 24 25 24 68 69 23 24 69 21 49 23 49 22 23 49 21 52 22 49 52 53 24 23 24 53 48 22 53 23 53 22 48</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="geo1" name="PLATFORM_115">
+      <mesh>
+        <source id="v1">
+          <float_array count="54" id="v1-array">185.0765 68.79059 107.25 115.37 65.14 107.25 119.18 67.57 107.25 124 67.84 107.25 142.52 69.9 107.25 152.73 71.59 107.25 167.35 72 107.25 181.26 73.28 107.25 191.94 71.78 107.25 207.89 71.81 107.25 221.58 72.95 107.25 236.22 74.17 107.25 245.5 75.05 107.25 260.78 75.53 107.25 262.92 68.3 107.25 267.87 62.23 107.25 125.95 53.79 107.25 123.24 56.51 107.25</float_array>
+          <technique_common>
+            <accessor count="18" source="#v1-array" stride="3">
+              <param type="float" name="X"/>
+              <param type="float" name="Y"/>
+              <param type="float" name="Z"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="v1-vertices">
+          <input semantic="POSITION" source="#v1"/>
+        </vertices>
+        <triangles count="17" material="ms1">
+          <input offset="0" semantic="VERTEX" source="#v1-vertices"/>
+          <p>0 1 2 0 2 3 0 3 4 0 4 5 0 5 6 0 6 7 0 7 8 0 8 9 0 9 10 0 10 11 0 11 12 0 12 13 0 13 14 0 14 15 0 15 16 0 16 17 0 17 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="geo2" name="PLATFORM_116">
+      <mesh>
+        <source id="v2">
+          <float_array count="24" id="v2-array">202.0886 51.03714 105.5 125.95 53.79 105.5 267.87 62.23 105.5 261.23 58.45 105.5 245.73 51.26 105.5 240.1 46.62 105.5 138.49 40.48 105.5 135.25 44.43 105.5</float_array>
+          <technique_common>
+            <accessor count="8" source="#v2-array" stride="3">
+              <param type="float" name="X"/>
+              <param type="float" name="Y"/>
+              <param type="float" name="Z"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="v2-vertices">
+          <input semantic="POSITION" source="#v2"/>
+        </vertices>
+        <triangles count="7" material="ms2">
+          <input offset="0" semantic="VERTEX" source="#v2-vertices"/>
+          <p>0 1 2 0 2 3 0 3 4 0 4 5 0 5 6 0 6 7 0 7 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+    <geometry id="geo3" name="PLATFORM_117">
+      <mesh>
+        <source id="v3">
+          <float_array count="45" id="v3-array">184.7543 28.25 106.25 138.49 40.48 106.25 240.1 46.62 106.25 235.73 43.01 106.25 227.26 37.79 106.25 211.88 26.74 106.25 205.07 21.52 106.25 195.09 28.29 106.25 182.59 35.22 106.25 174.18 28.57 106.25 165.07 19.33 106.25 157.84 11.04 106.25 154.68 5.22 106.25 151.25 21.98 106.25 147.33 29.69 106.25</float_array>
+          <technique_common>
+            <accessor count="15" source="#v3-array" stride="3">
+              <param type="float" name="X"/>
+              <param type="float" name="Y"/>
+              <param type="float" name="Z"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="v3-vertices">
+          <input semantic="POSITION" source="#v3"/>
+        </vertices>
+        <triangles count="14" material="ms3">
+          <input offset="0" semantic="VERTEX" source="#v3-vertices"/>
+          <p>0 1 2 0 2 3 0 3 4 0 4 5 0 5 6 0 6 7 0 7 8 0 8 9 0 9 10 0 10 11 0 11 12 0 12 13 0 13 14 0 14 1</p>
+        </triangles>
+      </mesh>
+    </geometry>
+  </library_geometries>
+  <library_materials>
+    <material id="mat0" name="ARAZI">
+      <instance_effect url="#eff0"/>
+    </material>
+    <material id="mat1" name="PLATFORM_115">
+      <instance_effect url="#eff1"/>
+    </material>
+    <material id="mat2" name="PLATFORM_116">
+      <instance_effect url="#eff2"/>
+    </material>
+    <material id="mat3" name="PLATFORM_117">
+      <instance_effect url="#eff3"/>
+    </material>
+  </library_materials>
+  <library_visual_scenes>
+    <visual_scene id="scene">
+      <node id="n0" name="n0">
+        <instance_geometry url="#geo0">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ms0" target="#mat0"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="n1" name="n1">
+        <instance_geometry url="#geo1">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ms1" target="#mat1"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="n2" name="n2">
+        <instance_geometry url="#geo2">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ms2" target="#mat2"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+      <node id="n3" name="n3">
+        <instance_geometry url="#geo3">
+          <bind_material>
+            <technique_common>
+              <instance_material symbol="ms3" target="#mat3"/>
+            </technique_common>
+          </bind_material>
+        </instance_geometry>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#scene"/>
+  </scene>
+</COLLADA>
