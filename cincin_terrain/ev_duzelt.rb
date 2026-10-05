@@ -116,7 +116,10 @@ begin
     alt = pts.select { |q| q.z < zb + 0.03.m }
     hull = CincinEv.kabuk(alt)
     next if hull.length < 3
-    tas = CincinEv.malzeme(ev.definition.entities).max_by { |_, a| a }&.first
+    alanlar = CincinEv.malzeme(ev.definition.entities)
+    tas = alanlar.select { |mt, _| mt.name =~ /stone|sandstone|ashlar|brick|tas/i }.max_by { |_, a| a }&.first
+    tas ||= m.materials.find { |mt| mt.name =~ /Stone Sandstone Ashlar/i }
+    tas ||= alanlar.max_by { |_, a| a }&.first
     tas ||= m.materials["ETEK_DUVAR"] || m.materials.add("ETEK_DUVAR").tap { |x| x.color = Sketchup::Color.new(200, 175, 130) }
     # Evin altini subasman tabanina kadar dolu beton blokla kapat: kitle tabani izinden, cevredeki
     # (ERISIM m icindeki) en alcak zeminin GOMME kadar altina inen masif blok. Dis yuzler tas kapli.

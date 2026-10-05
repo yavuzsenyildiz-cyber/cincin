@@ -1,13 +1,14 @@
 # P115: kitlelerin arkasindan arac yolu + YAPI2/YAPI3 arasi otopark + YAPI3 arkasinda yaya yolu; bahceler +-0.00; istinat duvarlari.
-# Onceki P115 arazi/bahce/duvar gruplarini ve P115_KITLE_TABAN'i yeniler (taban = +-0.00'dan zemin kat esigine dolu blok); orijinal PLANKOTE arazisini gizler (silmez).
-# Kaydetmez; Ctrl+Z geri alir.   load "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/cincin_terrain/p115_yol.rb"
+# Onceki P115 arazi/bahce/duvar/merdiven gruplarini yeniler, kirmizi P115_KITLE_TABAN'i siler; bahceler subasman altinda,
+# istinattan bahceye merdiven; sonunda ev_duzelt.rb ile ev altlari tas kapli dolgu. Orijinal PLANKOTE arazisini gizler (silmez).
+# Kaydetmez; Ctrl+Z geri alir.   load Dir.glob("C:/Users/YOGA/OneDrive/*/*/cincin_terrain/p115_yol.rb").first
 dir = File.dirname(__FILE__) + "/"
 begin
   m = Sketchup.active_model
   m.close_active while m.active_path
   m.start_operation("P115 yol + otopark + yaya yolu", true)
   ents = m.entities
-  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN)/ }.each(&:erase!)
+  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN|P115_KITLE_TABAN)/ }.each(&:erase!)
   orig = ents.grep(Sketchup::Group).select { |g| g.name.start_with?("ARAZI (PLANKOTE") }
   orig.each { |g| g.hidden = true }
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
@@ -81,17 +82,18 @@ begin
     x0, y0, x1, y1, z = t[1..5].map(&:to_f)
     gm.entities.add_line(Geom::Point3d.new(x0.m, y0.m, z.m), Geom::Point3d.new(x1.m, y1.m, z.m)) rescue nil
   end
-  # kitle tabanlari: +-0.00'dan zemin kat esigine kadar dolu blok (ust yuzu = zemin kat)
-  ents.grep(Sketchup::Group).select { |g| g.name.start_with?("P115_KITLE_TABAN") }.each(&:erase!)
-  tm = mk.("KITLE_TABAN", 220, 60, 40)
-  gt = ents.add_group; gt.name = "P115_KITLE_TABAN (+-0.00 -> zemin kat)"; gt.layer = m.layers.add("KITLE_TABAN")
-  File.foreach(dir + "p115y_taban.txt") do |ln|
-    t = ln.split; next unless t[0] == "B"
-    z0 = t[2].to_f; z1 = t[3].to_f
-    sg = gt.entities.add_group; sg.name = t[1]
-    fc = sg.entities.add_face(pts.(t[4], z0)); fc.reverse! if fc.normal.z < 0
+  # istinattan YAPI1 bahcesine (yesile) inen merdiven: kot farkinin en az oldugu yerde, masif basamaklar
+  tas = m.materials["[Stone Sandstone Ashlar Light]"] || mk.("MERDIVEN_TAS", 196, 170, 120)
+  gb = ents.add_group; gb.name = "P115_MERDIVEN (istinat -> bahce)"; gb.layer = m.layers.add("MERDIVEN")
+  nb = 0
+  File.foreach(dir + "p115y_basamak.txt") do |ln|
+    t = ln.split; next unless t[0] == "T"
+    z0 = t[1].to_f; z1 = t[2].to_f
+    sg = gb.entities.add_group
+    fc = sg.entities.add_face(pts.(t[3], z0)); fc.reverse! if fc.normal.z < 0
     fc.pushpull((z1 - z0).m)
-    sg.entities.grep(Sketchup::Face).each { |q| q.material = tm; q.back_material = tm }
+    sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
+    nb += 1
   end
   ge = ents.add_group; ge.name = "P115_ETIKET"; ge.layer = m.layers.add("YAPI_KOT")
   File.foreach(dir + "p115y_etiket.txt") do |ln|
@@ -99,7 +101,10 @@ begin
     ge.entities.add_text(t[4].tr("|", "\n"), Geom::Point3d.new(t[1].to_f.m, t[2].to_f.m, t[3].to_f.m), Geom::Vector3d.new(0, 0, 3.m))
   end
   m.commit_operation
-  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} gizlenen_arazi=#{orig.length}")
+  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} gizlenen_arazi=#{orig.length}")
+  # ev altlari: subasman altindaki acik kalan yerleri tas kapli dolgu blokla kapat (tum KITLE_ evleri)
+  m.selection.clear
+  load dir + "ev_duzelt.rb"
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "p115_yol_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(2).join("\n")}")

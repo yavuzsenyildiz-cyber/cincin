@@ -11,7 +11,7 @@ from matplotlib.tri import Triangulation, LinearTriInterpolator
 from scipy.spatial import Delaunay
 from scipy.optimize import linprog
 H0=105.07; W=3.0; S_ROAD=0.12; S_PARK=0.05; S_WALK=0.08; S_STAIR=0.50; SMAX_SILL=1.20; DOOR_GAP=0.02
-STALL_W=2.5; STALL_D=5.0; AISLE=5.5; PARAPET=0.9
+FACADE_REACH=6.0; STALL_W=2.5; STALL_D=5.0; AISLE=5.5; PARAPET=0.0   # korkuluk duvari yok: duvar ustu yesille/yolla ayni hizada biter
 V=[];F=[]
 for l in open('pk_mesh.txt'):
     t=l.split()
@@ -29,6 +29,9 @@ P=Polygon(ring)
 J=json.load(open('tesviye.json'))
 ids=[k for k,n in enumerate(J['names']) if n.startswith('P115')]
 names=[J['names'][k] for k in ids]; Z=np.array([J['Z'][k] for k in ids]); fps=[Polygon(J['fp'][k]) for k in ids]
+# bahce (+-0.00) = kitle subasman alti (modeldeki KITLE_ taban kotu): subasman yesile oturur, arada bosluk kalmaz
+ZB_KITLE={'P115-YAPI1':6.30,'P115-YAPI2':2.80,'P115-YAPI3':-0.25}
+Z=np.array([ZB_KITLE.get(n,z) for n,z in zip(names,Z)])
 FPu=unary_union(fps)
 
 # ---------- kapilar ----------
@@ -74,6 +77,7 @@ def slab_x(x0,x1): return box(x0,-1e3,x1,1e3)
 xs_park0=float(SP[st==s_park0][0][0]); xs_park1=float(SP[st==s_park1][0][0])
 west_fill=P.intersection(slab_x(-1e3,axis_pts[1][0]-1.0))          # giris ile kuzey serit arasi bosluk -> rampa
 road_poly=unary_union([band.intersection(slab_x(-1e3,xs_park0)),entry,west_fill]).buffer(0.01).buffer(-0.01).difference(FPu.buffer(0.05))
+# not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
 park_poly=P.intersection(slab_x(xs_park0,xs_park1)).difference(FPu.buffer(0.05))
 walk_poly=band.intersection(slab_x(xs_park1,1e3)).difference(FPu.buffer(0.05))
 for nm_,pp in (('yol',road_poly),('otopark',park_poly),('yaya',walk_poly)):
@@ -105,9 +109,14 @@ for dd in doors:
     row=zrow(dd['c']); row[ns+dd['k']]=-1; Aeq.append(row); beq.append(Z[dd['k']]-DOOR_GAP)    # yol = esik - 2 cm
 for i in range(ns):                                                                             # cephe boyunca yol esigi gecmesin
     for k in range(3):
-        if Point(*SP[i]).distance(fps[k])<W/2+0.6:
+        bx=fps[k].bounds                                                                        # yalniz cephenin yaninda (uclarin otesinde degil)
+        if bx[0]-0.5<=SP[i][0]<=bx[2]+0.5 and Point(*SP[i]).distance(fps[k])<W/2+FACADE_REACH:   # yol ekseni ile cephe arasi genis olabilir
             row=np.zeros(nv); row[i]=1; row[ns+k]=-1; A.append(row); b.append(Z[k]-DOOR_GAP)
 bounds=[(None,None)]*ns+[(0,SMAX_SILL)]*nS+[(0,None)]*ns+[(0,None)]*(ns-1)
+# esikler modeldeki kitle kapi kotlarina sabit (kitleler yerinde kalir): yerel kot +6.60 / +3.10 / +0.05
+ESIK_SABIT={'P115-YAPI1':6.60,'P115-YAPI2':3.10,'P115-YAPI3':0.05}
+for k in range(nS):
+    if names[k] in ESIK_SABIT: sv=max(0.0,ESIK_SABIT[names[k]]-Z[k]); bounds[ns+k]=(sv,sv)
 bounds[0]=(zn[0],zn[0])                                                                         # kamu yoluna baglanti
 res=linprog(c,A_ub=np.array(A),b_ub=np.array(b),A_eq=np.array(Aeq) if Aeq else None,b_eq=np.array(beq) if Aeq else None,bounds=bounds,method='highs')
 if res.status!=0:
@@ -198,7 +207,7 @@ for tag,q in groups:
                 a_=p0+(p1-p0)*i/m; b_=p0+(p1-p0)*(i+1)/m; mid=(a_+b_)/2
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
-                if FPu.distance(Point(*(mid-nn*0.1)))<0.1: continue                       # bina cephesi
+                if FPu.distance(LineString([a_,b_]))<0.6: continue                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or np.abs(zi-zo).max()<0.05: continue
@@ -206,7 +215,7 @@ for tag,q in groups:
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
                 lo=np.minimum(zi,zo); hi=np.maximum(zi,zo)
-                if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu+korkuluk'
+                if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu'
                 else: ty='istinat' if zi.mean()<zo.mean() else 'basamak'
                 walls.append((a_,b_,lo,hi,ty,nlow)); WL[ty]=WL.get(ty,0)+np.hypot(*(b_-a_))
 with open('p115y_duvar.txt','w') as f:
@@ -215,6 +224,32 @@ with open('p115y_duvar.txt','w') as f:
     for a_,b_,lo,hi,ty,nl in walls:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
         f.write('W %s %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %d %d\n'%(ty,a_[0],a_[1],b_[0],b_[1],lo[0]-0.3,lo[1]-0.3,hi[0],hi[1],nl[0],nl[1],e0,e1))
+
+# ---------- istinattan YAPI1 bahcesine (yesile) inen merdiven: kot farkinin en az oldugu duvar parcasi ----------
+RISER=0.17; TREAD=0.30; ST_W=1.20; TH=0.30
+cand=[]
+for a_,b_,lo,hi,ty,nl in walls:
+    mid=(a_+b_)/2
+    if not gard[0].contains(Point(*(mid+nl*0.6))): continue                 # alcak taraf YAPI1 bahcesi
+    if not hard.buffer(0.05).contains(Point(*(mid-nl*0.3))): continue        # yuksek taraf yol (istinatin ustu)
+    if (hi-lo).mean()<0.35: continue
+    run_=TH+np.ceil((hi-lo).mean()/RISER)*TREAD+0.5
+    tip=mid+nl*run_                                                           # merdiven bahceye sigmali, binaya carpmamali
+    if not gard[0].buffer(-0.05).contains(LineString([mid+nl*TH,tip]).buffer(ST_W/2,cap_style=2)): continue
+    cand.append(((hi-lo).mean(),mid,nl,float(hi.mean()),float(lo.mean())))
+stair2=[]
+if cand:
+    hgt,mid,nl,ztop,zbot=min(cand,key=lambda q:q[0])
+    n_=int(np.ceil((ztop-zbot)/RISER)); r_=(ztop-zbot)/n_
+    tw=np.array([-nl[1],nl[0]])
+    for i in range(1,n_):                                                     # i. basamak: ust kottan i rihtim asagi
+        d0=TH+(i-1)*TREAD; d1=d0+TREAD
+        q=[mid+nl*d0+tw*ST_W/2,mid+nl*d1+tw*ST_W/2,mid+nl*d1-tw*ST_W/2,mid+nl*d0-tw*ST_W/2]
+        stair2.append((ztop-i*r_,q))
+    print('istinat->bahce merdiveni: (%.2f,%.2f) yuksek %.2f m, %d rihtim x %.1f cm, kosu %.2f m'%(mid[0],mid[1],ztop-zbot,n_,r_*100,(n_-1)*TREAD))
+else: print('istinat->bahce merdiveni icin uygun yer bulunamadi')
+with open('p115y_basamak.txt','w') as f:
+    for zt,q in stair2: f.write('T %.3f %.3f %s\n'%(zbot-0.3,zt,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
 
 # ---------- otopark yerleri ----------
 pp=park_poly if park_poly.geom_type=='Polygon' else max(park_poly.geoms,key=lambda q:q.area)
