@@ -7,11 +7,12 @@
 # Sonuc ev_duzelt_result.txt'ye yazilir. Ctrl+Z ile tek adimda geri alinir.
 dir = File.dirname(__FILE__) + "/"
 module CincinEv
-  unless defined?(KALINLIK)
-    KALINLIK = 0.25
-    GOMME    = 0.30
-    ADIM     = 0.50
-  end
+  KALINLIK = 0.25 unless defined?(KALINLIK)
+  GOMME = 0.30 unless defined?(GOMME)
+  ADIM = 0.50 unless defined?(ADIM)
+  ERISIM = 2.50 unless defined?(ERISIM) # kenardan disari bakilan mesafe (m)
+  ERISIM_N = 10 unless defined?(ERISIM_N)
+  ESIK = 0.30 unless defined?(ESIK) # bundan az dususte perde kurma (m)
 
   # BINA_OTURUM malzemeli ya da duz kirmizi (220,60,40 civari, dokusuz) yuzler
   def self.kirmizi?(mt)
@@ -32,6 +33,7 @@ module CincinEv
     end
     (ents.grep(Sketchup::Group) + ents.grep(Sketchup::ComponentInstance)).each do |g|
       next unless g.valid?
+      next if g.name.to_s =~ /^KITLE_/ # evin icindeki esyalara dokunma
       d = g.definition
       next if gezilen[d]
       gezilen[d] = true
@@ -79,7 +81,7 @@ module CincinEv
     6.times do
       hit = m.raytest([p, Geom::Vector3d.new(0, 0, -1)], true)
       return nil unless hit
-      return hit[0].z unless hit[1].any? { |e| atla.include?(e) || (e.respond_to?(:name) && e.name.to_s =~ /^(KITLE_|PERDE_|MERDIVEN)/) }
+      return [hit[0].z, hit[1].map { |e| e.respond_to?(:name) && !e.name.to_s.empty? ? e.name : e.class.name.split('::').last }.join(' > ')] unless hit[1].any? { |e| atla.include?(e) || (e.respond_to?(:name) && e.name.to_s =~ /^(KITLE_|PERDE_|MERDIVEN)/) }
       p = hit[0].offset(Geom::Vector3d.new(0, 0, -1), 1.mm)
     end
     nil
@@ -115,21 +117,31 @@ begin
     tas = CincinEv.malzeme(ev.definition.entities).max_by { |_, a| a }&.first
     tas ||= m.materials["ETEK_DUVAR"] || m.materials.add("ETEK_DUVAR").tap { |x| x.color = Sketchup::Color.new(200, 175, 130) }
     gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
-    kenar = 0; hmax = 0.0
+    kenar = 0; hmax = 0.0; tani = []
     hull.each_with_index do |a, i|
       b = hull[(i + 1) % hull.length]
       dx = b[0] - a[0]; dy = b[1] - a[1]; len = Math.hypot(dx, dy)
       next if len < 0.10.m
       dis = Geom::Vector3d.new(dy / len, -dx / len, 0) # saat yonu tersine kabukta disari
       n = [(len.to_m / CincinEv::ADIM).ceil, 1].max
+      # Duvarin dibi: kenardan disari ERISIM mesafesi icindeki en alcak zemin (sev/sevli dolgu yerine yola kadar iner)
+      ilk = nil
       alts = (0..n).map do |k|
         x = a[0] + dx * k / n; y = a[1] + dy * k / n
-        gz = CincinEv.zemin(m, x + dis.x * 0.05.m, y + dis.y * 0.05.m, zb - 0.01.m, [ev])
+        zs = (0..CincinEv::ERISIM_N).map do |j|
+          d = 0.05 + j * CincinEv::ERISIM / CincinEv::ERISIM_N
+          r = CincinEv.zemin(m, x + dis.x * d.m, y + dis.y * d.m, zb + 0.20.m, [ev])
+          ilk ||= r if j.zero? && k == n / 2
+          r && r[0]
+        end.compact
+        gz = zs.min
         gz = zb if gz.nil? || gz > zb
         [x, y, gz]
       end
       h = alts.map { |q| (zb - q[2]).to_m }.max
-      next if h < 0.05
+      tani << format("  kenar %d (%.1f m): taban %.2f, dibe kadar %.2f m, ilk zemin %s", i + 1, len.to_m, zb.to_m, h,
+                     ilk ? format("%.2f [%s]", ilk[0].to_m, ilk[1]) : "yok")
+      next if h < CincinEv::ESIK
       hmax = [hmax, h].max
       ust = [Geom::Point3d.new(a[0], a[1], zb), Geom::Point3d.new(b[0], b[1], zb)]
       dip = alts.reverse.map { |x, y, gz| Geom::Point3d.new(x, y, [gz - CincinEv::GOMME.m, zb - 0.05.m].min) }
@@ -140,7 +152,9 @@ begin
       sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
       kenar += 1
     end
-    if kenar.zero? then gp.erase! else rapor << format("%s: %d kenar, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name) end
+    gp.erase! if kenar.zero?
+    rapor << format("%s: %d kenarda perde, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name)
+    rapor.concat(tani)
   end
   m.commit_operation
   kirmizimsi = m.materials.select { |x| c = x.color; c.red > 150 && c.red > c.green * 1.8 && c.red > c.blue * 1.8 }
