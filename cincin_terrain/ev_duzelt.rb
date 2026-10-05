@@ -7,9 +7,39 @@
 # Sonuc ev_duzelt_result.txt'ye yazilir. Ctrl+Z ile tek adimda geri alinir.
 dir = File.dirname(__FILE__) + "/"
 module CincinEv
-  KALINLIK = 0.25
-  GOMME    = 0.30
-  ADIM     = 0.50
+  unless defined?(KALINLIK)
+    KALINLIK = 0.25
+    GOMME    = 0.30
+    ADIM     = 0.50
+  end
+
+  # BINA_OTURUM malzemeli ya da duz kirmizi (220,60,40 civari, dokusuz) yuzler
+  def self.kirmizi?(mt)
+    return false unless mt
+    return true if mt.name =~ /OTURUM|SUBASMAN/i
+    c = mt.color
+    mt.texture.nil? && (c.red - 220).abs < 25 && (c.green - 60).abs < 30 && (c.blue - 40).abs < 30
+  end
+
+  # Tum modelde kirmizi yuzleri sil; bosalan grup/bilesenleri de sil. Silinen yuz sayisi ve yerleri doner.
+  def self.kirmizi_sil(ents, yol, rapor, gezilen = {})
+    yuz = ents.grep(Sketchup::Face).select { |f| kirmizi?(f.material) || kirmizi?(f.back_material) }
+    unless yuz.empty?
+      kenar = yuz.flat_map(&:edges).uniq
+      ents.erase_entities(yuz)
+      ents.erase_entities(kenar.select { |e| e.valid? && e.faces.empty? })
+      rapor[yol.empty? ? "(model)" : yol] += yuz.length
+    end
+    (ents.grep(Sketchup::Group) + ents.grep(Sketchup::ComponentInstance)).each do |g|
+      next unless g.valid?
+      d = g.definition
+      next if gezilen[d]
+      gezilen[d] = true
+      ad = g.name.to_s.empty? ? d.name : g.name
+      kirmizi_sil(d.entities, yol.empty? ? ad : "#{yol} > #{ad}", rapor, gezilen)
+      g.erase! if g.valid? && d.entities.grep(Sketchup::Face).empty? && d.entities.grep(Sketchup::Group).empty? && d.entities.grep(Sketchup::ComponentInstance).empty?
+    end
+  end
 
   def self.alt_noktalar(ents, tr, out)
     ents.each do |e|
@@ -63,8 +93,9 @@ begin
   ents = m.entities
 
   kirmizi = ents.grep(Sketchup::Group).select { |g| g.name =~ /^(YAPI_SUBASMAN|BINA_OTURUM)/ }
-  silinen = kirmizi.map(&:name)
-  kirmizi.each(&:erase!)
+  silinen = Hash.new(0)
+  kirmizi.each { |g| silinen[g.name] += 1; g.erase! }
+  CincinEv.kirmizi_sil(ents, "", silinen)
 
   sec = m.selection.grep(Sketchup::Group) + m.selection.grep(Sketchup::ComponentInstance)
   evler = sec.empty? ? ents.grep(Sketchup::Group).select { |g| g.name =~ /^KITLE_/ } : sec
@@ -112,7 +143,11 @@ begin
     if kenar.zero? then gp.erase! else rapor << format("%s: %d kenar, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name) end
   end
   m.commit_operation
-  txt = "OK silinen kirmizi=#{silinen.inspect}\n" + (rapor.empty? ? "perde gerekmedi" : rapor.join("\n"))
+  kirmizimsi = m.materials.select { |x| c = x.color; c.red > 150 && c.red > c.green * 1.8 && c.red > c.blue * 1.8 }
+                          .map { |x| "#{x.name}(#{x.color.red},#{x.color.green},#{x.color.blue}#{x.texture ? ',doku' : ''})" }
+  kr = silinen.empty? ? "kirmizi bulunamadi; kirmizimsi malzemeler: #{kirmizimsi.join(', ')}" : silinen.map { |k, v| "  #{k}: #{v}" }.join("\n")
+  txt = "Kirmizi silinen:\n#{kr}\nEv (#{sec.empty? ? 'tum KITLE_' : 'secili'}): #{evler.length}\n" +
+        (rapor.empty? ? "perde gerekmedi" : rapor.join("\n"))
   File.write(dir + "ev_duzelt_result.txt", txt)
   UI.messagebox(txt)
 rescue => e
