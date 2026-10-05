@@ -54,6 +54,23 @@ module CincinEv
     end
   end
 
+  # dunya koordinatinda asagi bakan (alt) yuzlerin dis halkalari, en ust kotu zmax'tan dusuk olanlar
+  def self.alt_yuzler(ents, tr, zmax, out)
+    ents.each do |e|
+      case e
+      when Sketchup::Face
+        n = e.normal.transform(tr)
+        next unless n.length > 0
+        n.normalize!
+        next unless n.z < -0.9
+        pts = e.outer_loop.vertices.map { |v| v.position.transform(tr) }
+        out << pts if pts.map(&:z).max < zmax && pts.length >= 3
+      when Sketchup::Group, Sketchup::ComponentInstance
+        alt_yuzler(e.definition.entities, tr * e.transformation, zmax, out)
+      end
+    end
+  end
+
   def self.kabuk(pts)
     p = pts.map { |q| [q.x.to_f, q.y.to_f] }.uniq.sort
     return p if p.length < 3
@@ -147,11 +164,22 @@ begin
       next
     end
     gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
-    f = gp.entities.add_face(hull.map { |x, y| Geom::Point3d.new(x, y, zb) })
-    f.reverse! if f.normal.z > 0
-    f.pushpull(h.m + CincinEv::GOMME.m)
-    gp.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
-    rapor << format("%s: dolgu blok taban %.2f -> %.2f (%.2f m), malzeme %s", ev.name, zb.to_m, (zmin.to_m - CincinEv::GOMME), h + CincinEv::GOMME, tas.name)
+    # Blok evin GERCEK tabanindan: asagi bakan alt yuzler (subasman ve basamak altlari, doseme +0.30 altinda kalanlar)
+    # tek tek asagi uzatilir. Dis sinir (kabuk) kullanilmaz: girintilerde/kapi onlerinde tas yuzey acikta kalmaz.
+    zdip = zmin - CincinEv::GOMME.m
+    yuzler = []
+    CincinEv.alt_yuzler(ev.definition.entities, ev.transformation, zb + 0.29.m, yuzler) # dosemenin (zb+0.30) altindakiler; esyaya dokunma
+    yuzler.each do |poly|
+      zt = poly.map(&:z).max
+      next if zt - zdip < 0.02.m
+      sg = gp.entities.add_group
+      f = sg.entities.add_face(poly.map { |q| Geom::Point3d.new(q.x, q.y, zt) }) rescue nil
+      next unless f
+      f.reverse! if f.normal.z > 0
+      f.pushpull(zt - zdip)
+      sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
+    end
+    rapor << format("%s: dolgu %d parca, taban %.2f -> %.2f (%.2f m), malzeme %s", ev.name, gp.entities.length, zb.to_m, (zmin.to_m - CincinEv::GOMME), h + CincinEv::GOMME, tas.name)
   end
   m.commit_operation
   kirmizimsi = m.materials.select { |x| c = x.color; c.red > 150 && c.red > c.green * 1.8 && c.red > c.blue * 1.8 }

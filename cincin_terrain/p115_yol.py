@@ -184,9 +184,10 @@ bnd=unary_union([q.boundary for q in feats]+[P.boundary])
 const=lambda zc: (lambda x,y: np.full(len(x),zc))
 parts=[]
 for k,gg in enumerate(gard): parts.append((gg.difference(FPu),'cim',const(Z[k])))
+# bina izleri (girinti/avlu dahil) bahceyle ayni kotta yesil: teras/tas yuzey kalmaz
 for pp_,tg in ((road_poly,'asfalt'),(park_poly,'otopark'),(walk_poly,'yaya')): parts.append((pp_,tg,feat_z))
 parts.append((lot_poly,'otopark',lot_z))
-for k,fp in enumerate(fps): parts.append((fp,'arazi',const(Z[k]-0.05)))
+for k,fp in enumerate(fps): parts.append((fp,'cim',const(Z[k])))
 VV=[]; FF=[]
 def tri_part(poly,tag,zf,step=1.0,extra=None):
     if poly.is_empty: return
@@ -246,6 +247,9 @@ for tag,q in groups:
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
                 lo=np.minimum(zi,zo); hi=np.maximum(zi,zo)
+                zi4=final([a_[0]+nn[0]*0.4,b_[0]+nn[0]*0.4],[a_[1]+nn[1]*0.4,b_[1]+nn[1]*0.4])     # koseler: duvar ustu yanindaki en yuksek zemine kadar
+                zo4=final([a_[0]-nn[0]*0.4,b_[0]-nn[0]*0.4],[a_[1]-nn[1]*0.4,b_[1]-nn[1]*0.4])
+                hi=np.nanmax(np.vstack([hi,zi4,zo4]),axis=0)
                 if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu'
                 else: ty='istinat' if zi.mean()<zo.mean() else 'basamak'
                 walls.append((a_,b_,lo,hi,ty,nlow)); WL[ty]=WL.get(ty,0)+np.hypot(*(b_-a_))
@@ -267,6 +271,7 @@ for a_,b_,lo,hi,ty,nl in walls:
     if not gard[0].contains(Point(*(mid+nl*0.6))): continue                 # alcak taraf YAPI1 bahcesi
     if not hard.buffer(0.05).contains(Point(*(mid-nl*0.3))): continue        # yuksek taraf yol (istinatin ustu)
     if (hi-lo).mean()<0.35: continue
+    if FPu.distance(Point(*mid))<2.5: continue                                # bina kosesine sikismasin
     run_=TH+np.ceil((hi-lo).mean()/RISER)*TREAD+0.5
     tip=mid+nl*run_                                                           # merdiven bahceye sigmali, binaya carpmamali
     if not gard[0].buffer(-0.05).contains(LineString([mid+nl*TH,tip]).buffer(ST_W/2,cap_style=2)): continue
