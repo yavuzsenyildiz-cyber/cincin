@@ -80,6 +80,11 @@ road_poly=unary_union([band.intersection(slab_x(-1e3,xs_park0)),entry,west_fill]
 # not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
 park_poly=P.intersection(slab_x(xs_park0,xs_park1)).difference(FPu.buffer(0.05))
 walk_poly=band.intersection(slab_x(xs_park1,1e3)).difference(FPu.buffer(0.05))
+# YAPI1 ile YAPI2 arasi otopark: kuzeyden yola acilan 5.5 m koridor (bati) + dogu tarafta 5 m derin park yerleri.
+# Duz platform; yola bitisik 2.5 m serit yol kotundan platform kotuna yumusak baglanir (giris).
+LOT_X=(55.2,65.7); LOT_APRON=2.5
+lot_poly=P.intersection(slab_x(*LOT_X)).difference(road_poly).difference(FPu.buffer(0.05)).buffer(-0.01).buffer(0.01)
+if lot_poly.geom_type!='Polygon': lot_poly=max(lot_poly.geoms,key=lambda q:q.area)
 for nm_,pp in (('yol',road_poly),('otopark',park_poly),('yaya',walk_poly)):
     if pp.geom_type!='Polygon': print('uyari:',nm_,'parcali',pp.geom_type)
 
@@ -138,13 +143,14 @@ for i in range(ns-1):
 # ---------- bahceler ----------
 order=sorted(range(3),key=lambda k:fps[k].bounds[0])
 cuts=[-1e3]+[(fps[order[j]].bounds[2]+fps[order[j+1]].bounds[0])/2 for j in range(2)]+[1e3]
-hard=unary_union([road_poly,park_poly,walk_poly])
+hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
 gard=[None]*3
 for j,k in enumerate(order):
     g=P.intersection(slab_x(cuts[j],cuts[j+1])).difference(hard)
     gard[k]=g
 
 # ---------- arazi ----------
+
 def feat_z(x,y):
     s=np.array([axis.project(Point(a_,b_)) for a_,b_ in zip(x,y)]); return zax(s)
 def final(x,y):
@@ -152,8 +158,15 @@ def final(x,y):
     for k,g in enumerate(gard): f[contains_xy(g,x,y)]=Z[k]
     m=contains_xy(hard,x,y)
     if m.any(): f[m]=feat_z(x[m],y[m])
+    m=contains_xy(lot_poly,x,y)
+    if m.any(): f[m]=lot_z(x[m],y[m])
     for k,fp in enumerate(fps): f[contains_xy(fp,x,y)]=Z[k]-0.05
     return f
+Z_LOT=None
+def lot_z(x,y):
+    x=np.asarray(x,float); y=np.asarray(y,float)
+    d=shapely.distance(road_poly,shapely.points(x,y)); w_=np.clip(1-d/LOT_APRON,0,1)
+    return Z_LOT+(feat_z(x,y)-Z_LOT)*w_
 def ringpts(poly,step=0.5):
     out=[]
     for pg in ([poly] if poly.geom_type=='Polygon' else list(poly.geoms)):
@@ -162,36 +175,53 @@ def ringpts(poly,step=0.5):
             for p0,p1 in zip(c_[:-1],c_[1:]):
                 m=max(1,int(np.hypot(*(p1-p0))/step)); out.append(p0+(p1-p0)*np.linspace(0,1,m,endpoint=False)[:,None])
     return np.vstack(out)
-feats=[*gard,road_poly,park_poly,walk_poly,*fps]
+Z_LOT=float(zax(axis.project(Point((LOT_X[0]+LOT_X[0]+5.5)/2,lot_poly.bounds[3]))))
+feats=[*gard,road_poly,park_poly,walk_poly,lot_poly,*fps]
 region=P.buffer(15)
-outer=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
-x0,y0,x1,y1=region.bounds
-gx,gy=np.meshgrid(np.arange(x0,x1,1.0),np.arange(y0,y1,1.0)); g=np.c_[gx.ravel(),gy.ravel()]
 bnd=unary_union([q.boundary for q in feats]+[P.boundary])
-g=g[contains_xy(region,g[:,0],g[:,1])]; g=g[shapely.distance(bnd,shapely.points(g[:,0],g[:,1]))>0.3]
-pts=[g,ringpts(region,1.0)]
-for q in feats+[P]:
-    for o_ in (-0.05,0.05):
-        qq=q.buffer(o_,join_style=2)
-        if not qq.is_empty: pts.append(ringpts(qq,0.4))
-P2=np.vstack(pts); A_=np.vstack([outer,np.c_[P2,final(P2[:,0],P2[:,1])]])
-A_=A_[~np.isnan(A_[:,2])]
-_,ui=np.unique(np.round(A_[:,:2],2),axis=0,return_index=True); A_=A_[np.sort(ui)]
-T=Delaunay(A_[:,:2]).simplices
-p=A_[:,:2]; u=p[T[:,1]]-p[T[:,0]]; w=p[T[:,2]]-p[T[:,0]]; cr=u[:,0]*w[:,1]-u[:,1]*w[:,0]
-T=T[np.abs(cr)>1e-6]; cr=cr[np.abs(cr)>1e-6]; T[cr<0]=T[cr<0][:,[0,2,1]]
-cen=A_[T][:,:,:2].mean(1); T=T[~np.isnan(nat(cen[:,0],cen[:,1]))|contains_xy(P,cen[:,0],cen[:,1])]
-cen=A_[T][:,:,:2].mean(1); zr_=A_[T][:,:,2].max(1)-A_[T][:,:,2].min(1)      # dik gecis seridi (testere disi) ucgenleri: yerine gercek duvar
-dB=shapely.distance(bnd,shapely.points(cen[:,0],cen[:,1])); dF=shapely.distance(FPu.boundary,shapely.points(cen[:,0],cen[:,1]))
-T=T[~((zr_>0.05)&(dB<0.15)&(dF>0.15))]
-cen=A_[T][:,:,:2].mean(1)
-mat=np.full(len(T),'arazi',dtype=object)
-for k,gg in enumerate(gard): mat[contains_xy(gg,cen[:,0],cen[:,1])]='cim'
-mat[contains_xy(road_poly,cen[:,0],cen[:,1])]='asfalt'; mat[contains_xy(park_poly,cen[:,0],cen[:,1])]='otopark'; mat[contains_xy(walk_poly,cen[:,0],cen[:,1])]='yaya'
+# Her alan ayri ucgenlenir (ucgenler alan sinirini asmaz): yesil sivri/egik ucgenler olusmaz; kot farki olan
+# sinirlari gercek duvarlar kapatir.
+const=lambda zc: (lambda x,y: np.full(len(x),zc))
+parts=[]
+for k,gg in enumerate(gard): parts.append((gg.difference(FPu),'cim',const(Z[k])))
+for pp_,tg in ((road_poly,'asfalt'),(park_poly,'otopark'),(walk_poly,'yaya')): parts.append((pp_,tg,feat_z))
+parts.append((lot_poly,'otopark',lot_z))
+for k,fp in enumerate(fps): parts.append((fp,'arazi',const(Z[k]-0.05)))
+VV=[]; FF=[]
+def tri_part(poly,tag,zf,step=1.0,extra=None):
+    if poly.is_empty: return
+    x0_,y0_,x1_,y1_=poly.bounds
+    gx,gy=np.meshgrid(np.arange(x0_,x1_,step),np.arange(y0_,y1_,step)); gp=np.c_[gx.ravel(),gy.ravel()]
+    gp=gp[contains_xy(poly,gp[:,0],gp[:,1])]
+    if len(gp): gp=gp[shapely.distance(poly.boundary,shapely.points(gp[:,0],gp[:,1]))>0.25]
+    rp=ringpts(poly,0.4)
+    pp_=np.vstack([gp,rp]) if len(gp) else rp
+    zz=zf(pp_[:,0],pp_[:,1])
+    A3=np.c_[pp_,zz]
+    if extra is not None: A3=np.vstack([A3,extra])
+    A3=A3[~np.isnan(A3[:,2])]
+    _,ui=np.unique(np.round(A3[:,:2],3),axis=0,return_index=True); A3=A3[np.sort(ui)]
+    if len(A3)<3: return
+    try: Tt=Delaunay(A3[:,:2]).simplices
+    except Exception: return
+    c3=A3[Tt][:,:,:2].mean(1)
+    keep=contains_xy(poly,c3[:,0],c3[:,1]) if extra is None else ~contains_xy(P,c3[:,0],c3[:,1])
+    Tt=Tt[keep]
+    q2=A3[:,:2]; u=q2[Tt[:,1]]-q2[Tt[:,0]]; w=q2[Tt[:,2]]-q2[Tt[:,0]]; cr=u[:,0]*w[:,1]-u[:,1]*w[:,0]
+    Tt=Tt[np.abs(cr)>1e-6]; cr=cr[np.abs(cr)>1e-6]; Tt[cr<0]=Tt[cr<0][:,[0,2,1]]
+    base=sum(len(v_) for v_ in VV); VV.append(A3); FF.extend((t_+base,tag) for t_ in Tt)
+for poly,tag,zf in parts:
+    for pg in ([poly] if poly.geom_type=='Polygon' else [q for q in getattr(poly,'geoms',[]) if q.geom_type=='Polygon']):
+        tri_part(pg,tag,zf)
+# parsel disi: dogal arazi
+outer=V[contains_xy(region,V[:,0],V[:,1])&~contains_xy(P,V[:,0],V[:,1])][:,:3]
+far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
+tri_part(region.difference(P),'arazi',nat,step=1.0,extra=np.vstack([outer,far]))
+A_=np.vstack(VV)
 UV=np.c_[A_[:,:2],np.ones(len(A_))]@uvA
 with open('p115y_mesh.txt','w') as f:
     for v_,uv in zip(A_,UV): f.write('V %.3f %.3f %.3f %.6f %.6f\n'%(v_[0],v_[1],v_[2],uv[0],uv[1]))
-    for t_,m_ in zip(T,mat): f.write('F %d %d %d %s\n'%(t_[0],t_[1],t_[2],m_))
+    for t_,m_ in FF: f.write('F %d %d %d %s\n'%(t_[0],t_[1],t_[2],m_))
 
 # ---------- duvarlar ----------
 walls=[]; WL={}
@@ -207,7 +237,8 @@ for tag,q in groups:
                 a_=p0+(p1-p0)*i/m; b_=p0+(p1-p0)*(i+1)/m; mid=(a_+b_)/2
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
-                if FPu.distance(LineString([a_,b_]))<0.6: continue                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
+                if FPu.distance(LineString([a_,b_]))<0.6: continue
+                if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or np.abs(zi-zo).max()<0.05: continue
@@ -223,6 +254,9 @@ with open('p115y_duvar.txt','w') as f:
     cnt=Counter([tuple(np.round(w_[0],2)) for w_ in walls]+[tuple(np.round(w_[1],2)) for w_ in walls])
     for a_,b_,lo,hi,ty,nl in walls:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
+        tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
+        if e0: a_=a_-tv_*0.30
+        if e1: b_=b_+tv_*0.30
         f.write('W %s %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %d %d\n'%(ty,a_[0],a_[1],b_[0],b_[1],lo[0]-0.3,lo[1]-0.3,hi[0],hi[1],nl[0],nl[1],e0,e1))
 
 # ---------- istinattan YAPI1 bahcesine (yesile) inen merdiven: kot farkinin en az oldugu duvar parcasi ----------
@@ -266,6 +300,19 @@ for off_ in np.arange(0,STALL_W,0.5):
             if pp.buffer(0.01).contains(rc) and rc.distance(FPu)>0.3: stl.append(rc)
             s_+=STALL_W
         if len(stl)>len(best): best=stl
+lot_st=[]
+ly1=lot_poly.bounds[3]
+yy=ly1
+while True:                                                   # yola en yakin noktadan apron kadar iceride basla
+    yy-=0.25
+    if not lot_poly.contains(Point(LOT_X[1]-2.5,yy)) or shapely.distance(road_poly,Point(LOT_X[1]-2.5,yy))>=LOT_APRON: break
+y_=yy
+while True:
+    rc=box(LOT_X[0]+5.5,y_-STALL_W,LOT_X[0]+5.5+STALL_D,y_)
+    if not lot_poly.buffer(0.02).contains(rc): break
+    lot_st.append(rc); y_-=STALL_W
+print('ara otopark: %d arac, platform +%.2f'%(len(lot_st),Z_LOT+H0))
+best=best+lot_st
 with open('p115y_park.txt','w') as f:
     for rc in best:
         cc=np.array(rc.centroid.coords[0]); zz=float(final([cc[0]],[cc[1]])[0])
