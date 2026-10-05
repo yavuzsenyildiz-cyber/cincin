@@ -1,0 +1,1 @@
+OK bahce=3 duvar=349 arazi_yuz=17845 gizlenen_arazi=1

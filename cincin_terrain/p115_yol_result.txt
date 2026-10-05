@@ -1,0 +1,1 @@
+OK ucgen=23243 duvar=648 park_yeri=10 gizlenen_arazi=1
