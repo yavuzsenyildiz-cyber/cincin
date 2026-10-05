@@ -1,7 +1,7 @@
 # Ev kitlelerinin altini duzeltir:
 #   1) Kirmizi "YAPI_SUBASMAN (+0.50)" ve "BINA_OTURUM" gruplarini siler (kitlelerin kendi 50 cm subasmani var).
-#   2) Kitle tabaninin altinda arazi/yol asagi dustugu her yerde perde duvar kurar: dis yuzu kitle
-#      kenariyla ayni hizada, 25 cm kalin, zemine 30 cm gomulu, evin kaplama malzemesiyle (tas) kapli.
+#   2) Evin altini subasman tabanina kadar masif dolgu blokla kapatir: kitle taban izinde, cevredeki en
+#      alcak zeminin (yolun) 30 cm altina kadar iner; dis yuzleri evin kaplama malzemesiyle (tas) kapli.
 # Secim bossa adi KITLE_ ile baslayan tum gruplara uygulanir; ev grubu/gruplari seciliyse sadece onlara.
 #   load "C:/Users/YOGA/OneDrive/MİMARİ/CİNCİN/cincin_terrain/ev_duzelt.rb"
 # Sonuc ev_duzelt_result.txt'ye yazilir. Ctrl+Z ile tek adimda geri alinir.
@@ -116,45 +116,37 @@ begin
     next if hull.length < 3
     tas = CincinEv.malzeme(ev.definition.entities).max_by { |_, a| a }&.first
     tas ||= m.materials["ETEK_DUVAR"] || m.materials.add("ETEK_DUVAR").tap { |x| x.color = Sketchup::Color.new(200, 175, 130) }
-    gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
-    kenar = 0; hmax = 0.0; tani = []
+    # Evin altini subasman tabanina kadar dolu beton blokla kapat: kitle tabani izinden, cevredeki
+    # (ERISIM m icindeki) en alcak zeminin GOMME kadar altina inen masif blok. Dis yuzler tas kapli.
+    zmin = nil; ilk = nil
     hull.each_with_index do |a, i|
       b = hull[(i + 1) % hull.length]
       dx = b[0] - a[0]; dy = b[1] - a[1]; len = Math.hypot(dx, dy)
       next if len < 0.10.m
-      dis = Geom::Vector3d.new(dy / len, -dx / len, 0) # saat yonu tersine kabukta disari
+      dis = Geom::Vector3d.new(dy / len, -dx / len, 0)
       n = [(len.to_m / CincinEv::ADIM).ceil, 1].max
-      # Duvarin dibi: kenardan disari ERISIM mesafesi icindeki en alcak zemin (sev/sevli dolgu yerine yola kadar iner)
-      ilk = nil
-      alts = (0..n).map do |k|
+      (0..n).each do |k|
         x = a[0] + dx * k / n; y = a[1] + dy * k / n
-        zs = (0..CincinEv::ERISIM_N).map do |j|
+        (0..CincinEv::ERISIM_N).each do |j|
           d = 0.05 + j * CincinEv::ERISIM / CincinEv::ERISIM_N
           r = CincinEv.zemin(m, x + dis.x * d.m, y + dis.y * d.m, zb + 0.20.m, [ev])
-          ilk ||= r if j.zero? && k == n / 2
-          r && r[0]
-        end.compact
-        gz = zs.min
-        gz = zb if gz.nil? || gz > zb
-        [x, y, gz]
+          next unless r
+          ilk ||= r
+          zmin = r[0] if zmin.nil? || r[0] < zmin
+        end
       end
-      h = alts.map { |q| (zb - q[2]).to_m }.max
-      tani << format("  kenar %d (%.1f m): taban %.2f, dibe kadar %.2f m, ilk zemin %s", i + 1, len.to_m, zb.to_m, h,
-                     ilk ? format("%.2f [%s]", ilk[0].to_m, ilk[1]) : "yok")
-      next if h < CincinEv::ESIK
-      hmax = [hmax, h].max
-      ust = [Geom::Point3d.new(a[0], a[1], zb), Geom::Point3d.new(b[0], b[1], zb)]
-      dip = alts.reverse.map { |x, y, gz| Geom::Point3d.new(x, y, [gz - CincinEv::GOMME.m, zb - 0.05.m].min) }
-      sg = gp.entities.add_group
-      f = sg.entities.add_face(ust + dip)
-      next unless f
-      f.pushpull(f.normal.dot(dis) > 0 ? -CincinEv::KALINLIK.m : CincinEv::KALINLIK.m)
-      sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
-      kenar += 1
     end
-    gp.erase! if kenar.zero?
-    rapor << format("%s: %d kenarda perde, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name)
-    rapor.concat(tani)
+    h = zmin ? (zb - zmin).to_m : 0.0
+    if zmin.nil? || h < CincinEv::ESIK
+      rapor << format("%s: taban %.2f, cevre en alcak %s -> dolgu gerekmedi", ev.name, zb.to_m, zmin ? format("%.2f", zmin.to_m) : "yok")
+      next
+    end
+    gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
+    f = gp.entities.add_face(hull.map { |x, y| Geom::Point3d.new(x, y, zb) })
+    f.reverse! if f.normal.z > 0
+    f.pushpull(h.m + CincinEv::GOMME.m)
+    gp.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
+    rapor << format("%s: dolgu blok taban %.2f -> %.2f (%.2f m), malzeme %s", ev.name, zb.to_m, (zmin.to_m - CincinEv::GOMME), h + CincinEv::GOMME, tas.name)
   end
   m.commit_operation
   kirmizimsi = m.materials.select { |x| c = x.color; c.red > 150 && c.red > c.green * 1.8 && c.red > c.blue * 1.8 }
