@@ -100,8 +100,10 @@ begin
   CincinEv.kirmizi_sil(ents, "", silinen)
 
   sec = m.selection.grep(Sketchup::Group) + m.selection.grep(Sketchup::ComponentInstance)
+  # Secimden yalnizca ev kitleleri (KITLE_) alinir; arazi vb. secilmisse tum evlere uygulanir.
+  sec = sec.select { |g| g.name =~ /^KITLE_/ }
   evler = sec.empty? ? ents.grep(Sketchup::Group).select { |g| g.name =~ /^KITLE_/ } : sec
-  raise "Ev grubu bulunamadi (KITLE_ ile baslayan grup yok, bir sey de secili degil)" if evler.empty?
+  raise "Ev grubu bulunamadi: modelde adi KITLE_ ile baslayan grup yok" if evler.empty?
 
   ents.grep(Sketchup::Group).select { |g| g.name =~ /^PERDE_/ && evler.any? { |e| g.name == "PERDE_#{e.name}" } }.each(&:erase!)
   lay = m.layers.add("PERDE_DUVAR")
