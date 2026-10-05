@@ -1,6 +1,6 @@
 # Tikla-sil araci: silinecek nesneye tikla, nesnenin model icindeki yolu gosterilir ve sorulur:
 #   Evet  = tiklanan yuzu iceren EN ICTEKI grubu/bileseni sil
-#   Hayir = sadece tiklanan yuzu (ve ayni malzemeli bitisik yuzleri) sil
+#   Hayir = sadece tiklanan yuzu sil
 #   Iptal = hicbir sey yapma
 # Ev kitlesi (KITLE_), arazi (ARAZI), bahce/platform ust gruplari butunuyle SILINMEZ (koruma).
 # Esc ile cik. Her silme ayri Ctrl+Z ile geri alinir. Tiklananlar sec_sil_log.txt'ye yazilir.
@@ -44,7 +44,7 @@ module CincinSil
       korunan = ic.nil? || ic.name.to_s =~ KORU || ic.definition.name.to_s =~ KORU
       soru = metin + "\n\n" +
              (korunan ? "Evet = (korunan grup, silinmez)" : "Evet = en icteki grubu sil: #{CincinSil.ad(ic)}") +
-             "\nHayir = sadece bu yuzu (ve ayni malzemeli bitisik yuzleri) sil\nIptal = vazgec"
+             "\nHayir = sadece tiklanan bu yuzu sil\nIptal = vazgec"
       r = UI.messagebox(soru, MB_YESNOCANCEL)
       m = Sketchup.active_model
       if r == IDYES && !korunan
@@ -54,13 +54,8 @@ module CincinSil
       elsif r == IDNO && yuz
         m.start_operation("Yuz sil", true)
         ents = yuz.parent.entities
-        grup = [yuz]; i = 0
-        while i < grup.length
-          grup[i].edges.each { |ed| ed.faces.each { |f| grup << f if !grup.include?(f) && f.material == yuz.material } }
-          i += 1
-        end
-        kenar = grup.flat_map(&:edges).uniq
-        ents.erase_entities(grup)
+        kenar = yuz.edges
+        ents.erase_entities([yuz])
         ents.erase_entities(kenar.select { |e| e.valid? && e.faces.empty? })
         m.commit_operation
       end
