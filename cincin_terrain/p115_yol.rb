@@ -8,7 +8,7 @@ begin
   m.close_active while m.active_path
   m.start_operation("P115 yol + otopark + yaya yolu", true)
   ents = m.entities
-  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN|P115_KITLE_TABAN)/ }.each(&:erase!)
+  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN|P115_KITLE_TABAN|P115_BITKI)/ }.each(&:erase!)
   orig = ents.grep(Sketchup::Group).select { |g| g.name.start_with?("ARAZI (PLANKOTE") }
   orig.each { |g| g.hidden = true }
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
@@ -18,7 +18,7 @@ begin
     kok = (Sketchup.find_support_file("Materials") rescue nil)
     dosyalar = kok ? Dir.glob(File.join(kok, "**", "*.skm")) : []
     adlar.each do |a|
-      f = dosyalar.find { |d| File.basename(d, ".skm").casecmp(a).zero? }
+      f = (a.is_a?(Regexp) ? dosyalar.find { |d| File.basename(d, ".skm") =~ a } : dosyalar.find { |d| File.basename(d, ".skm").casecmp(a).zero? })
       if f
         x = (m.materials.load(f) rescue nil)
         return x if x
@@ -29,10 +29,13 @@ begin
   # istinat duvarlari: evlerin tasindan (Sandstone Ashlar) farkli, gri-kahve dogal tas
   istinat_tas = kutup.(["Stone Masonry Multi", "Stone Fieldstone", "Stone Coursed Rough", "Stone Masonry Rough"], "ISTINAT_TAS", 128, 118, 105)
   (istinat_tas.texture.size = 1.5.m if istinat_tas.texture) rescue nil
+  # tasit yollari ve otoparklar: tas (parke/arnavut) kaplama
+  yol_tas = kutup.(["Stone Cobblestone", "Stone Pavers Flagstone Gray", "Paving Stone Cobblestone", /cobble/i, /paver/i, /paving/i], "YOL_TAS_KAPLAMA", 118, 112, 104)
+  (yol_tas.texture.size = 1.0.m if yol_tas.texture) rescue nil
   mats = {
     "arazi" => (m.materials["ARAZI_PLANKOTE_UYDU"] || mk.("ARAZI_PLANKOTE_UYDU", 120, 120, 90)),
-    "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => mk.("ARAC_YOLU_ASFALT", 70, 70, 75),
-    "otopark" => mk.("OTOPARK_ZEMIN", 120, 120, 128), "yaya" => mk.("YAYA_YOLU", 205, 190, 150),
+    "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => yol_tas,
+    "otopark" => yol_tas, "yaya" => mk.("YAYA_YOLU", 205, 190, 150),
     "kaldirim" => mk.("KALDIRIM", 200, 190, 170),
     "perde_beton" => istinat_tas,
     "perde_tas" => (m.materials["[Stone Sandstone Ashlar Light]"] || mk.("ETEK_DUVAR", 200, 175, 130))
@@ -169,8 +172,33 @@ begin
     kutu.(q.offset(u.reverse, 0.20.m), q.offset(u, 0.20.m), 0.20.m, (d[:z0] - 0.10).m, (d[:z1] + 1.55).m, istinat_tas)    # dikme 40x40 (kademede uzun olan)
     kutu.(q.offset(u.reverse, 0.25.m), q.offset(u, 0.25.m), 0.25.m, (d[:z1] + 1.55).m, (d[:z1] + 1.61).m, kapak)          # dikme basligi
   end
+  # bitki citleri: otopark-bahce siniri ve bagimsiz bolumler arasi (bahce ayrimi); 60 cm genis, 1.1 m yuksek budanmis cit
+  yaprak = kutup.([/hedge/i, /shrub/i, /bush/i, /ivy/i, /leaves/i, /foliage/i], "BITKI_CIT", 58, 96, 44)
+  gc = ents.add_group; gc.name = "P115_BITKI (bahce ayrimi citleri)"; gc.layer = m.layers.add("BITKI")
+  ncit = 0
+  File.foreach(dir + "p115y_bitki.txt") do |ln|
+    t = ln.split; next unless t[0] == "H"
+    x0, y0, x1, y1, z = t[1..5].map(&:to_f)
+    p0 = Geom::Point3d.new(x0.m, y0.m, 0); p1 = Geom::Point3d.new(x1.m, y1.m, 0)
+    u = p1 - p0; next if u.length < 0.05.m
+    u.normalize!; n = Geom::Vector3d.new(-u.y, u.x, 0)
+    [[0.30, 0.0, 0.95], [0.24, 0.95, 1.10]].each do |yari, h0, h1|      # govde + yuvarlatilmis ust kademe
+      nn = n.clone; nn.length = yari.m
+      pts = [p0.offset(nn), p1.offset(nn), p1.offset(nn.reverse), p0.offset(nn.reverse)].map { |q| Geom::Point3d.new(q.x, q.y, (z + h0 - (h0.zero? ? 0.05 : 0)).m) }
+      sg = gc.entities.add_group
+      f = (sg.entities.add_face(pts) rescue nil)
+      if f
+        f.reverse! if f.normal.z < 0
+        f.pushpull((h1 - h0 + (h0.zero? ? 0.05 : 0)).m)
+        sg.entities.grep(Sketchup::Face).each { |q| q.material = yaprak; q.back_material = yaprak }
+      else
+        sg.erase!
+      end
+    end
+    ncit += 1
+  end
   m.commit_operation
-  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} gizlenen_arazi=#{orig.length}")
+  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} cit=#{ncit} gizlenen_arazi=#{orig.length}")
   # ev altlari: subasman altindaki acik kalan yerleri tas kapli dolgu blokla kapat (tum KITLE_ evleri)
   m.selection.clear
   load dir + "ev_duzelt.rb"

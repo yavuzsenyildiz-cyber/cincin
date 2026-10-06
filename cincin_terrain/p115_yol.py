@@ -507,6 +507,24 @@ for a_,b_,lo,hi,ty,nl in walls:
     if P.exterior.distance(Point(*mid))<0.05 and P.contains(Point(*(mid+nl*0.15))): nl=-nl
     _wb.append((a_,b_,lo,hi,ty,nl))
 walls=_wb
+# parsel ici duvarlar zeminle ayni seviye: tepe yuksek zeminin 5 mm altinda, govde yuksek tarafin altinda (ustten gorunmez)
+_wi=[]
+for a_,b_,lo,hi,ty,nl in walls:
+    mid=(a_+b_)/2
+    if ty.endswith('_m') or P.exterior.distance(Point(*mid))<0.05 or (gm_zones and LineString([a_,b_]).distance(_zu)<0.8):
+        _wi.append((a_,b_,lo,hi,ty,nl)); continue                                     # sinir, merdiven yani: oldugu gibi
+    d_=b_-a_; L_=np.hypot(*d_)
+    if L_<1e-6: continue
+    n_=np.array([-d_[1],d_[0]])/L_
+    xs=np.array([a_[0]+n_[0]*0.06,b_[0]+n_[0]*0.06,a_[0]-n_[0]*0.06,b_[0]-n_[0]*0.06])
+    ys=np.array([a_[1]+n_[1]*0.06,b_[1]+n_[1]*0.06,a_[1]-n_[1]*0.06,b_[1]-n_[1]*0.06])
+    zz=final(xs,ys)
+    if np.isnan(zz).any(): _wi.append((a_,b_,lo,hi,ty,nl)); continue
+    zp_,zm_=zz[:2],zz[2:]
+    up=n_ if zp_.mean()>zm_.mean() else -n_
+    hi2=np.maximum(zp_,zm_)-0.005; lo2=np.minimum(zp_,zm_)
+    _wi.append((a_,b_,lo2,hi2,ty,up))
+walls=_wi
 # ust uste binen (ayni konumda iki kez uretilen) duvarlar tekillesir: yuksek olan kalir
 _tek={}
 for w_ in walls:
@@ -700,3 +718,42 @@ for i_ in range(len(_pe)):
 with open('p115y_bahce_duvari.txt','w') as f:
     for p0,p1,zb_,out,zm_ in bays: f.write('B %.3f %.3f %.3f %.3f %.3f %.4f %.4f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],zb_,out[0],out[1],zm_))
 print('bahce duvari: %d bolme, %.0f m'%(len(bays),sum(np.hypot(*(b[1]-b[0])) for b in bays)))
+
+# ---------- bitki citleri: otopark-bahce sinirlari boyunca ve her bagimsiz bolum arasinda (bahce ayrimi) ----------
+CIT_IC=0.45     # citin bahce sinirindan iceri mesafesi (duvar govdesinin arkasi)
+_engel=[]       # merdiven agizlari: cit kesilir
+if gm_zones: _engel.append(unary_union([z_ for z_,_ in gm_zones]).buffer(1.2))
+if lot_stair: _engel.append(unary_union([Polygon(q) for _,q in lot_stair]).buffer(1.5))
+_engel=unary_union(_engel) if _engel else Polygon()
+citler=[]
+def _cit_ekle(ln,z_,g_):
+    for g2 in getattr(ln,'geoms',[ln]):
+        if g2.geom_type!='LineString' or g2.length<0.6: continue
+        g3=g2.difference(_engel)
+        for g4 in getattr(g3,'geoms',[g3]):
+            if g4.geom_type=='LineString' and g4.length>=0.6:
+                c_=np.array(g4.coords)
+                for p0,p1 in zip(c_[:-1],c_[1:]):
+                    if np.hypot(*(p1-p0))>0.05: citler.append((p0,p1,z_))
+_otop=unary_union([park_poly,lot_poly])
+for k in range(3):
+    g_=gard[k].difference(FPu)
+    if g_.is_empty: continue
+    # (a) otopark ile bahce siniri: siniri CIT_IC kadar bahceye kaydir
+    sb=g_.boundary.intersection(_otop.buffer(0.08))
+    for s2 in getattr(sb,'geoms',[sb]):
+        if s2.geom_type!='LineString' or s2.length<0.6: continue
+        for sd in (CIT_IC,-CIT_IC):
+            o_=s2.offset_curve(sd)
+            if o_.is_empty: continue
+            if g_.buffer(-0.1).contains(o_.interpolate(0.5,normalized=True)):
+                _cit_ekle(o_.intersection(g_.buffer(-0.2)),Z[k],g_); break
+    # (b) bagimsiz bolumler arasi: bahce tarafinda (guney) evden sinira dik cit
+    u0_,u1_=urange(fps[k]); ns_=float(np.min(np.array(fps[k].exterior.coords)@NU))
+    for i_ in (1,2,3):
+        u_=u0_+i_*(u1_-u0_)/4
+        ln=LineString([U*u_+NU*(ns_+0.5),U*u_+NU*(ns_-40)]).intersection(g_.buffer(-0.2))
+        _cit_ekle(ln,Z[k],g_)
+with open('p115y_bitki.txt','w') as f:
+    for p0,p1,z_ in citler: f.write('H %.3f %.3f %.3f %.3f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],z_))
+print('bitki citi: %d parca, %.0f m'%(len(citler),sum(np.hypot(*(c[1]-c[0])) for c in citler)))
