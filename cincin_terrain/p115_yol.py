@@ -539,6 +539,16 @@ for w_ in walls:
     key=tuple(sorted([tuple(np.round(w_[0],1)),tuple(np.round(w_[1],1))]))
     if key not in _tek or w_[3].max()>_tek[key][3].max(): _tek[key]=w_
 walls=list(_tek.values())
+# ust uste binen kopyalar (birkac mm kaymis): baska duvarlarin %80'ini kapladigi parca atilir -> ortada uc yuzu/cikinti kalmaz
+walls.sort(key=lambda w_: -np.hypot(*(w_[1]-w_[0])))
+_kabul=[]; _kab_geo=[]
+for w_ in walls:
+    ln=LineString([w_[0],w_[1]])
+    if _kab_geo and ln.length>0:
+        yakin=[g_ for g_ in _kab_geo if g_.distance(ln)<0.06]
+        if yakin and ln.intersection(unary_union(yakin).buffer(0.06)).length>=0.8*ln.length: continue
+    _kabul.append(w_); _kab_geo.append(ln)
+walls=_kabul
 with open('p115y_duvar.txt','w') as f:
     from collections import Counter
     cnt=Counter([tuple(np.round(w_[0],2)) for w_ in walls]+[tuple(np.round(w_[1],2)) for w_ in walls])
@@ -734,6 +744,14 @@ if gm_zones: _engel.append(unary_union([z_ for z_,_ in gm_zones]).buffer(1.2))
 if lot_stair: _engel.append(unary_union([Polygon(q) for _,q in lot_stair]).buffer(1.5))
 _engel=unary_union(_engel) if _engel else Polygon()
 citler=[]
+# bagimsiz bolum planlari (bina_iz.txt: B01..B12) -> her yapi icin u sirali bolum listesi
+_bol={k:[] for k in range(3)}
+for _l in open('bina_iz.txt'):
+    _t=_l.split()
+    if _t[0]!='B' or not _t[1].startswith('P115'): continue                    # yalniz bu parselin bolumleri
+    _q=Polygon([tuple(map(float,p_.split(','))) for p_ in _t[3].split(';')])
+    _k=int(np.argmin([_q.centroid.distance(f_) for f_ in fps])); _bol[_k].append((_t[1],_q))
+for _k in _bol: _bol[_k].sort(key=lambda bq: float(np.mean(np.array(bq[1].exterior.coords)@U)))
 def _cit_ekle(ln,z_,g_):
     for g2 in getattr(ln,'geoms',[ln]):
         if g2.geom_type!='LineString' or g2.length<0.6: continue
@@ -756,12 +774,19 @@ for k in range(3):
             if o_.is_empty: continue
             if g_.buffer(-0.1).contains(o_.interpolate(0.5,normalized=True)):
                 _cit_ekle(o_.intersection(g_.buffer(-0.2)),Z[k],g_); break
-    # (b) bagimsiz bolumler arasi: bahce tarafinda (guney) evden sinira dik cit
-    u0_,u1_=urange(fps[k]); ns_=float(np.min(np.array(fps[k].exterior.coords)@NU))
-    for i_ in (1,2,3):
-        u_=u0_+i_*(u1_-u0_)/4
-        ln=LineString([U*u_+NU*(ns_+0.5),U*u_+NU*(ns_-40)]).intersection(g_.buffer(-0.2))
+    # (b) bagimsiz bolumler arasi: gercek bolum sinirlarindan (bina_iz.txt) bahce tarafinda evden guney sinira cit
+    for (b0_,q0_),(b1_,q1_) in zip(_bol[k][:-1],_bol[k][1:]):
+        c0_=np.array(q0_.exterior.coords)[:-1]; c1_=np.array(q1_.exterior.coords)[:-1]
+        u_=0.5*(float((c0_@U).max())+float((c1_@U).min()))                        # iki bolumun ortak siniri
+        ns_=min(float((c0_@NU).min()),float((c1_@NU).min()))
+        ln=LineString([U*u_+NU*(ns_+1.0),U*u_+NU*(ns_-40)]).intersection(g_.buffer(-0.2))
         _cit_ekle(ln,Z[k],g_)
+    # (c) guney parsel siniri boyunca (bahce icinde, sinirdan CIT_IC iceride)
+    _gs=LineString([ring[14],ring[15]]).offset_curve(-CIT_IC) if True else None
+    for sd in (CIT_IC,-CIT_IC):
+        o_=LineString([ring[14],ring[15]]).offset_curve(sd)
+        if P.contains(o_.interpolate(0.5,normalized=True)):
+            _cit_ekle(o_.intersection(g_.buffer(-0.2)),Z[k],g_); break
 with open('p115y_bitki.txt','w') as f:
     for p0,p1,z_ in citler: f.write('H %.3f %.3f %.3f %.3f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],z_))
 print('bitki citi: %d parca, %.0f m'%(len(citler),sum(np.hypot(*(c[1]-c[0])) for c in citler)))
