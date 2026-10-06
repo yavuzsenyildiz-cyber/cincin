@@ -205,6 +205,9 @@ def feat_z(x,y):
     s=np.array([axis.project(Point(a_,b_)) for a_,b_ in zip(x,y)]); return zax(s)
 def final(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float); f=nat(x,y)
+    if 'nat_agiz' in globals():
+        o_=~contains_xy(P,x,y)
+        if o_.any(): f[o_]=nat_agiz(x[o_],y[o_])
     for k,g in enumerate(gard): f[contains_xy(g,x,y)]=Z[k]
     m=contains_xy(hard,x,y)
     if m.any(): f[m]=feat_z(x[m],y[m])
@@ -267,7 +270,21 @@ for poly,tag,zf in parts:
 # parsel disi: dogal arazi
 outer=V[contains_xy(region,V[:,0],V[:,1])&~contains_xy(P,V[:,0],V[:,1])][:,:3]
 far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
-tri_part(region.difference(P),'arazi',nat,step=1.0,extra=np.vstack([outer,far]))
+# giris agzi disinda dogal arazi yola baglanir (yol kenari havada kalmasin): 5 m icinde yol kotundan dogal kota
+opening=P.exterior.intersection(unary_union([mouth.buffer(0.3),sw.buffer(0.2).intersection(Jp.buffer(W/2+2.0))])).difference(unary_union(gard).buffer(0.3))
+AGIZ_D=5.0
+_cP=np.array(P.centroid.coords[0])
+def nat_agiz(x,y):
+    x=np.asarray(x,float); y=np.asarray(y,float); z0=nat(x,y)
+    if opening.is_empty: return z0
+    d=shapely.distance(opening,shapely.points(x,y)); w=np.clip(1-d/AGIZ_D,0,1); m=np.where(w>0)[0]
+    for i_ in m:
+        q=nearest_points(opening,Point(x[i_],y[i_]))[0]; qi=np.array([q.x,q.y]); qi=qi+(_cP-qi)/np.hypot(*(_cP-qi))*0.1   # parselin hemen ici = yol kotu
+        zr=float(final([qi[0]],[qi[1]])[0])
+        if not np.isnan(zr): z0[i_]=w[i_]*zr+(1-w[i_])*(z0[i_] if not np.isnan(z0[i_]) else zr)
+    return z0
+outer[:,2]=nat_agiz(outer[:,0],outer[:,1])
+tri_part(region.difference(P),'arazi',nat_agiz,step=1.0,extra=np.vstack([outer,far]))
 A_=np.vstack(VV)
 UV=np.c_[A_[:,:2],np.ones(len(A_))]@uvA
 with open('p115y_mesh.txt','w') as f:
@@ -288,7 +305,7 @@ for tag,q in groups:
                 a_=p0+(p1-p0)*i/m; b_=p0+(p1-p0)*(i+1)/m; mid=(a_+b_)/2
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
-                if FPu.distance(LineString([a_,b_]))<0.6: continue
+                if FPu.buffer(0.35).contains(LineString([a_,b_])): continue                 # yalniz cepheye yapisik parcalar (dolgu blok kapatir); digerlerinde bosluk kalmasin
                 if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
