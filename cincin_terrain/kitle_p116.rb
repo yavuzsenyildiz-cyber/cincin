@@ -13,7 +13,7 @@ begin
   File.foreach(dir + "p116y_taban.txt") { |ln| t = ln.split; esik[t[1]] = t[3].to_f if t[0] == "B" }
   m.start_operation("P116 kitleleri", true)
   ents = m.entities
-  ents.grep(Sketchup::Group).select { |g| g.name =~ /^KITLE_P116/ }.each(&:erase!)
+  ents.grep(Sketchup::Group).select { |g| g.name =~ /^KITLE_P116/ }.each { |g_| g_.erase! if g_.valid? }
   lay = m.layers.add("KITLE")
   inst = ents.add_instance(m.definitions.load(skp), Geom::Transformation.new)
   parts = inst.explode

@@ -8,7 +8,7 @@ begin
   m.close_active while m.active_path
   m.start_operation("P116 yol + otopark + yaya yolu", true)
   ents = m.entities
-  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P116_ARAZI|P116_BAHCE|P116_DUVAR|P116_OTOPARK|P116_ETIKET|P116_MERDIVEN|P116_KITLE_TABAN|P116_BITKI|P116_YAYA)/ }.each(&:erase!)
+  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P116_ARAZI|P116_BAHCE|P116_DUVAR|P116_OTOPARK|P116_ETIKET|P116_MERDIVEN|P116_KITLE_TABAN|P116_BITKI|P116_YAYA)/ }.each { |g_| g_.erase! if g_.valid? }
   orig = ents.grep(Sketchup::Group).select { |g| g.name.start_with?("ARAZI (PLANKOTE") }
   orig.each { |g| g.hidden = true }
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
