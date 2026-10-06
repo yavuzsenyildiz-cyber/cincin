@@ -546,7 +546,19 @@ for w_ in walls:
     ln=LineString([w_[0],w_[1]])
     if _kab_geo and ln.length>0:
         yakin=[g_ for g_ in _kab_geo if g_.distance(ln)<0.06]
-        if yakin and ln.intersection(unary_union(yakin).buffer(0.06)).length>=0.8*ln.length: continue
+        if yakin:
+            _ub=unary_union(yakin).buffer(0.06,cap_style=2)
+            ort=ln.intersection(_ub).length
+            if ort>=0.8*ln.length: continue
+            if ort>0.05:                                                              # kismen ortusen: yalniz ortusmeyen kismi kalir
+                kal=ln.difference(_ub)
+                for g_ in getattr(kal,'geoms',[kal]):
+                    if g_.geom_type!='LineString' or g_.length<0.1: continue
+                    c_=np.array(g_.coords); L_=ln.length
+                    t0=np.dot(c_[0]-w_[0],w_[1]-w_[0])/L_**2; t1=np.dot(c_[-1]-w_[0],w_[1]-w_[0])/L_**2
+                    lo_=w_[2][0]+(w_[2][1]-w_[2][0])*np.array([t0,t1]); hi_=w_[3][0]+(w_[3][1]-w_[3][0])*np.array([t0,t1])
+                    _kabul.append((c_[0],c_[-1],lo_,hi_,w_[4],w_[5])); _kab_geo.append(LineString([c_[0],c_[-1]]))
+                continue
     _kabul.append(w_); _kab_geo.append(ln)
 walls=_kabul
 with open('p115y_duvar.txt','w') as f:
