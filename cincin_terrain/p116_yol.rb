@@ -11,17 +11,6 @@ begin
   ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P116_ARAZI|P116_BAHCE|P116_DUVAR|P116_OTOPARK|P116_ETIKET|P116_MERDIVEN|P116_KITLE_TABAN|P116_BITKI|P116_YAYA)/ }.each(&:erase!)
   orig = ents.grep(Sketchup::Group).select { |g| g.name.start_with?("ARAZI (PLANKOTE") }
   orig.each { |g| g.hidden = true }
-  # P116 evlerini LP ile bulunan subasman kotuna (taban dosyasi) tasi: en az harfiyat; tekrar calistirmada kayma olmaz
-  nkay = 0
-  File.foreach(dir + "p116y_taban.txt") do |ln|
-    t = ln.split; next unless t[0] == "B"
-    ev = ents.grep(Sketchup::Group).find { |g| g.name == "KITLE_" + t[1] }
-    next unless ev
-    dz = t[2].to_f - ev.bounds.min.z.to_m
-    if dz.abs > 0.005
-      ev.transform!(Geom::Transformation.translation(Geom::Vector3d.new(0, 0, dz.m))); nkay += 1
-    end
-  end
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
   # SketchUp malzeme kutuphanesinden (.skm) malzeme yukle; bulunamazsa duz renkli yedek
   kutup = lambda do |adlar, yedek, r, g, b|
@@ -221,7 +210,7 @@ begin
   end
   ndirek = 0
   m.commit_operation
-  File.write(dir + "p116_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} cit=#{ncit} yaya_direk=#{ndirek} gizlenen_arazi=#{orig.length} ev_kaydirilan=#{nkay}")
+  File.write(dir + "p116_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} cit=#{ncit} yaya_direk=#{ndirek} gizlenen_arazi=#{orig.length}")
   # ev altlari: subasman altindaki acik kalan yerleri tas kapli dolgu blokla kapat (tum KITLE_ evleri)
   m.selection.clear
   load dir + "ev_duzelt.rb"
