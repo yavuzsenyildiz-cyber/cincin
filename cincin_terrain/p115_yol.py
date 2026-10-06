@@ -57,7 +57,14 @@ def _kes(r):
 real_fp=[_kes(r) for r in real_fp]
 real_fp=[r if r.geom_type=='Polygon' else max(r.geoms,key=lambda q:q.area) for r in real_fp if not r.is_empty]
 FPu=unary_union(fps+real_fp)
-FPu_ic=FPu.buffer(-0.30,join_style=2)      # yol evin 30 cm altina girer (ev/perde altinda gizli): kose sivrileri havada kalmaz
+# yol yalniz evin YOL CEPHESINDE (cephe hattinin 30 cm icinden kuzeye) iz icine girer: kose sivrisi havada kalmaz,
+# evin yanlarinda/bahce tarafinda yol ize sizmaz (bahcede bosluk olmaz)
+_nf=[]
+for f_ in fps:
+    nf_=float(np.max(np.array(f_.exterior.coords)@NU))
+    u0_,u1_=urange(f_)
+    _nf.append(Polygon([U*(u0_-3)+NU*(nf_-0.30),U*(u1_+3)+NU*(nf_-0.30),U*(u1_+3)+NU*(nf_+1e3),U*(u0_-3)+NU*(nf_+1e3)]))
+FPu_ic=FPu.difference(unary_union(_nf))
 
 # ---------- kapilar ----------
 d=json.loads(subprocess.check_output(['git','show','HEAD:cincin_terrain/kitle_dump.json']))
@@ -337,9 +344,48 @@ def tri_part(poly,tag,zf,step=1.0,extra=None):
     q2=A3[:,:2]; u=q2[Tt[:,1]]-q2[Tt[:,0]]; w=q2[Tt[:,2]]-q2[Tt[:,0]]; cr=u[:,0]*w[:,1]-u[:,1]*w[:,0]
     Tt=Tt[np.abs(cr)>1e-6]; cr=cr[np.abs(cr)>1e-6]; Tt[cr<0]=Tt[cr<0][:,[0,2,1]]
     base=sum(len(v_) for v_ in VV); VV.append(A3); FF.extend((t_+base,tag) for t_ in Tt)
+# parsel icinde hicbir alana dusmeyen artik parcalar (birlesim sivrileri) doldurulur: zeminde bosluk kalmaz
+_kap=unary_union([q for q,_,_ in parts if not q.is_empty])
+_art=P.difference(_kap)
+for g_ in getattr(_art,'geoms',[_art]):
+    if g_.geom_type=='Polygon' and g_.area>1e-5:
+        tg_='asfalt' if hard.buffer(0.05).contains(g_.representative_point()) else 'cim'
+        parts.append((g_,tg_,final))
+# kisitli ucgenleme: alan 1 m karelere bolunur, her kare kendi sinirina oturan ucgenlerle tam doldurulur (bosluk/tasma yok)
+_vid={}
+def tri_cdt(poly,tag,zf,step=1.0):
+    if poly.is_empty: return
+    x0_,y0_,x1_,y1_=poly.bounds
+    cells=[]
+    for gx_ in np.arange(np.floor(x0_),x1_,step):
+        for gy_ in np.arange(np.floor(y0_),y1_,step):
+            c_=poly.intersection(box(gx_,gy_,gx_+step,gy_+step))
+            for g_ in getattr(c_,'geoms',[c_]):
+                if g_.geom_type=='Polygon' and g_.area>1e-6: cells.append(shapely.segmentize(g_,0.5))
+    if not cells: return
+    tris=shapely.constrained_delaunay_triangles(shapely.GeometryCollection(cells) if len(cells)>1 else cells[0])
+    pts=[]; idx=[]
+    for t_ in getattr(tris,'geoms',[tris]):
+        cc=np.array(t_.exterior.coords)[:3]
+        if abs((cc[1,0]-cc[0,0])*(cc[2,1]-cc[0,1])-(cc[1,1]-cc[0,1])*(cc[2,0]-cc[0,0]))<1e-8: continue
+        pts.append(cc)
+    if not pts: return
+    pts=np.array(pts); flat=pts.reshape(-1,2)
+    zz=zf(flat[:,0],flat[:,1])
+    base=sum(len(v_) for v_ in VV); loc={}; A3=[]
+    ids=[]
+    for (x_,y_),z_ in zip(flat,zz):
+        key=(round(x_,3),round(y_,3))
+        if key not in loc: loc[key]=len(A3); A3.append((x_,y_,z_))
+        ids.append(loc[key])
+    ids=np.array(ids).reshape(-1,3)
+    A3=np.array(A3)
+    q2=A3[:,:2]; u=q2[ids[:,1]]-q2[ids[:,0]]; w=q2[ids[:,2]]-q2[ids[:,0]]; cr=u[:,0]*w[:,1]-u[:,1]*w[:,0]
+    ids[cr<0]=ids[cr<0][:,[0,2,1]]
+    VV.append(A3); FF.extend((t_+base,tag) for t_ in ids)
 for poly,tag,zf in parts:
     for pg in ([poly] if poly.geom_type=='Polygon' else [q for q in getattr(poly,'geoms',[]) if q.geom_type=='Polygon']):
-        tri_part(pg,tag,zf)
+        tri_cdt(pg,tag,zf)
 # parsel disi: dogal arazi
 outer=V[contains_xy(region,V[:,0],V[:,1])&~contains_xy(P,V[:,0],V[:,1])][:,:3]
 far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
