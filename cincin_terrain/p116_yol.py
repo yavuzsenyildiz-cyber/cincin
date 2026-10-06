@@ -472,7 +472,7 @@ for poly,tag,zf in parts:
 outer=V[contains_xy(region,V[:,0],V[:,1])&~contains_xy(P,V[:,0],V[:,1])][:,:3]
 far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
 # giris agzi disinda dogal arazi yola baglanir (yol kenari havada kalmasin): 5 m icinde yol kotundan dogal kota
-opening=P.exterior.intersection(unary_union([mouth.buffer(0.3),sw.buffer(0.2).intersection(Jp.buffer(W/2+2.0))])).difference(unary_union(gard).buffer(0.3))
+opening=P.exterior.intersection(unary_union([mouth.buffer(0.3),sw.buffer(0.2).intersection(Jp.buffer(W/2+2.0)),sw.buffer(0.2).intersection(road_poly.buffer(0.3))])).difference(unary_union(gard).buffer(0.3))   # yolun bati kenara degdigi her yer arac girisi
 AGIZ_D=5.0
 _cP=np.array(P.centroid.coords[0])
 def nat_agiz(x,y):
@@ -536,7 +536,7 @@ for tag,q in groups:
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
                 if LineString([a_,b_]).intersection(FPu.buffer(0.35)).length>=0.6*np.hypot(*(b_-a_)): continue   # cepheye yapisik parcalar (temel perdesi kapatir): egik tepeli ucgen duvar olmasin
-                if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik
+                if sw.distance(Point(*mid))<0.2 and (Point(*mid).distance(Jp)<W/2+2.0 or opening.buffer(0.3).contains(Point(*mid))): continue   # kamu yolundan arac girisi: acik
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])

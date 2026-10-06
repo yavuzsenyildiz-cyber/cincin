@@ -433,19 +433,19 @@ if NB_POLY is not None and os.path.exists(NB_PFX+'agiz.txt'):
     import shapely.wkt; NB_OPEN=shapely.wkt.loads(open(NB_PFX+'agiz.txt').read())
 _cP=np.array(P.centroid.coords[0])
 def nat_agiz(x,y):
-    x=np.asarray(x,float); y=np.asarray(y,float); z0=nat(x,y)
-    if NB_OPEN is not None and not NB_OPEN.is_empty:                                      # komsu (116) giris agzi: dogal arazi onun yol kotuna baglanir
-        d=shapely.distance(NB_OPEN,shapely.points(x,y)); w=np.clip(1-d/AGIZ_D,0,1); _cN=np.array(NB_POLY.centroid.coords[0])
-        for i_ in np.where(w>0)[0]:
+    # dogal arazi, en yakin arac girisi agzinin yol kotuna AGIZ_D icinde baglanir (115 agzi veya komsu 116 agzi; ikisi karismaz)
+    x=np.asarray(x,float); y=np.asarray(y,float); z0=nat(x,y); pts=shapely.points(x,y)
+    dO=shapely.distance(opening,pts) if not opening.is_empty else np.full(len(x),np.inf)
+    dN=shapely.distance(NB_OPEN,pts) if (NB_OPEN is not None and not NB_OPEN.is_empty) else np.full(len(x),np.inf)
+    _cN=np.array(NB_POLY.centroid.coords[0]) if NB_POLY is not None else None
+    for i_ in np.where(np.minimum(dO,dN)<AGIZ_D)[0]:
+        if dN[i_]<dO[i_]:
             q=nearest_points(NB_OPEN,Point(x[i_],y[i_]))[0]; qi=np.array([q.x,q.y]); qi=qi+(_cN-qi)/np.hypot(*(_cN-qi))*0.1
-            zr=float(nbz([qi[0]],[qi[1]])[0])
-            if not np.isnan(zr): z0[i_]=w[i_]*zr+(1-w[i_])*(z0[i_] if not np.isnan(z0[i_]) else zr)
-    if opening.is_empty: return z0
-    d=shapely.distance(opening,shapely.points(x,y)); w=np.clip(1-d/AGIZ_D,0,1); m=np.where(w>0)[0]
-    for i_ in m:
-        q=nearest_points(opening,Point(x[i_],y[i_]))[0]; qi=np.array([q.x,q.y]); qi=qi+(_cP-qi)/np.hypot(*(_cP-qi))*0.1   # parselin hemen ici = yol kotu
-        zr=float(final([qi[0]],[qi[1]])[0])
-        if not np.isnan(zr): z0[i_]=w[i_]*zr+(1-w[i_])*(z0[i_] if not np.isnan(z0[i_]) else zr)
+            zr=float(nbz([qi[0]],[qi[1]])[0]); w=1-dN[i_]/AGIZ_D
+        else:
+            q=nearest_points(opening,Point(x[i_],y[i_]))[0]; qi=np.array([q.x,q.y]); qi=qi+(_cP-qi)/np.hypot(*(_cP-qi))*0.1   # parselin hemen ici = yol kotu
+            zr=float(final([qi[0]],[qi[1]])[0]); w=1-dO[i_]/AGIZ_D
+        if not np.isnan(zr): z0[i_]=w*zr+(1-w)*(z0[i_] if not np.isnan(z0[i_]) else zr)
     return z0
 outer[:,2]=nat_agiz(outer[:,0],outer[:,1])
 tri_part(region.difference(P) if NB_POLY is None else region.difference(P).difference(NB_POLY),'arazi',nat_agiz,step=1.0,extra=np.vstack([outer,far]))
