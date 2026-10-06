@@ -130,7 +130,8 @@ begin
     CincinEv.alt_noktalar(ev.definition.entities, ev.transformation, pts)
     next if pts.empty?
     zb = pts.map(&:z).min
-    alt = pts.select { |q| q.z < zb + 0.03.m }
+    # Dis cizgi: evin alt 0.6 m'sindeki tum noktalar (cepheden tasan plinth bandi dahil)
+    alt = pts.select { |q| q.z < zb + 0.6.m }
     hull = CincinEv.kabuk(alt)
     next if hull.length < 3
     alanlar = CincinEv.malzeme(ev.definition.entities)
@@ -138,66 +139,46 @@ begin
     tas ||= m.materials.find { |mt| mt.name =~ /Stone Sandstone Ashlar/i }
     tas ||= alanlar.max_by { |_, a| a }&.first
     tas ||= m.materials["ETEK_DUVAR"] || m.materials.add("ETEK_DUVAR").tap { |x| x.color = Sketchup::Color.new(200, 175, 130) }
-    # Evin altini subasman tabanina kadar dolu beton blokla kapat: kitle tabani izinden, cevredeki
-    # (ERISIM m icindeki) en alcak zeminin GOMME kadar altina inen masif blok. Dis yuzler tas kapli.
-    zmin = nil; ilk = nil
+    # TEMEL PERDESI: dis cizginin her kenarinda, disaridaki zemin tabandan asagidaysa, plinth'in dis yuzuyle ayni
+    # hizada (1 cm iceride) tas kapli perde: ustu plinth altina (o kenardaki en alt cephe noktasi) degip biter,
+    # alti zeminin 30 cm altina iner. Zemin taban kotunda olan kenarlarda (bahce) perde yok -> yuzeye cikmaz.
+    gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
+    kenar = 0; hmax = 0.0
     hull.each_with_index do |a, i|
       b = hull[(i + 1) % hull.length]
       dx = b[0] - a[0]; dy = b[1] - a[1]; len = Math.hypot(dx, dy)
       next if len < 0.10.m
-      dis = Geom::Vector3d.new(dy / len, -dx / len, 0)
+      ux = dx / len; uy = dy / len
+      dis = Geom::Vector3d.new(uy, -ux, 0)
+      # bu kenardaki cephenin en alt noktasi (plinth alti)
+      yakin = alt.select do |q|
+        t = (q.x - a[0]) * ux + (q.y - a[1]) * uy
+        t > -0.05.m && t < len + 0.05.m && ((q.x - a[0]) * dis.x + (q.y - a[1]) * dis.y).abs < 0.05.m
+      end
+      zt = (yakin.empty? ? zb : yakin.map(&:z).min) + 0.01.m
       n = [(len.to_m / CincinEv::ADIM).ceil, 1].max
-      (0..n).each do |k|
+      dip = (0..n).map do |k|
         x = a[0] + dx * k / n; y = a[1] + dy * k / n
-        (0..CincinEv::ERISIM_N).each do |j|
-          d = 0.05 + j * CincinEv::ERISIM / CincinEv::ERISIM_N
-          r = CincinEv.zemin(m, x + dis.x * d.m, y + dis.y * d.m, zb + 0.20.m, [ev])
-          next unless r
-          ilk ||= r
-          zmin = r[0] if zmin.nil? || r[0] < zmin
-        end
+        gz = [0.1, 0.4, 0.8].map { |d| r = CincinEv.zemin(m, x + dis.x * d.m, y + dis.y * d.m, zt + 0.5.m, [ev]); r && r[0] }.compact.min
+        gz = zt if gz.nil? || gz > zt
+        [x, y, gz]
       end
-    end
-    h = zmin ? (zb - zmin).to_m : 0.0
-    if zmin.nil? || h < CincinEv::ESIK
-      rapor << format("%s: taban %.2f, cevre en alcak %s -> dolgu gerekmedi", ev.name, zb.to_m, zmin ? format("%.2f", zmin.to_m) : "yok")
-      next
-    end
-    gp = ents.add_group; gp.name = "PERDE_#{ev.name}"; gp.layer = lay
-    # Blok evin GERCEK tabanindan: asagi bakan alt yuzler (subasman ve basamak altlari, doseme +0.30 altinda kalanlar)
-    # tek tek asagi uzatilir. Dis sinir (kabuk) kullanilmaz: girintilerde/kapi onlerinde tas yuzey acikta kalmaz.
-    zdip = zmin - CincinEv::GOMME.m
-    yuzler = []
-    CincinEv.alt_yuzler(ev.definition.entities, ev.transformation, zb + 1.5.m, yuzler)
-    # 1) dosemenin (zb+0.30) altindaki tum alt yuzler; 2) daha yukaridaki ama taban izi DISINA tasan buyuk alt yuzler
-    # (cepheden tasan subasman/plinth alti, >= 1 m2): plinth ile zemin arasi bosluk dolar; esya/denizlik alti dolmaz
-    hp = hull.map { |x, y| Geom::Point3d.new(x, y, 0) }
-    yuzler = yuzler.select do |poly|
-      zt = poly.map(&:z).max
-      next true if zt < zb + 0.29.m
-      alan = 0.0
-      poly.each_with_index { |p0, i| p1 = poly[(i + 1) % poly.length]; alan += p0.x.to_m * p1.y.to_m - p1.x.to_m * p0.y.to_m }
-      next false if alan.abs / 2 < 1.0
-      c = poly.inject(Geom::Vector3d.new(0, 0, 0)) { |v, q| v + Geom::Vector3d.new(q.x, q.y, 0) }
-      c = Geom::Point3d.new(c.x / poly.length, c.y / poly.length, 0)
-      seg = lambda do |a_, b_|
-        ab = b_ - a_; t = ab.length > 0 ? ((c - a_).dot(ab) / (ab.length**2)) : 0
-        t = [[t, 0].max, 1].min
-        c.distance(a_.offset(ab, ab.length * t))
-      end
-      !Geom.point_in_polygon_2D(c, hp, true) || hp.each_index.map { |i| seg.(hp[i], hp[(i + 1) % hp.length]) }.min < 0.6.m
-    end
-    yuzler.each do |poly|
-      zt = poly.map(&:z).max
-      next if zt - zdip < 0.02.m
+      h = dip.map { |q| (zt - q[2]).to_m }.max
+      next if h < 0.05
+      hmax = [hmax, h].max
+      ic = Geom::Vector3d.new(-dis.x, -dis.y, 0); ic.length = 0.01.m
+      ust = [Geom::Point3d.new(a[0], a[1], zt), Geom::Point3d.new(b[0], b[1], zt)].map { |q| q.offset(ic) }
+      alt_ = dip.reverse.map { |x, y, gz| Geom::Point3d.new(x, y, [gz - CincinEv::GOMME.m, zt - 0.05.m].min).offset(ic) }
       sg = gp.entities.add_group
-      f = sg.entities.add_face(poly.map { |q| Geom::Point3d.new(q.x, q.y, zt) }) rescue nil
+      f = (sg.entities.add_face(ust + alt_) rescue nil)
       next unless f
-      f.reverse! if f.normal.z > 0
-      f.pushpull(zt - zdip)
+      f.pushpull(f.normal.dot(dis) > 0 ? -0.30.m : 0.30.m)
       sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
+      kenar += 1
     end
-    rapor << format("%s: dolgu %d parca, taban %.2f -> %.2f (%.2f m), malzeme %s", ev.name, gp.entities.length, zb.to_m, (zmin.to_m - CincinEv::GOMME), h + CincinEv::GOMME, tas.name)
+    if kenar.zero? then gp.erase!; rapor << format("%s: perde gerekmedi", ev.name)
+    else rapor << format("%s: temel perdesi %d kenar, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name)
+    end
   end
   m.commit_operation
   kirmizimsi = m.materials.select { |x| c = x.color; c.red > 150 && c.red > c.green * 1.8 && c.red > c.blue * 1.8 }
