@@ -18,14 +18,13 @@ begin
   inst = ents.add_instance(m.definitions.load(skp), Geom::Transformation.new)
   parts = inst.explode
   groups = parts.select { |e| e.valid? && e.is_a?(Sketchup::Group) }
-  keep = []; placed = 0; missing = []
+  keep = []; placed = 0; missing = []; log = []
   plan.each do |p|
     b = p["bounds"]
-    g = groups.find do |x|
-      next false unless x.valid? && !keep.include?(x)
-      bx = x.bounds
-      [bx.min.x, bx.min.y, bx.min.z, bx.max.x, bx.max.y, bx.max.z].map(&:to_m).each_with_index.all? { |val, i| (val - b[i]).abs < 0.05 }
-    end
+    bd = lambda { |x| bx = x.bounds; [bx.min.x, bx.min.y, bx.min.z, bx.max.x, bx.max.y, bx.max.z].map(&:to_m) }
+    cand = groups.select { |x| x.valid? && !keep.include?(x) }.map { |x| [x, bd.(x).each_with_index.map { |v, i| (v - b[i]).abs }.max] }.min_by { |_, d| d }
+    g = (cand && cand[1] < 1.0) ? cand[0] : nil
+    log << "#{p['yapi']}: en yakin sapma=#{cand ? cand[1].round(3) : 'yok'} (grup sayisi #{groups.length})"
     if g.nil? || esik[p["yapi"]].nil? then missing << p["yapi"]; next end
     dz = esik[p["yapi"]] - p["kapi_alt_kotlar"].first
     g.transform!(Geom::Transformation.translation(Geom::Vector3d.new(0, 0, dz.m)))
@@ -36,9 +35,11 @@ begin
   (parts.select(&:valid?) - keep).each { |e| e.erase! if e.valid? }
   m.definitions.purge_unused
   m.commit_operation
-  File.write(dir + "kitle_p116_result.txt", "OK yerlestirilen=#{placed}/#{plan.length} eksik=#{missing.inspect}")
+  File.write(dir + "kitle_p116_result.txt", "OK yerlestirilen=#{placed}/#{plan.length} eksik=#{missing.inspect}\n#{log.join("\n")}\nskp=#{skp}")
+  UI.messagebox("P116 kitleleri: #{placed}/#{plan.length} yerlestirildi\n#{log.join("\n")}")
   load dir + "p116_yol.rb" if missing.empty?
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "kitle_p116_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(3).join("\n")}")
+  UI.messagebox("HATA: #{e.message}")
 end
