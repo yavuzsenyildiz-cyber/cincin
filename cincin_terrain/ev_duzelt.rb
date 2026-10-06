@@ -163,18 +163,38 @@ begin
         gz = zt if gz.nil? || gz > zt
         [x, y, gz]
       end
-      h = dip.map { |q| (zt - q[2]).to_m }.max
-      next if h < 0.05
-      hmax = [hmax, h].max
+      # cephe gercekten bu kenarda mi? disaridan eve yatay isin: 0.6 m icinde ev yuzeyi varsa evet
+      # (girinti/kapi onu/bahceyi kesen kabuk kirisleri -> perde yok)
+      var = (0..n).map do |k|
+        x, y, = dip[k]
+        o = Geom::Point3d.new(x + dis.x * 0.5.m, y + dis.y * 0.5.m, zt + 0.10.m)
+        hit = m.raytest([o, Geom::Vector3d.new(-dis.x, -dis.y, 0)], true)
+        hit && hit[1].include?(ev) && hit[0].distance(o) < 1.1.m
+      end
       ic = Geom::Vector3d.new(-dis.x, -dis.y, 0); ic.length = 0.01.m
-      ust = [Geom::Point3d.new(a[0], a[1], zt), Geom::Point3d.new(b[0], b[1], zt)].map { |q| q.offset(ic) }
-      alt_ = dip.reverse.map { |x, y, gz| Geom::Point3d.new(x, y, [gz - CincinEv::GOMME.m, zt - 0.05.m].min).offset(ic) }
-      sg = gp.entities.add_group
-      f = (sg.entities.add_face(ust + alt_) rescue nil)
-      next unless f
-      f.pushpull(f.normal.dot(dis) > 0 ? -0.30.m : 0.30.m)
-      sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
-      kenar += 1
+      k = 0
+      while k < n
+        if !(var[k] && var[k + 1]) then k += 1; next end
+        k1 = k
+        k1 += 1 while k1 < n && var[k1 + 1]
+        parca = dip[k..k1]
+        h = parca.map { |q| (zt - q[2]).to_m }.max
+        if h >= 0.05
+          hmax = [hmax, h].max
+          ust = [parca.first, parca.last].map { |x, y, _| Geom::Point3d.new(x, y, zt).offset(ic) }
+          alt_ = parca.reverse.map { |x, y, gz| Geom::Point3d.new(x, y, [gz - CincinEv::GOMME.m, zt - 0.05.m].min).offset(ic) }
+          sg = gp.entities.add_group
+          f = (sg.entities.add_face(ust + alt_) rescue nil)
+          if f
+            f.pushpull(f.normal.dot(dis) > 0 ? -0.30.m : 0.30.m)
+            sg.entities.grep(Sketchup::Face).each { |q| q.material = tas; q.back_material = tas }
+            kenar += 1
+          else
+            sg.erase!
+          end
+        end
+        k = k1 + 1
+      end
     end
     if kenar.zero? then gp.erase!; rapor << format("%s: perde gerekmedi", ev.name)
     else rapor << format("%s: temel perdesi %d kenar, en yuksek %.2f m, malzeme %s", ev.name, kenar, hmax, tas.name)

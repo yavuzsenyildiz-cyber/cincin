@@ -207,6 +207,11 @@ for k in range(3):
     g_=gard[k]; gc_=g_.buffer(-0.5,join_style=2).buffer(0.5,join_style=2).intersection(g_)
     sl=g_.difference(gc_).difference(FPu)
     if not sl.is_empty and sl.area>0.01: sliv.append(sl)
+for j,k in enumerate(order):                                   # evin kuzey cephe hattinin otesindeki (yol tarafi) bahce parcalari
+    nmax=max(float(np.max(np.array(q.exterior.coords)@NU)) for q in [fps[k]]+[r for r in real_fp if r.intersects(slab_u(cuts[j],cuts[j+1])) and r.distance(fps[k])<1.0])
+    kuz=Polygon([U*-1e4+NU*nmax,U*1e4+NU*nmax,U*1e4+NU*(nmax+1e3),U*-1e4+NU*(nmax+1e3)])
+    ky=gard[k].intersection(kuz).difference(FPu)
+    if ky.area>0.05: sliv.append(ky); print('%s cephe onu bahce parcasi yola: %.1f m2'%(names[k],ky.area))
 if sliv:
     print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
     road_poly=unary_union([road_poly]+sliv).buffer(0.01).buffer(-0.01)
@@ -254,7 +259,13 @@ for k,gg in enumerate(gard): parts.append((gg.difference(FPu),'cim',const(Z[k]))
 # bina izleri (girinti/avlu dahil) bahceyle ayni kotta yesil: teras/tas yuzey kalmaz
 for pp_,tg in ((road_poly,'asfalt'),(park_poly,'otopark'),(walk_poly,'yaya')): parts.append((pp_,tg,feat_z))
 parts.append((lot_poly,'otopark',lot_z))
-for j_,k in enumerate(order): parts.append((FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1])),'cim',const(Z[k])))   # bina izleri (gercek iz dahil)
+for j_,k in enumerate(order):                                   # bina izleri: yol tarafi (kuzey) kaldirim, bahce tarafi cim
+    fz=FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1]))
+    if fz.is_empty: continue
+    nc=float(np.mean(np.array(fps[k].exterior.coords)@NU))
+    kuzey=Polygon([U*-1e4+NU*nc,U*1e4+NU*nc,U*1e4+NU*(nc+1e3),U*-1e4+NU*(nc+1e3)])
+    parts.append((fz.intersection(kuzey),'kaldirim',const(Z[k])))
+    parts.append((fz.difference(kuzey),'cim',const(Z[k])))
 VV=[]; FF=[]
 def tri_part(poly,tag,zf,step=1.0,extra=None):
     if poly.is_empty: return
@@ -350,7 +361,7 @@ with open('p115y_duvar.txt','w') as f:
     for a_,b_,lo,hi,ty,nl in walls:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
         tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
-        uzat_ok=lambda q: not (hard.contains(Point(*q)) or FPu.contains(Point(*q)))   # uc yola/evin icine tasmasin (cikinti olmasin)
+        uzat_ok=lambda q: not hard.contains(Point(*q))                                 # uc yola tasmasin; evin icine uzayabilir (kose boslugu kapanir)
         if e0 and uzat_ok(a_-tv_*0.30): a_=a_-tv_*0.30
         if e1 and uzat_ok(b_+tv_*0.30): b_=b_+tv_*0.30
         f.write('W %s %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %d %d\n'%(ty,a_[0],a_[1],b_[0],b_[1],lo[0]-0.3,lo[1]-0.3,hi[0],hi[1],nl[0],nl[1],e0,e1))
