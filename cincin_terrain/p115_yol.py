@@ -50,6 +50,12 @@ for _l in open('bolge_dump.txt'):
     if _l.startswith('  TABAN '):
         _p=[tuple(map(float,q.split(','))) for q in _l.split()[1].split(';')]
         if len(_p)>=3: real_fp.append(shapely.MultiPoint(_p).convex_hull)
+# gercek izler yol tarafinda cephe (duvar) hattinda kesilir: kapi onu basamak cikintilari izi buyutmesin
+def _kes(r):
+    k_=int(np.argmin([r.distance(f_) for f_ in fps])); nf_=float(np.max(np.array(fps[k_].exterior.coords)@NU))+0.01
+    return r.intersection(Polygon([U*-1e4+NU*(nf_-1e3),U*1e4+NU*(nf_-1e3),U*1e4+NU*nf_,U*-1e4+NU*nf_]))
+real_fp=[_kes(r) for r in real_fp]
+real_fp=[r if r.geom_type=='Polygon' else max(r.geoms,key=lambda q:q.area) for r in real_fp if not r.is_empty]
 FPu=unary_union(fps+real_fp)
 
 # ---------- kapilar ----------
@@ -208,7 +214,7 @@ for k in range(3):
     sl=g_.difference(gc_).difference(FPu)
     if not sl.is_empty and sl.area>0.01: sliv.append(sl)
 for j,k in enumerate(order):                                   # evin kuzey cephe hattinin otesindeki (yol tarafi) bahce parcalari
-    nmax=max(float(np.max(np.array(q.exterior.coords)@NU)) for q in [fps[k]]+[r for r in real_fp if r.intersects(slab_u(cuts[j],cuts[j+1])) and r.distance(fps[k])<1.0])
+    nmax=float(np.max(np.array(fps[k].exterior.coords)@NU))      # cephe (duvar) hatti; kapi onu basamaklari degil
     kuz=Polygon([U*-1e4+NU*nmax,U*1e4+NU*nmax,U*1e4+NU*(nmax+1e3),U*-1e4+NU*(nmax+1e3)])
     ky=gard[k].intersection(kuz).difference(FPu)
     if ky.area>0.05: sliv.append(ky); print('%s cephe onu bahce parcasi yola: %.1f m2'%(names[k],ky.area))
@@ -262,9 +268,9 @@ parts.append((lot_poly,'otopark',lot_z))
 for j_,k in enumerate(order):                                   # bina izleri: yol tarafi (kuzey) kaldirim, bahce tarafi cim
     fz=FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1]))
     if fz.is_empty: continue
-    nc=float(np.mean(np.array(fps[k].exterior.coords)@NU))
-    kuzey=Polygon([U*-1e4+NU*nc,U*1e4+NU*nc,U*1e4+NU*(nc+1e3),U*-1e4+NU*(nc+1e3)])
-    kald=fz.intersection(kuzey).intersection(hard.buffer(1.0))                   # yalniz yola bitisik serit kaldirim; bahceye bakan (merdiven yani vb.) yesil
+    _c=np.array(fps[k].exterior.coords); nf=float((_c@NU).max()); u0f,u1f=float((_c@U).min()),float((_c@U).max())
+    # kaldirim: yalniz evin onu - cephe hatti ile yol arasi, evin boyu kadar; evin yanlari ve bahce tarafi yesil
+    kald=fz.intersection(Polygon([U*u0f+NU*(nf-0.05),U*u1f+NU*(nf-0.05),U*u1f+NU*(nf+1e3),U*u0f+NU*(nf+1e3)]))
     parts.append((kald,'kaldirim',const(Z[k])))
     parts.append((fz.difference(kald),'cim',const(Z[k])))
 VV=[]; FF=[]
