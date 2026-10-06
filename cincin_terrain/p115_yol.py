@@ -374,7 +374,7 @@ for tag,q in groups:
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
-                if np.isnan(zo).any() or np.abs(zi-zo).max()<0.10: continue                       # 10 cm alti kot farki duvar degil
+                if np.isnan(zo).any() or (np.abs(zi-zo).max()<0.10 and P.exterior.distance(Point(*mid))>0.05): continue   # 10 cm alti fark duvar degil (parsel sinirinda duvar kesintisiz)
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
@@ -414,7 +414,14 @@ if gm_zones:
     for u_e,sg_,n0,n1,zp,zg,run in gm_info:
         for nn_,dn in ((n0,-1.0),(n1,1.0)):
             a_=U*u_e+NU*nn_; b_=U*(u_e+sg_*run)+NU*nn_
-            walls.append((a_,b_,np.array([zp,zp]),np.array([zg+0.01,zg+0.01]),'istinat',NU*dn))
+            walls.append((a_,b_,np.array([zp,zp]),np.array([zg+0.01,zg+0.01]),'istinat_m',NU*dn))   # _m: merdiven yani, uzatilmaz
+# parsel sinirindaki duvarlarin govdesi hep parsel disinda: ic yuzler sinir cizgisinde ayni hizada (kademe olmaz)
+_wb=[]
+for a_,b_,lo,hi,ty,nl in walls:
+    mid=(a_+b_)/2
+    if P.exterior.distance(Point(*mid))<0.05 and P.contains(Point(*(mid+nl*0.15))): nl=-nl
+    _wb.append((a_,b_,lo,hi,ty,nl))
+walls=_wb
 # ust uste binen (ayni konumda iki kez uretilen) duvarlar tekillesir: yuksek olan kalir
 _tek={}
 for w_ in walls:
@@ -433,6 +440,7 @@ with open('p115y_duvar.txt','w') as f:
             if x_.is_empty: return None
             t_=min(np.dot(np.array(q_)-p_,d_) for g_ in getattr(x_,'geoms',[x_]) for q_ in g_.coords)
             return p_+d_*(t_+0.05) if 0.0<t_<2.0 else None
+        if ty.endswith('_m'): e0=e1=0                                                   # merdiven yan duvari tam boyunda
         if e0:
             q_=eve_uzat(a_,-tv_)
             if q_ is not None: a_=q_

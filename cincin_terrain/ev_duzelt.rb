@@ -155,19 +155,22 @@ begin
         t = (q.x - a[0]) * ux + (q.y - a[1]) * uy
         t > -0.05.m && t < len + 0.05.m && ((q.x - a[0]) * dis.x + (q.y - a[1]) * dis.y).abs < 0.05.m
       end
-      zt = (yakin.empty? ? zb : yakin.map(&:z).min) + 0.01.m
+      # perde ustu: plinth bandinin ARKASINA kadar (doseme alti, zb+0.29); band alti egimli olsa da kama bosluk kalmaz.
+      # Perde dis yuzu banttan 1 cm iceride oldugu icin disaridan gorunmez.
+      zt0 = (yakin.empty? ? zb : yakin.map(&:z).min) + 0.01.m      # plinth alt kenari
+      zt = [zb + 0.29.m, zt0].max
       n = [(len.to_m / CincinEv::ADIM).ceil, 1].max
       dip = (0..n).map do |k|
         x = a[0] + dx * k / n; y = a[1] + dy * k / n
         gz = [0.1, 0.4, 0.8].map { |d| r = CincinEv.zemin(m, x + dis.x * d.m, y + dis.y * d.m, zt + 0.5.m, [ev]); r && r[0] }.compact.min
-        gz = zt if gz.nil? || gz > zt
+        gz = zt0 if gz.nil? || gz > zt0
         [x, y, gz]
       end
       # cephe gercekten bu kenarda mi? disaridan eve yatay isin: 0.6 m icinde ev yuzeyi varsa evet
       # (girinti/kapi onu/bahceyi kesen kabuk kirisleri -> perde yok)
       var = (0..n).map do |k|
         x, y, = dip[k]
-        o = Geom::Point3d.new(x + dis.x * 0.5.m, y + dis.y * 0.5.m, zt + 0.10.m)
+        o = Geom::Point3d.new(x + dis.x * 0.5.m, y + dis.y * 0.5.m, zt0 + 0.10.m)
         hit = m.raytest([o, Geom::Vector3d.new(-dis.x, -dis.y, 0)], true)
         hit && hit[1].include?(ev) && hit[0].distance(o) < 1.1.m
       end
@@ -178,7 +181,7 @@ begin
         k1 = k
         k1 += 1 while k1 < n && var[k1 + 1]
         parca = dip[k..k1]
-        h = parca.map { |q| (zt - q[2]).to_m }.max
+        h = parca.map { |q| (zt0 - q[2]).to_m }.max
         if h >= 0.05
           hmax = [hmax, h].max
           ust = [parca.first, parca.last].map { |x, y, _| Geom::Point3d.new(x, y, zt).offset(ic) }
