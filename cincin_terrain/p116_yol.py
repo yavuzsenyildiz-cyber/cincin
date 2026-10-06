@@ -179,12 +179,30 @@ def zrow(pt):
     row=np.zeros(nv); row[i]=1-fr; row[i+1]=fr; return row
 for dd in doors:
     if not dd['north']: continue
-    row=zrow(dd['c']); row[iZ+dd['k']]=-1; Aeq.append(row); beq.append(0.0)                 # kapi onunde yol = subasman alti (zb)
+    row=zrow(dd['c']); row[iZ+dd["k"]]=-1; row[ns+dd["k"]]=-1; Aeq.append(row); beq.append(0.0)                 # kapi onunde yol = subasman alti (zb)
 for i in range(ns):                                                                             # cephe boyunca yol esigi gecmesin
     for k in range(3):
         bx=fps[k].bounds                                                                        # yalniz cephenin yaninda (uclarin otesinde degil)
         if bx[0]-0.5<=SP[i][0]<=bx[2]+0.5 and Point(*SP[i]).distance(fps[k])<W/2+FACADE_REACH:   # yol ekseni ile cephe arasi genis olabilir
-            row=np.zeros(nv); row[i]=1; row[iZ+k]=-1; A.append(row); b.append(0.0)             # cephe boyunca yol subasman altini gecmez (subasman tamamen gorunur)
+            row=np.zeros(nv); row[i]=1; row[iZ+k]=-1; row[ns+k]=-1; A.append(row); b.append(0.0)             # cephe boyunca yol subasman altini gecmez (subasman tamamen gorunur)
+# 115'in otopark platformu 116 yolunun hemen kuzeyinde: yol ile otopark ayni kotta olsun (ortak sinirda kot farki/duvar kalmaz)
+_padc=[]
+if NB_POLY is not None and os.path.exists(NB_PFX+'park.txt'):
+    from shapely.ops import unary_union as _uu
+    _st=sorted([Polygon([tuple(map(float,q_.split(','))) for q_ in l_.split()[2].split(';')]) for l_ in open(NB_PFX+'park.txt')],key=lambda q_:q_.centroid.x)
+    _cl=[[_st[0]]]
+    for q_ in _st[1:]:
+        (_cl[-1] if q_.bounds[0]-_cl[-1][-1].bounds[2]<3.0 else _cl.append([])) if False else None
+        if q_.bounds[0]-_cl[-1][-1].bounds[2]<3.0: _cl[-1].append(q_)
+        else: _cl.append([q_])
+    _big=max(_cl,key=len)                                                  # en buyuk otopark kumesi (yola bitisik platform)
+    _xmin,_xmax=min(q_.bounds[0] for q_ in _big)+0.5,max(q_.bounds[2] for q_ in _big)
+    for i in range(ns):
+        pn=SP[i]+NU*(W/2+0.4)
+        if _xmin<=pn[0]<=_xmax and NB_POLY.contains(Point(*pn)):
+            zq_=float(nbz([pn[0]],[pn[1]])[0])
+            if not np.isnan(zq_) and i>0:
+                _padc.append((i,zq_))
 bounds=[(None,None)]*ns+[(0,SMAX_SILL)]*nS+[(0,None)]*ns+[(0,None)]*(ns-1)+[(Z0[k_]-DZ_MAX,Z0[k_]+DZ_MAX) for k_ in range(nS)]+[(0,None)]*nS
 for k_ in range(nS):                                                   # |zb-Z0| yardimcisi
     r1=np.zeros(nv); r1[iZ+k_]=1; r1[iD+k_]=-1; A.append(r1); b.append(Z0[k_])
@@ -192,7 +210,15 @@ for k_ in range(nS):                                                   # |zb-Z0|
 # esikler modeldeki kitle kapi kotlarina sabit (kitleler yerinde kalir): yerel kot +6.60 / +3.10 / +0.05
 for k in range(nS): bounds[ns+k]=(0.30,0.30)                           # esik = zb + 30 cm (zb ile 1 basamak)
 bounds[0]=(zn[0],zn[0])                                                                         # kamu yoluna baglanti
-res=linprog(c,A_ub=np.array(A),b_ub=np.array(b),A_eq=np.array(Aeq) if Aeq else None,b_eq=np.array(beq) if Aeq else None,bounds=bounds,method='highs')
+_A0=list(A); _b0=list(b)
+for PAD_TOL in (0.02,0.10,0.20,0.30,0.45,0.70,None):                 # komsu otopark kotuna en yakin uygulanabilir yol
+    A=list(_A0); b=list(_b0)
+    if PAD_TOL is not None:
+        for i_,zq_ in _padc:
+            row=np.zeros(nv); row[i_]=1; A.append(row); b.append(zq_+PAD_TOL); A.append(-row); b.append(-(zq_-PAD_TOL))
+    res=linprog(c,A_ub=np.array(A),b_ub=np.array(b),A_eq=np.array(Aeq) if Aeq else None,b_eq=np.array(beq) if Aeq else None,bounds=bounds,method='highs')
+    if res.status==0: break
+if _padc: print('115 otopark ile yol kot farki <= %s m'%PAD_TOL)
 if res.status!=0:
     print('kapi esitligi saglanamadi, kapilar yumusatiliyor:',res.message)
     for row,bq in zip(Aeq,beq): A+=[row,-row]; b+=[bq+0.6,-(bq-0.6)]     # +-0.6 m tolerans
@@ -309,7 +335,20 @@ def _feat_z0(x,y):
     s=np.array([axis.project(Point(a_,b_)) for a_,b_ in zip(x,y)]); return zax(s)
 def feat_z(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float)           # 5 noktali ortalama (r=1 m): eksen izdusumu sicramalari/keskin kirik yok
-    return (_feat_z0(x,y)+_feat_z0(x+1,y)+_feat_z0(x-1,y)+_feat_z0(x,y+1)+_feat_z0(x,y-1))/5.0
+    z_=(_feat_z0(x,y)+_feat_z0(x+1,y)+_feat_z0(x-1,y)+_feat_z0(x,y+1)+_feat_z0(x,y-1))/5.0
+    return pad_blend(x,y,z_)
+PAD_BL=3.0
+def pad_blend(x,y,z_):                                                   # 115 otoparki onunde yol yuzeyi ortak sinirda otopark kotuna egimle baglanir (duvar/basamak yok)
+    if not _padc: return z_
+    z_=np.array(z_,float); pts=shapely.points(x,y); d=shapely.distance(SHARED,pts)
+    wx=np.clip(np.minimum(x-_xmin,_xmax-x)/1.5+1.0,0,1)
+    w=np.clip(1-d/PAD_BL,0,1)*wx; m=np.where(w>0)[0]
+    if len(m)==0: return z_
+    pr=np.array([SHARED.interpolate(SHARED.project(Point(x[i],y[i]))).coords[0] for i in m])+NU*0.3
+    zt=nbz(pr[:,0],pr[:,1]); ok=~np.isnan(zt)
+    w_=w[m][ok]; w_=w_*w_*(3-2*w_)
+    z_[m[ok]]=z_[m[ok]]+w_*(zt[ok]-z_[m[ok]])
+    return z_
 def final(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float); f=nat(x,y)
     if 'nat_agiz' in globals():
@@ -502,6 +541,7 @@ for tag,q in groups:
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or (np.abs(zi-zo).max()<0.10 and P.exterior.distance(Point(*mid))>0.05): continue   # 10 cm alti fark duvar degil (parsel sinirinda duvar kesintisiz)
+                if NB_POLY is not None and SHARED.distance(Point(*mid))<0.2 and np.abs(zi-zo).max()<0.10: continue   # komsu ile ayni kot (yol-otopark): duvar/bordur yok
                 if hard.buffer(0.02).contains(Point(*(mid+nn*0.06))) and hard.buffer(0.02).contains(Point(*(mid-nn*0.06))): continue   # iki yani tasit alani: duvar yok
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer

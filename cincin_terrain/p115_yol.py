@@ -175,7 +175,7 @@ def zrow(pt):
     row=np.zeros(nv); row[i]=1-fr; row[i+1]=fr; return row
 for dd in doors:
     if not dd['north']: continue
-    row=zrow(dd['c']); Aeq.append(row); beq.append(Z[dd['k']])                              # kapi onunde yol = subasman alti (esikten 30 cm asagi, 1 basamak)
+    row=zrow(dd['c']); Aeq.append(row); beq.append(Z[dd["k"]])                              # kapi onunde yol = subasman alti (esikten 30 cm asagi, 1 basamak)
 for i in range(ns):                                                                             # cephe boyunca yol esigi gecmesin
     for k in range(3):
         bx=fps[k].bounds                                                                        # yalniz cephenin yaninda (uclarin otesinde degil)
@@ -503,6 +503,7 @@ for tag,q in groups:
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or (np.abs(zi-zo).max()<0.10 and P.exterior.distance(Point(*mid))>0.05): continue   # 10 cm alti fark duvar degil (parsel sinirinda duvar kesintisiz)
+                if NB_POLY is not None and SHARED.distance(Point(*mid))<0.2 and np.abs(zi-zo).max()<0.10: continue   # komsu ile ayni kot (yol-otopark): duvar/bordur yok
                 if hard.buffer(0.02).contains(Point(*(mid+nn*0.06))) and hard.buffer(0.02).contains(Point(*(mid-nn*0.06))): continue   # iki yani tasit alani: duvar yok
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
@@ -699,7 +700,7 @@ for dd in doors:
     zr=float(zax(axis.project(Point(*(dd['c']+dd['n']*0.5)))))
     if k==_k3 and uc(dd['c'])>U_CUT: zr=Z[k]                                    # son bolum: kapi onu bahce
     hh=Lk[k]-zr
-    if hh<0.05: continue
+    if hh<0.40: continue                                                       # kucuk kot farki: kapi onunde basamak/sove yok (yol daralmaz)
     nb_=int(np.ceil(hh/RISER)); rb_=hh/nb_
     e_=np.array([dd['n'][1],-dd['n'][0]])
     for i_ in range(1,nb_):
