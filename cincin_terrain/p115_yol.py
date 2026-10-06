@@ -143,12 +143,12 @@ def zrow(pt):
     row=np.zeros(nv); row[i]=1-fr; row[i+1]=fr; return row
 for dd in doors:
     if not dd['north']: continue
-    row=zrow(dd['c']); row[ns+dd['k']]=-1; Aeq.append(row); beq.append(Z[dd['k']]-DOOR_GAP)    # yol = esik - 2 cm
+    row=zrow(dd['c']); Aeq.append(row); beq.append(Z[dd['k']])                              # kapi onunde yol = subasman alti (esikten 30 cm asagi, 1 basamak)
 for i in range(ns):                                                                             # cephe boyunca yol esigi gecmesin
     for k in range(3):
         bx=fps[k].bounds                                                                        # yalniz cephenin yaninda (uclarin otesinde degil)
         if bx[0]-0.5<=SP[i][0]<=bx[2]+0.5 and Point(*SP[i]).distance(fps[k])<W/2+FACADE_REACH:   # yol ekseni ile cephe arasi genis olabilir
-            row=np.zeros(nv); row[i]=1; row[ns+k]=-1; A.append(row); b.append(Z[k]-DOOR_GAP)
+            row=np.zeros(nv); row[i]=1; A.append(row); b.append(Z[k])                          # cephe boyunca yol subasman altini gecmez (subasman tamamen gorunur)
 bounds=[(None,None)]*ns+[(0,SMAX_SILL)]*nS+[(0,None)]*ns+[(0,None)]*(ns-1)
 # esikler modeldeki kitle kapi kotlarina sabit (kitleler yerinde kalir): yerel kot +6.60 / +3.10 / +0.05
 ESIK_SABIT={'P115-YAPI1':6.60,'P115-YAPI2':3.10,'P115-YAPI3':0.05}
@@ -484,7 +484,23 @@ if hgt>0.2:
     for i_ in range(1,n_):
         lot_stair.append((Z_LOT+i_*r_,[tuple(q) for q in np.array(rectUN(u0_,u1_,n_lo+(i_-1)*TREAD,n_lo+i_*TREAD).exterior.coords)[:-1]]))
     print('otopark->YAPI1 bahce merdiveni: %.2f m, %d rihtim x %.1f cm, kosu %.2f m'%(hgt,n_,r_*100,(n_-1)*TREAD))
+# kuzey kapilar: yol subasman altinda -> kapi onune esikten yola basamak (1.40 m genis, 30 cm tread)
+kapi_bas=[]; _gor=[]
+for dd in doors:
+    if not dd['north'] or any(np.hypot(*(dd['c']-q_))<1.5 for q_ in _gor): continue
+    _gor.append(dd['c']); k=dd['k']
+    zr=float(zax(axis.project(Point(*(dd['c']+dd['n']*0.5)))))
+    hh=Lk[k]-zr
+    if hh<0.05: continue
+    nb_=int(np.ceil(hh/RISER)); rb_=hh/nb_
+    e_=np.array([dd['n'][1],-dd['n'][0]])
+    for i_ in range(1,nb_):
+        d0=(i_-1)*TREAD-(0.15 if i_==1 else 0.0); d1=i_*TREAD          # ilk basamak cepheye 15 cm girer: aralik kalmaz
+        q=[dd['c']+dd['n']*d0+e_*0.7,dd['c']+dd['n']*d1+e_*0.7,dd['c']+dd['n']*d1-e_*0.7,dd['c']+dd['n']*d0-e_*0.7]
+        kapi_bas.append((zr-0.3,Lk[k]-i_*rb_,q))
+    print('%s kuzey kapi basamagi: %.2f m, %d rihtim'%(names[k],hh,nb_))
 with open('p115y_basamak.txt','a') as f:
+    for zb_,zt_,q in kapi_bas: f.write('T %.3f %.3f %s\n'%(zb_,zt_,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
     for zb_,zt_,q in gm_stairs: f.write('T %.3f %.3f %s\n'%(zb_,zt_,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
     for zt,q in lot_stair: f.write('T %.3f %.3f %s\n'%(Z_LOT-0.3,zt,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
 print('ara otopark: %d arac, platform +%.2f'%(len(lot_st),Z_LOT+H0))
