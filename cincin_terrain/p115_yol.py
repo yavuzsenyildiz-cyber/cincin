@@ -108,7 +108,8 @@ ROAD_W2=5.5
 wide=north.buffer(ROAD_W2,cap_style=2,join_style=2).intersection(P).intersection(slab_u(u_gap0,u_gap1))
 road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,wide]).buffer(0.01).buffer(-0.01).difference(FPu)
 # not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
-park_poly=P.intersection(slab_u(xs_park0,xs_park1)).difference(FPu)
+PARK_KIS=3.0     # otopark iki uctan 3'er m kisalir, bahceler buyur; kuzeydeki W serit gecis icin otopark/yol kalir
+park_poly=unary_union([band.intersection(slab_u(xs_park0,xs_park1)),P.intersection(slab_u(xs_park0+PARK_KIS,xs_park1-PARK_KIS))]).difference(FPu)
 walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu)
 # YAPI1 ile YAPI2 arasi otopark: kuzeyden yola acilan 5.5 m koridor (bati) + dogu tarafta 5 m derin park yerleri.
 # Duz platform; yola bitisik 2.5 m serit yol kotundan platform kotuna yumusak baglanir (giris).
@@ -224,6 +225,32 @@ if sliv:
     hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
     for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 
+# ---------- otoparktan bahcelere gomulu merdivenler (guney uclarda, bahceye dogru) ----------
+RISER=0.17; TREAD=0.30; ST_W=1.20
+gm_stairs=[]; gm_zones=[]      # (poly, ramp fonk) ve basamak bloklari
+_pk=park_poly if park_poly.geom_type=='Polygon' else max(park_poly.geoms,key=lambda q:q.area)
+for u_e,sg_,k in ((xs_park0+PARK_KIS,-1,order[1]),(xs_park1-PARK_KIS,1,order[2])):
+    # park kenarinin guney ucu
+    _ln=LineString([U*u_e+NU*-1e3,U*u_e+NU*1e3]).intersection(P)
+    _c=np.array(_ln.coords) if _ln.geom_type=='LineString' else np.array(max(_ln.geoms,key=lambda g:g.length).coords)
+    n_s=float((_c@NU).min())+0.6; n0=n_s; n1=n_s+ST_W
+    pp_=U*(u_e-sg_*0.3)+NU*(n0+ST_W/2)
+    zp=float(zax(axis.project(Point(*pp_))))
+    h_=Z[k]-zp; ns_=max(int(np.ceil(abs(h_)/RISER)),1); r_=h_/ns_; run=(ns_-1)*TREAD
+    gzone=Polygon([U*u_e+NU*n0,U*(u_e+sg_*run)+NU*n0,U*(u_e+sg_*run)+NU*n1,U*u_e+NU*n1])
+    if gzone.area>0 and not gzone.is_valid: gzone=gzone.buffer(0)
+    for i_ in range(1,ns_):
+        d0=(i_-1)*TREAD; d1=i_*TREAD
+        q=Polygon([U*(u_e+sg_*d0)+NU*n0,U*(u_e+sg_*d1)+NU*n0,U*(u_e+sg_*d1)+NU*n1,U*(u_e+sg_*d0)+NU*n1])
+        zt_=zp+i_*r_; zb_=min(zp,Z[k])-0.3
+        gm_stairs.append((zb_,zt_,[tuple(c) for c in np.array(q.exterior.coords)[:-1]]))
+    if h_>0:          # bahce yuksek: merdiven bahceye gomulu (bahceden oyulur; yanlarda istinat)
+        def _ramp(x,y,u_e=u_e,sg_=sg_,zp=zp,r_=r_):
+            d=np.clip(((np.c_[x,y]@U)-u_e)*sg_,0,None); return zp+d/TREAD*r_-0.02
+        gm_zones.append((gzone,_ramp))
+        gard[k]=gard[k].difference(gzone)
+    print('%s bahcesine merdiven: %s %.2f m, %d rihtim x %.1f cm, kosu %.2f m'%(names[k],'cikis (gomulu)' if h_>0 else 'inis',abs(h_),ns_,abs(r_)*100,run))
+
 # ---------- arazi ----------
 
 def feat_z(x,y):
@@ -238,6 +265,9 @@ def final(x,y):
     if m.any(): f[m]=feat_z(x[m],y[m])
     m=contains_xy(lot_poly,x,y)
     if m.any(): f[m]=lot_z(x[m],y[m])
+    for zn_,rf_ in gm_zones:
+        m=contains_xy(zn_,x,y)
+        if m.any(): f[m]=rf_(x[m],y[m])
     for k,fp in enumerate(fps): f[contains_xy(fp,x,y)]=Z[k]-0.05
     return f
 Z_LOT=None
@@ -265,6 +295,7 @@ for k,gg in enumerate(gard): parts.append((gg.difference(FPu),'cim',const(Z[k]))
 # bina izleri (girinti/avlu dahil) bahceyle ayni kotta yesil: teras/tas yuzey kalmaz
 for pp_,tg in ((road_poly,'asfalt'),(park_poly,'otopark'),(walk_poly,'yaya')): parts.append((pp_,tg,feat_z))
 parts.append((lot_poly,'otopark',lot_z))
+for zn_,rf_ in gm_zones: parts.append((zn_,'kaldirim',rf_))
 for j_,k in enumerate(order):                                   # bina izleri: yol tarafi (kuzey) kaldirim, bahce tarafi cim
     fz=FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1]))
     if fz.is_empty: continue
@@ -454,6 +485,7 @@ if hgt>0.2:
         lot_stair.append((Z_LOT+i_*r_,[tuple(q) for q in np.array(rectUN(u0_,u1_,n_lo+(i_-1)*TREAD,n_lo+i_*TREAD).exterior.coords)[:-1]]))
     print('otopark->YAPI1 bahce merdiveni: %.2f m, %d rihtim x %.1f cm, kosu %.2f m'%(hgt,n_,r_*100,(n_-1)*TREAD))
 with open('p115y_basamak.txt','a') as f:
+    for zb_,zt_,q in gm_stairs: f.write('T %.3f %.3f %s\n'%(zb_,zt_,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
     for zt,q in lot_stair: f.write('T %.3f %.3f %s\n'%(Z_LOT-0.3,zt,';'.join('%.3f,%.3f'%tuple(p_) for p_ in q)))
 print('ara otopark: %d arac, platform +%.2f'%(len(lot_st),Z_LOT+H0))
 best=best+lot_st
