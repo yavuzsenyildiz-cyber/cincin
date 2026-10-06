@@ -369,8 +369,19 @@ with open('p115y_duvar.txt','w') as f:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
         tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
         uzat_ok=lambda q: not hard.contains(Point(*q))                                 # uc yola tasmasin; evin icine uzayabilir (kose boslugu kapanir)
-        if e0 and uzat_ok(a_-tv_*0.30): a_=a_-tv_*0.30
-        if e1 and uzat_ok(b_+tv_*0.30): b_=b_+tv_*0.30
+        def eve_uzat(p_,d_):                                                            # uc evin 2 m yakinindaysa ayni hizada eve kadar uzar
+            ray=LineString([p_,p_+d_*2.0]); x_=ray.intersection(FPu)
+            if x_.is_empty: return None
+            t_=min(np.dot(np.array(q_)-p_,d_) for g_ in getattr(x_,'geoms',[x_]) for q_ in g_.coords)
+            return p_+d_*(t_+0.05) if 0.0<t_<2.0 else None
+        if e0:
+            q_=eve_uzat(a_,-tv_)
+            if q_ is not None: a_=q_
+            elif uzat_ok(a_-tv_*0.30): a_=a_-tv_*0.30
+        if e1:
+            q_=eve_uzat(b_,tv_)
+            if q_ is not None: b_=q_
+            elif uzat_ok(b_+tv_*0.30): b_=b_+tv_*0.30
         f.write('W %s %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %d %d\n'%(ty,a_[0],a_[1],b_[0],b_[1],lo[0]-0.3,lo[1]-0.3,hi[0],hi[1],nl[0],nl[1],e0,e1))
 
 # ---------- istinattan YAPI1 bahcesine (yesile) inen merdiven: kot farkinin en az oldugu duvar parcasi ----------
