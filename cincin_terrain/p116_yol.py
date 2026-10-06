@@ -31,21 +31,15 @@ P=Polygon(ring)                                           # 116: kuzey sinir 115
 KUZEY_KAYMA=0.0
 # ---- komsu parsel tasarimi (varsa): ortak sinirda duvarlar yuksek tarafca kurulur, disaridaki kot komsunun tasarim kotundan okunur ----
 import os
+import komsu
 NB_PFX='p115y_'
-SHARED=LineString(ring[0:2])                                    # komsu ile ortak sinir
-NB_POLY=None; nbz=None
-if os.path.exists(NB_PFX+'poly.txt') and os.path.exists(NB_PFX+'mesh.txt'):
-    NB_POLY=Polygon([tuple(map(float,q_.split(','))) for q_ in open(NB_PFX+'poly.txt').read().split()[0].split(';')])
-    _nv=[]; _nfc=[]
-    for _l in open(NB_PFX+'mesh.txt'):
-        _t=_l.split()
-        if _t[0]=='V': _nv.append([float(q_) for q_ in _t[1:4]])
-        elif _t[0]=='F': _nfc.append([int(q_) for q_ in _t[1:4]])
-    _nv=np.array(_nv); _nfc=np.array(_nfc)
-    _u=_nv[_nfc[:,1],:2]-_nv[_nfc[:,0],:2]; _w=_nv[_nfc[:,2],:2]-_nv[_nfc[:,0],:2]
-    _nfc=_nfc[np.abs(_u[:,0]*_w[:,1]-_u[:,1]*_w[:,0])>1e-4]                 # dikey/dejenere yuzler atilir
-    _nI=LinearNDInterpolator(_nv[np.unique(_nfc)][:,:2],_nv[np.unique(_nfc)][:,2])
-    nbz=lambda x_,y_: np.asarray(_nI(np.asarray(x_,float),np.asarray(y_,float)),float)
+SHARED=LineString(ring[0:2])                                    # birincil komsu ile ortak sinir
+NBS=[n_ for n_ in (komsu.yukle('p115y_',LineString(ring[0:2])),komsu.yukle('p117y_',LineString([ring[4],ring[5]]))) if n_ is not None]
+_nb0=next((n_ for n_ in NBS if n_['pfx']==NB_PFX),None)
+NB_POLY=_nb0['poly'] if _nb0 else None; nbz=_nb0['z'] if _nb0 else None
+NB_ALL=unary_union([n_['poly'] for n_ in NBS]) if NBS else None                      # tum komsu tasarim alanlari
+_sh=[n_['shared'] for n_ in NBS if n_['shared'] is not None]
+SHARED_ALL=unary_union(_sh) if _sh else None                                          # komsularla ortak sinirlar
 J=json.load(open('tesviye.json'))
 ids=[k for k,n in enumerate(J['names']) if n.startswith('P116')]
 names=[J['names'][k] for k in ids]; Z=np.array([J['Z'][k] for k in ids]); fps=[Polygon(J['fp'][k]) for k in ids]
@@ -354,10 +348,10 @@ def final(x,y):
     if 'nat_agiz' in globals():
         o_=~contains_xy(P,x,y)
         if o_.any(): f[o_]=nat_agiz(x[o_],y[o_])
-    if NB_POLY is not None:
-        mn=contains_xy(NB_POLY,x,y)&~contains_xy(P,x,y)
+    for n_ in NBS:                                                                     # komsu parselin tasarim kotu
+        mn=contains_xy(n_['poly'],x,y)&~contains_xy(P,x,y)
         if mn.any():
-            zz=nbz(x[mn],y[mn]); ix=np.where(mn)[0]; okm=~np.isnan(zz); f[ix[okm]]=zz[okm]
+            zz=n_['z'](x[mn],y[mn]); ix=np.where(mn)[0]; okm=~np.isnan(zz); f[ix[okm]]=zz[okm]
     for k,g in enumerate(gard): f[contains_xy(g,x,y)]=Z[k]
     m=contains_xy(hard,x,y)
     if m.any(): f[m]=feat_z(x[m],y[m])
@@ -535,17 +529,18 @@ for tag,q in groups:
                 a_=p0+(p1-p0)*i/m; b_=p0+(p1-p0)*(i+1)/m; mid=(a_+b_)/2
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
+                if not P.contains(Point(*(mid+nn*0.06))): continue                             # ic taraf parsel disinda (sinirdaki kil payi sivri): duvar yok
                 if LineString([a_,b_]).intersection(FPu.buffer(0.35)).length>=0.6*np.hypot(*(b_-a_)): continue   # cepheye yapisik parcalar (temel perdesi kapatir): egik tepeli ucgen duvar olmasin
                 if sw.distance(Point(*mid))<0.2 and (Point(*mid).distance(Jp)<W/2+2.0 or opening.buffer(0.3).contains(Point(*mid))): continue   # kamu yolundan arac girisi: acik
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or (np.abs(zi-zo).max()<0.10 and P.exterior.distance(Point(*mid))>0.05): continue   # 10 cm alti fark duvar degil (parsel sinirinda duvar kesintisiz)
-                if NB_POLY is not None and SHARED.distance(Point(*mid))<0.2 and np.abs(zi-zo).max()<0.10: continue   # komsu ile ayni kot (yol-otopark): duvar/bordur yok
+                if SHARED_ALL is not None and SHARED_ALL.distance(Point(*mid))<0.2 and np.abs(zi-zo).max()<0.10: continue   # komsu ile ayni kot (yol-otopark): duvar/bordur yok
                 if hard.buffer(0.02).contains(Point(*(mid+nn*0.06))) and hard.buffer(0.02).contains(Point(*(mid-nn*0.06))): continue   # iki yani tasit alani: duvar yok
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
-                if NB_POLY is not None and SHARED.distance(Point(*mid))<0.2 and zi.mean()<zo.mean(): continue   # ortak sinir: duvari yuksek taraf kurar
+                if SHARED_ALL is not None and SHARED_ALL.distance(Point(*mid))<0.2 and zi.mean()<zo.mean(): continue   # ortak sinir: duvari yuksek taraf kurar
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
                 if hard.contains(Point(*(mid-nlow*0.2))) is False and hard.contains(Point(*(mid+nlow*0.2))) and GARD_U.contains(Point(*(mid-nlow*0.2))):
                     nlow=-nlow                                                                  # yol ile bahce arasinda govde bahce tarafinda: yol kenari cephe hizasinda temiz kalir
