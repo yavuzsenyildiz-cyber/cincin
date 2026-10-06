@@ -190,7 +190,7 @@ for i in range(ns-1):
 order=sorted(range(3),key=lambda k:fps[k].bounds[0])
 order=sorted(range(3),key=lambda k:urange(fps[k])[0])
 cuts=[-1e4]+[(urange(fps[order[j]])[1]+urange(fps[order[j+1]])[0])/2 for j in range(2)]+[1e4]
-hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
+hard=unary_union([road_poly,park_poly,walk_poly,lot_poly]).buffer(0.03,join_style=2).buffer(-0.03,join_style=2)   # kilcal bosluklar kapanir
 gard=[None]*3
 for j,k in enumerate(order):
     g=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
@@ -220,7 +220,7 @@ mouth=shapely.MultiPoint([tuple(_l0-_ax*1.0),tuple(_l0+_ax*PAH),tuple(_sw),tuple
 mouth=mouth.intersection(P).difference(FPu.buffer(0.5))
 print('kamu yolu agzi pahi: alan %.1f m2'%mouth.area)
 road_poly=unary_union([road_poly,pah,mouth]).buffer(0.01).buffer(-0.01)
-hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
+hard=unary_union([road_poly,park_poly,walk_poly,lot_poly]).buffer(0.03,join_style=2).buffer(-0.03,join_style=2)   # kilcal bosluklar kapanir
 for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 # bahce sivrileri (1 m'den dar seritler) yola katilir: yol ustunde anlamsiz duvar kutulari olusmasin
 sliv=[]
@@ -244,7 +244,7 @@ if sliv:
         sliv=[_sv.difference(_sv_lot)]
     print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
     road_poly=unary_union([road_poly]+sliv).buffer(0.01).buffer(-0.01)
-    hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
+    hard=unary_union([road_poly,park_poly,walk_poly,lot_poly]).buffer(0.03,join_style=2).buffer(-0.03,join_style=2)   # kilcal bosluklar kapanir
     for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 
 # ---------- otoparktan bahcelere gomulu merdivenler (guney uclarda, bahceye dogru) ----------
@@ -468,6 +468,7 @@ for tag,q in groups:
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or (np.abs(zi-zo).max()<0.10 and P.exterior.distance(Point(*mid))>0.05): continue   # 10 cm alti fark duvar degil (parsel sinirinda duvar kesintisiz)
+                if hard.buffer(0.02).contains(Point(*(mid+nn*0.06))) and hard.buffer(0.02).contains(Point(*(mid-nn*0.06))): continue   # iki yani tasit alani: duvar yok
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
