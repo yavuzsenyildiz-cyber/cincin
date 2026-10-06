@@ -754,10 +754,17 @@ print('bahce duvari: %d bolme, %.0f m'%(len(bays),sum(np.hypot(*(b[1]-b[0])) for
 # ---------- bitki citleri: otopark-bahce sinirlari boyunca ve her bagimsiz bolum arasinda (bahce ayrimi) ----------
 CIT_IC=0.45     # citin bahce sinirindan iceri mesafesi (duvar govdesinin arkasi)
 _engel=[]       # merdiven agizlari: cit kesilir
-if gm_zones: _engel.append(unary_union([z_ for z_,_ in gm_zones]).buffer(1.2))
-if lot_stair: _engel.append(unary_union([Polygon(q) for _,q in lot_stair]).buffer(1.5))
+if gm_zones: _engel.append(unary_union([z_ for z_,_ in gm_zones]).buffer(0.45))      # cit merdiven yan duvarina kadar uzanir (45 cm: cit yarim genisligi + duvar)
+if lot_stair: _engel.append(unary_union([Polygon(q) for _,q in lot_stair]).buffer(0.45))
 _engel=unary_union(_engel) if _engel else Polygon()
 citler=[]
+# cit kuzey uclari icin girintileri izleyen gercek ev izi (dis kabuk girintileri doldurdugu icin cit evden uzakta kaliyordu)
+_gercek=[]
+for _l in open('bolge_dump.txt'):
+    if _l.startswith('  TABAN '):
+        _pp=[tuple(map(float,q_.split(','))) for q_ in _l.split()[1].split(';')]
+        if len(_pp)>=4: _gercek.append(shapely.concave_hull(shapely.MultiPoint(_pp),ratio=0.12))
+FPc=unary_union(_gercek).buffer(0.05) if _gercek else FPu
 # bagimsiz bolum planlari (bina_iz.txt: B01..B12) -> her yapi icin u sirali bolum listesi
 _bol={k:[] for k in range(3)}
 for _l in open('bina_iz.txt'):
@@ -773,6 +780,11 @@ def _cit_ekle(ln,z_,g_):
         for g4 in getattr(g3,'geoms',[g3]):
             if g4.geom_type=='LineString' and g4.length>=0.6:
                 c_=np.array(g4.coords)
+                # uclar 40 cm uzatilir: eve/guney citine/otopark citine degip birlesir (merdiven yani haric)
+                for ucn,yon_ in ((0,-1),(-1,1)):
+                    a_=c_[ucn]; b_=c_[1 if ucn==0 else -2]; d_=(a_-b_)/max(np.hypot(*(a_-b_)),1e-9)
+                    q_=a_+d_*0.40
+                    if not _engel.buffer(0.02).contains(Point(*q_)) and P.buffer(-0.05).contains(Point(*q_)): c_[ucn]=q_
                 for p0,p1 in zip(c_[:-1],c_[1:]):
                     if np.hypot(*(p1-p0))>0.05: citler.append((p0,p1,z_))
 _otop=unary_union([park_poly,lot_poly])
@@ -787,20 +799,20 @@ for k in range(3):
             o_=s2.offset_curve(sd)
             if o_.is_empty: continue
             if g_.buffer(-0.1).contains(o_.interpolate(0.5,normalized=True)):
-                _cit_ekle(o_.intersection(g_.buffer(-0.2)),Z[k],g_); break
+                _cit_ekle(o_.intersection(g_.buffer(-0.05)),Z[k],g_); break
     # (b) bagimsiz bolumler arasi: gercek bolum sinirlarindan (bina_iz.txt) bahce tarafinda evden guney sinira cit
     for (b0_,q0_),(b1_,q1_) in zip(_bol[k][:-1],_bol[k][1:]):
         c0_=np.array(q0_.exterior.coords)[:-1]; c1_=np.array(q1_.exterior.coords)[:-1]
         u_=0.5*(float((c0_@U).max())+float((c1_@U).min()))                        # iki bolumun ortak siniri
         ns_=min(float((c0_@NU).min()),float((c1_@NU).min()))
-        ln=LineString([U*u_+NU*(ns_+1.0),U*u_+NU*(ns_-40)]).intersection(g_.buffer(-0.2))
+        ln=LineString([U*u_+NU*(ns_+1.0),U*u_+NU*(ns_-40)]).intersection(gard[k].difference(FPc).buffer(-0.05))
         _cit_ekle(ln,Z[k],g_)
     # (c) guney parsel siniri boyunca (bahce icinde, sinirdan CIT_IC iceride)
     _gs=LineString([ring[14],ring[15]]).offset_curve(-CIT_IC) if True else None
     for sd in (CIT_IC,-CIT_IC):
         o_=LineString([ring[14],ring[15]]).offset_curve(sd)
         if P.contains(o_.interpolate(0.5,normalized=True)):
-            _cit_ekle(o_.intersection(g_.buffer(-0.2)),Z[k],g_); break
+            _cit_ekle(o_.intersection(g_.buffer(-0.05)),Z[k],g_); break
 with open('p115y_bitki.txt','w') as f:
     for p0,p1,z_ in citler: f.write('H %.3f %.3f %.3f %.3f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],z_))
 print('bitki citi: %d parca, %.0f m'%(len(citler),sum(np.hypot(*(c[1]-c[0])) for c in citler)))
