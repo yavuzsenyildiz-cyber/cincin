@@ -26,6 +26,9 @@ for l in open('pk_rings.txt'):
     t=l.split()
     if t[0]=='R' and t[1]=='115': ring=[tuple(map(float,p.split(',')[:2])) for p in ' '.join(t[2:]).split(';')]
 P=Polygon(ring)
+# kuzey istinat duvari 0.50 m disari kaydirilir -> kuzey serit (yol) 0.50 m genisler
+KUZEY_KAYMA=0.50
+P=P.union(LineString(ring[0:13]).buffer(KUZEY_KAYMA,single_sided=True,join_style=2)).buffer(0.01,join_style=2).buffer(-0.01,join_style=2)
 J=json.load(open('tesviye.json'))
 ids=[k for k,n in enumerate(J['names']) if n.startswith('P115')]
 names=[J['names'][k] for k in ids]; Z=np.array([J['Z'][k] for k in ids]); fps=[Polygon(J['fp'][k]) for k in ids]
@@ -321,14 +324,17 @@ for tag,q in groups:
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
-                if np.isnan(zo).any() or np.abs(zi-zo).max()<0.05: continue
+                if np.isnan(zo).any() or np.abs(zi-zo).max()<0.10: continue                       # 10 cm alti kot farki duvar degil
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
                 lo=np.minimum(zi,zo); hi=np.maximum(zi,zo)
                 zi4=final([a_[0]+nn[0]*0.4,b_[0]+nn[0]*0.4],[a_[1]+nn[1]*0.4,b_[1]+nn[1]*0.4])     # koseler: duvar ustu yanindaki en yuksek zemine kadar
                 zo4=final([a_[0]-nn[0]*0.4,b_[0]-nn[0]*0.4],[a_[1]-nn[1]*0.4,b_[1]-nn[1]*0.4])
-                hi=np.nanmax(np.vstack([hi,zi4,zo4]),axis=0)
+                for q4,z4 in ((nn*0.4,zi4),(-nn*0.4,zo4)):                                     # yalniz parsel ici (bahce/yol) kotlari; dogal arazi degil
+                    in4=contains_xy(P,np.array([a_[0]+q4[0],b_[0]+q4[0]]),np.array([a_[1]+q4[1],b_[1]+q4[1]]))
+                    z4[~in4]=np.nan
+                if (hi-lo).max()>=0.30: hi=np.nanmax(np.vstack([hi,zi4,zo4]),axis=0)          # kucuk kot farklarinda ucgen tepe olusmasin
                 if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu'
                 else: ty='istinat' if zi.mean()<zo.mean() else 'basamak'
                 walls.append((a_,b_,lo,hi,ty,nlow)); WL[ty]=WL.get(ty,0)+np.hypot(*(b_-a_))
