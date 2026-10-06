@@ -418,7 +418,9 @@ for poly,tag,zf in parts:
         tri_cdt(pg,tag,zf)
 # parsel disi: dogal arazi
 outer=V[contains_xy(region,V[:,0],V[:,1])&~contains_xy(P,V[:,0],V[:,1])][:,:3]
-far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
+# parsellerin cevresi: 2 km x 2 km uydu dokulu genis arazi (pk_merged_mesh: PLANKOTE + cevre topografya)
+_VM=np.array([list(map(float,l_.split()[1:4])) for l_ in open('pk_merged_mesh.txt') if l_[0]=='V'])
+far=_VM[~contains_xy(region,_VM[:,0],_VM[:,1])]
 # giris agzi disinda dogal arazi yola baglanir (yol kenari havada kalmasin): 5 m icinde yol kotundan dogal kota
 opening=P.exterior.intersection(unary_union([mouth.buffer(0.3),sw.buffer(0.2).intersection(Jp.buffer(W/2+2.0))])).difference(unary_union(gard).buffer(0.3))
 AGIZ_D=5.0

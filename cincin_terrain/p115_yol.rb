@@ -43,8 +43,11 @@ begin
   end
   istinat_tas = dokulu.("ISTINAT_TAS_MOLOZ", "istinat_tas_moloz.png", 1.5, 128, 118, 105)   # evlerin tasindan farkli dogal tas
   yol_tas = dokulu.("YOL_TAS_PARKE", "yol_tas_parke.png", 1.0, 118, 116, 112)               # tasit yollari ve otoparklar: granit parke
+  # uydu dokusu (sat.jpg, 2.2 km x 2.2 km): arazi koseleri UV ile goruntuye oturur
+  uydu = m.materials["ARAZI_PLANKOTE_UYDU"] || m.materials.add("ARAZI_PLANKOTE_UYDU")
+  uydu.texture = dir + "sat.jpg" if uydu.texture.nil? && File.exist?(dir + "sat.jpg")
   mats = {
-    "arazi" => (m.materials["ARAZI_PLANKOTE_UYDU"] || mk.("ARAZI_PLANKOTE_UYDU", 120, 120, 90)),
+    "arazi" => uydu,
     "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => yol_tas,
     "otopark" => yol_tas, "yaya" => dokulu.("YAYA_PLAKA", "yaya_tas_plaka.png", 1.2, 205, 190, 150),
     "kaldirim" => mk.("KALDIRIM", 200, 190, 170),
