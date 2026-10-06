@@ -29,12 +29,20 @@ begin
     end
     mk.(yedek, r, g, b)
   end
-  # istinat duvarlari: evlerin tasindan (Sandstone Ashlar) farkli, gri-kahve dogal tas
-  istinat_tas = kutup.(["Stone Masonry Multi", "Stone Fieldstone", "Stone Coursed Rough", "Stone Masonry Rough"], "ISTINAT_TAS", 128, 118, 105)
-  (istinat_tas.texture.size = 1.5.m if istinat_tas.texture) rescue nil
-  # tasit yollari ve otoparklar: tas (parke/arnavut) kaplama
-  yol_tas = kutup.(["Stone Cobblestone", "Stone Pavers Flagstone Gray", "Paving Stone Cobblestone", /cobble/i, /paver/i, /paving/i], "YOL_TAS_KAPLAMA", 118, 112, 104)
-  (yol_tas.texture.size = 1.0.m if yol_tas.texture) rescue nil
+  # proje dokulari (cincin_terrain/doku/*.png): kutuphaneye bagli degil, her bilgisayarda ayni gorunur
+  dokulu = lambda do |ad, dosya, genislik, r, g, b|
+    x = m.materials[ad] || m.materials.add(ad)
+    yol = dir + "doku/" + dosya
+    if File.exist?(yol)
+      x.texture = yol
+      x.texture.size = genislik.m if x.texture
+    else
+      x.color = Sketchup::Color.new(r, g, b)
+    end
+    x
+  end
+  istinat_tas = dokulu.("ISTINAT_TAS_MOLOZ", "istinat_tas_moloz.png", 1.5, 128, 118, 105)   # evlerin tasindan farkli dogal tas
+  yol_tas = dokulu.("YOL_TAS_PARKE", "yol_tas_parke.png", 1.0, 118, 116, 112)               # tasit yollari ve otoparklar: granit parke
   mats = {
     "arazi" => (m.materials["ARAZI_PLANKOTE_UYDU"] || mk.("ARAZI_PLANKOTE_UYDU", 120, 120, 90)),
     "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => yol_tas,
@@ -176,7 +184,7 @@ begin
     kutu.(q.offset(u.reverse, 0.25.m), q.offset(u, 0.25.m), 0.25.m, (d[:z1] + 1.55).m, (d[:z1] + 1.61).m, kapak)          # dikme basligi
   end
   # bitki citleri: otopark-bahce siniri ve bagimsiz bolumler arasi (bahce ayrimi); 60 cm genis, 1.1 m yuksek budanmis cit
-  yaprak = kutup.([/hedge/i, /shrub/i, /bush/i, /ivy/i, /leaves/i, /foliage/i], "BITKI_CIT", 58, 96, 44)
+  yaprak = dokulu.("BITKI_CIT_YAPRAK", "cit_yaprak.png", 1.0, 58, 96, 44)
   gc = ents.add_group; gc.name = "P115_BITKI (bahce ayrimi citleri)"; gc.layer = m.layers.add("BITKI")
   ncit = 0
   File.foreach(dir + "p115y_bitki.txt") do |ln|
