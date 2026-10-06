@@ -337,7 +337,7 @@ def ringpts(poly,step=0.5):
     return np.vstack(out)
 Z_LOT=float(za[int(np.argmin([abs(uc(q)-(LOT_U[0]+AISLE_L/2)) for q in SP]))])     # koridor ortasinda yol kotu
 feats=[*gard,road_poly,park_poly,walk_poly,lot_poly,*fps]
-region=P.buffer(15)
+region=P.buffer(15) if NB_POLY is None else unary_union([P,NB_POLY]).buffer(15)       # komsu parselin dis arazisi de burada uretilir (tek sahip)
 bnd=unary_union([q.boundary for q in feats]+[P.boundary])
 # Her alan ayri ucgenlenir (ucgenler alan sinirini asmaz): yesil sivri/egik ucgenler olusmaz; kot farki olan
 # sinirlari gercek duvarlar kapatir.
@@ -428,9 +428,18 @@ far=V[~contains_xy(region,V[:,0],V[:,1])][:,:3]
 # giris agzi disinda dogal arazi yola baglanir (yol kenari havada kalmasin): 5 m icinde yol kotundan dogal kota
 opening=P.exterior.intersection(unary_union([mouth.buffer(0.3),sw.buffer(0.2).intersection(Jp.buffer(W/2+2.0))])).difference(unary_union(gard).buffer(0.3))
 AGIZ_D=5.0
+NB_OPEN=None
+if NB_POLY is not None and os.path.exists(NB_PFX+'agiz.txt'):
+    import shapely.wkt; NB_OPEN=shapely.wkt.loads(open(NB_PFX+'agiz.txt').read())
 _cP=np.array(P.centroid.coords[0])
 def nat_agiz(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float); z0=nat(x,y)
+    if NB_OPEN is not None and not NB_OPEN.is_empty:                                      # komsu (116) giris agzi: dogal arazi onun yol kotuna baglanir
+        d=shapely.distance(NB_OPEN,shapely.points(x,y)); w=np.clip(1-d/AGIZ_D,0,1); _cN=np.array(NB_POLY.centroid.coords[0])
+        for i_ in np.where(w>0)[0]:
+            q=nearest_points(NB_OPEN,Point(x[i_],y[i_]))[0]; qi=np.array([q.x,q.y]); qi=qi+(_cN-qi)/np.hypot(*(_cN-qi))*0.1
+            zr=float(nbz([qi[0]],[qi[1]])[0])
+            if not np.isnan(zr): z0[i_]=w[i_]*zr+(1-w[i_])*(z0[i_] if not np.isnan(z0[i_]) else zr)
     if opening.is_empty: return z0
     d=shapely.distance(opening,shapely.points(x,y)); w=np.clip(1-d/AGIZ_D,0,1); m=np.where(w>0)[0]
     for i_ in m:

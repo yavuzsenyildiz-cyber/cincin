@@ -473,6 +473,7 @@ for poly,tag,zf in parts:
                 tg_='perde_tas' if tas_ else 'perde_beton'
                 FF.append((np.array([base,base+1,base+2]),tg_)); FF.append((np.array([base,base+2,base+3]),tg_)); nperde+=1
 print('kenar perdesi: %d parca'%nperde)
+open('p116y_agiz.txt','w').write(opening.wkt)
 open('p116y_poly.txt','w').write(';'.join('%.3f,%.3f'%tuple(q_) for q_ in np.array(P.exterior.coords)))
 A_=np.vstack(VV)
 UV=np.c_[A_[:,:2],np.ones(len(A_))]@uvA
