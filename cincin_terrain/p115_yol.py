@@ -563,9 +563,10 @@ for w_ in walls:
 walls=_kabul
 with open('p115y_duvar.txt','w') as f:
     from collections import Counter
-    cnt=Counter([tuple(np.round(w_[0],2)) for w_ in walls]+[tuple(np.round(w_[1],2)) for w_ in walls])
+    _uc=np.array([w_[0] for w_ in walls]+[w_[1] for w_ in walls])
+    def _komsu_say(q_): return int((np.hypot(_uc[:,0]-q_[0],_uc[:,1]-q_[1])<0.10).sum())   # 10 cm icindeki uc sayisi (zincir baglantisi)
     for a_,b_,lo,hi,ty,nl in walls:
-        e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
+        e0=int(_komsu_say(a_)<2); e1=int(_komsu_say(b_)<2)                             # zincir ucu -> uc yuzu kapat
         tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
         uzat_ok=lambda q: not hard.contains(Point(*q)) and not (gm_zones and unary_union([z_ for z_,_ in gm_zones]).buffer(0.02).contains(Point(*q)))   # uc yola/merdiven oyuguna tasmasin
         def eve_uzat(p_,d_):                                                            # uc evin 2 m yakinindaysa ayni hizada eve kadar uzar
