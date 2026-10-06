@@ -10,7 +10,7 @@ from shapely import contains_xy
 from matplotlib.tri import Triangulation, LinearTriInterpolator
 from scipy.spatial import Delaunay
 from scipy.optimize import linprog
-H0=105.07; W=3.0; S_ROAD=0.12; S_PARK=0.05; S_WALK=0.08; S_STAIR=0.50; SMAX_SILL=1.20; DOOR_GAP=0.02
+H0=105.07; W=3.0; S_ROAD=0.12; S_PARK=0.05; S_WALK=0.05; S_STAIR=0.50; SMAX_SILL=1.20; DOOR_GAP=0.02
 FACADE_REACH=6.0; STALL_W=2.5; STALL_D=5.0; AISLE=5.5; PARAPET=0.0   # korkuluk duvari yok: duvar ustu yesille/yolla ayni hizada biter
 V=[];F=[]
 for l in open('pk_mesh.txt'):
@@ -280,8 +280,11 @@ for u_e,sg_,k,mod_ in ((xs_park0+PARK_KIS,-1,order[1],'guney'),(xs_park1-PARK_KI
 
 # ---------- arazi ----------
 
-def feat_z(x,y):
+def _feat_z0(x,y):
     s=np.array([axis.project(Point(a_,b_)) for a_,b_ in zip(x,y)]); return zax(s)
+def feat_z(x,y):
+    x=np.asarray(x,float); y=np.asarray(y,float)           # 5 noktali ortalama (r=1 m): eksen izdusumu sicramalari/keskin kirik yok
+    return (_feat_z0(x,y)+_feat_z0(x+1,y)+_feat_z0(x-1,y)+_feat_z0(x,y+1)+_feat_z0(x,y-1))/5.0
 def final(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float); f=nat(x,y)
     if 'nat_agiz' in globals():
@@ -816,3 +819,21 @@ for k in range(3):
 with open('p115y_bitki.txt','w') as f:
     for p0,p1,z_ in citler: f.write('H %.3f %.3f %.3f %.3f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],z_))
 print('bitki citi: %d parca, %.0f m'%(len(citler),sum(np.hypot(*(c[1]-c[0])) for c in citler)))
+
+
+# ---------- yaya yolu tasarimi: tasit girmez (bariyer direkleri), bordur, taş plaka ----------
+_s0=float(s_park1); _s1=float(st[int(np.argmin(np.abs(np.array([uc(q) for q in SP])-U_CUT)))])
+_ss=np.arange(_s0,_s1+1e-6,1.0)
+_yp=[]
+for s_ in _ss:
+    c_=np.array(axis.interpolate(s_).coords[0]); c2_=np.array(axis.interpolate(min(s_+0.5,L)).coords[0]); c1_=np.array(axis.interpolate(max(s_-0.5,0)).coords[0])
+    t_=c2_-c1_; t_/=np.hypot(*t_); n_=np.array([-t_[1],t_[0]])
+    _yp.append((c_,n_,float(zax(s_))))
+with open('p115y_yaya.txt','w') as f:
+    for (c_,n_,z_) in _yp:                      # y: eksen noktasi + normal + kot (bordur kesitleri)
+        f.write('Y %.3f %.3f %.4f %.4f %.3f\n'%(c_[0],c_[1],n_[0],n_[1],z_))
+    # bariyer direkleri: yaya girisinde 3 adet, 1.20 m aralikli (tekerlekli sandalye gecer, otomobil giremez)
+    c_,n_,z_=_yp[0] if len(_yp)<2 else _yp[1]
+    for off_ in (-1.2,0.0,1.2):
+        q_=c_+n_*off_; f.write('D %.3f %.3f %.3f\n'%(q_[0],q_[1],z_))
+print('yaya yolu: %.0f m, bordur ve 3 bariyer diregi'%(_s1-_s0))

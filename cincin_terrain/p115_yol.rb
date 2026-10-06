@@ -8,7 +8,7 @@ begin
   m.close_active while m.active_path
   m.start_operation("P115 yol + otopark + yaya yolu", true)
   ents = m.entities
-  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN|P115_KITLE_TABAN|P115_BITKI)/ }.each(&:erase!)
+  ents.grep(Sketchup::Group).select { |g| g.name =~ /^(P115_ARAZI|P115_BAHCE|P115_DUVAR|P115_OTOPARK|P115_ETIKET|P115_MERDIVEN|P115_KITLE_TABAN|P115_BITKI|P115_YAYA)/ }.each(&:erase!)
   orig = ents.grep(Sketchup::Group).select { |g| g.name.start_with?("ARAZI (PLANKOTE") }
   orig.each { |g| g.hidden = true }
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
@@ -46,7 +46,7 @@ begin
   mats = {
     "arazi" => (m.materials["ARAZI_PLANKOTE_UYDU"] || mk.("ARAZI_PLANKOTE_UYDU", 120, 120, 90)),
     "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => yol_tas,
-    "otopark" => yol_tas, "yaya" => mk.("YAYA_YOLU", 205, 190, 150),
+    "otopark" => yol_tas, "yaya" => dokulu.("YAYA_PLAKA", "yaya_tas_plaka.png", 1.2, 205, 190, 150),
     "kaldirim" => mk.("KALDIRIM", 200, 190, 170),
     "perde_beton" => istinat_tas,
     "perde_tas" => (m.materials["[Stone Sandstone Ashlar Light]"] || mk.("ETEK_DUVAR", 200, 175, 130))
@@ -208,8 +208,52 @@ begin
     end
     ncit += 1
   end
+  # yaya yolu tasarimi: tasit girmez - girista 3 bariyer diregi (1.20 m aralik) ve iki yanda bordur; tas plaka kaplama
+  gy = ents.add_group; gy.name = "P115_YAYA_YOLU (bordur + bariyer)"; gy.layer = m.layers.add("YAYA_YOLU")
+  bordur = mats["kaldirim"]
+  kesit = []
+  File.foreach(dir + "p115y_yaya.txt") do |ln|
+    t = ln.split
+    kesit << t[1..5].map(&:to_f) if t[0] == "Y"
+  end
+  pm_b = Geom::PolygonMesh.new
+  kesit.each_cons(2) do |a, b|
+    [1, -1].each do |yon|
+      ps = [a, b].map do |x, y, nx, ny, z|
+        [(x + nx * yon * 1.425), (y + ny * yon * 1.425), (x + nx * yon * 1.575), (y + ny * yon * 1.575), z]
+      end
+      pt = lambda { |xx, yy, zz| Geom::Point3d.new(xx.m, yy.m, zz.m) }
+      ai = [pt.(ps[0][0], ps[0][1], ps[0][4] + 0.08), pt.(ps[1][0], ps[1][1], ps[1][4] + 0.08)]
+      ao = [pt.(ps[0][2], ps[0][3], ps[0][4] + 0.08), pt.(ps[1][2], ps[1][3], ps[1][4] + 0.08)]
+      bi = [pt.(ps[0][0], ps[0][1], ps[0][4] - 0.25), pt.(ps[1][0], ps[1][1], ps[1][4] - 0.25)]
+      bo = [pt.(ps[0][2], ps[0][3], ps[0][4] - 0.25), pt.(ps[1][2], ps[1][3], ps[1][4] - 0.25)]
+      quad.(pm_b, [ai[0], ai[1], ao[1], ao[0]])      # ust
+      quad.(pm_b, [ai[0], bi[0], bi[1], ai[1]])      # ic yuz
+      quad.(pm_b, [ao[0], ao[1], bo[1], bo[0]])      # dis yuz
+    end
+  end
+  gy.entities.add_faces_from_mesh(pm_b, Geom::PolygonMesh::AUTO_SOFTEN, bordur, bordur) if pm_b.count_polygons > 0
+  direk = mk.("BARIYER_DIREK", 58, 60, 64); direk_ust = mk.("BARIYER_DIREK_USTU", 214, 214, 210)
+  ndirek = 0
+  File.foreach(dir + "p115y_yaya.txt") do |ln|
+    t = ln.split; next unless t[0] == "D"
+    x, y, z = t[1..3].map(&:to_f)
+    [[0.85, direk, -0.10], [0.95, direk_ust, 0.85]].each do |ust, mt, alt|
+      sg = gy.entities.add_group
+      c = sg.entities.add_circle(Geom::Point3d.new(x.m, y.m, (z + alt).m), Geom::Vector3d.new(0, 0, 1), (alt < 0.5 ? 0.10 : 0.105).m, 16)
+      f = (sg.entities.add_face(c) rescue nil)
+      if f
+        f.reverse! if f.normal.z < 0
+        f.pushpull((ust - alt).m)
+        sg.entities.grep(Sketchup::Face).each { |q| q.material = mt; q.back_material = mt }
+      else
+        sg.erase!
+      end
+    end
+    ndirek += 1
+  end
   m.commit_operation
-  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} cit=#{ncit} gizlenen_arazi=#{orig.length}")
+  File.write(dir + "p115_yol_result.txt", "OK ucgen=#{nf} duvar=#{nw} park_yeri=#{ns} basamak=#{nb} bahce_duvari_bolme=#{nbd} cit=#{ncit} yaya_direk=#{ndirek} gizlenen_arazi=#{orig.length}")
   # ev altlari: subasman altindaki acik kalan yerleri tas kapli dolgu blokla kapat (tum KITLE_ evleri)
   m.selection.clear
   load dir + "ev_duzelt.rb"
