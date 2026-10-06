@@ -111,7 +111,10 @@ road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,
 # not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
 PARK_KIS=3.0     # otopark iki uctan 3'er m kisalir, bahceler buyur; kuzeydeki W serit gecis icin otopark/yol kalir
 park_poly=unary_union([band.intersection(slab_u(xs_park0,xs_park1)),P.intersection(slab_u(xs_park0+PARK_KIS,xs_park1-PARK_KIS))]).difference(FPu_ic)
-walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu_ic)
+# son bagimsiz bolum (YAPI3 dogu ucu, 4. bolum): yaya yolu o bolumun basinda biter, kalan serit o bolumun bahcesi olur
+_k3=_ord[2]
+_u3=urange(fps[_k3]); U_CUT=_u3[1]-(_u3[1]-_u3[0])/4.0                       # 4 bolumlu yapinin son bolumu basladigi yer
+walk_poly=band.intersection(slab_u(xs_park1,U_CUT)).difference(FPu_ic)
 # YAPI1 ile YAPI2 arasi otopark: kuzeyden yola acilan 5.5 m koridor (bati) + dogu tarafta 5 m derin park yerleri.
 # Duz platform; yola bitisik 2.5 m serit yol kotundan platform kotuna yumusak baglanir (giris).
 LOT_W=10.5; LOT_APRON=2.5; AISLE_L=5.5
@@ -219,6 +222,7 @@ for j,k in enumerate(order):                                   # evin kuzey ceph
     nmax=float(np.max(np.array(fps[k].exterior.coords)@NU))      # cephe (duvar) hatti; kapi onu basamaklari degil
     kuz=Polygon([U*-1e4+NU*nmax,U*1e4+NU*nmax,U*1e4+NU*(nmax+1e3),U*-1e4+NU*(nmax+1e3)])
     ky=gard[k].intersection(kuz).difference(FPu)
+    if k==_k3: ky=ky.difference(slab_u(U_CUT,1e4))                              # son bolumun on bahcesi korunur
     if ky.area>0.05: sliv.append(ky); print('%s cephe onu bahce parcasi yola: %.1f m2'%(names[k],ky.area))
 if sliv:
     print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
@@ -230,11 +234,15 @@ if sliv:
 RISER=0.17; TREAD=0.30; ST_W=1.20
 gm_stairs=[]; gm_zones=[]; gm_info=[]      # (poly, ramp fonk) ve basamak bloklari
 _pk=park_poly if park_poly.geom_type=='Polygon' else max(park_poly.geoms,key=lambda q:q.area)
-for u_e,sg_,k in ((xs_park0+PARK_KIS,-1,order[1]),(xs_park1-PARK_KIS,1,order[2])):
+for u_e,sg_,k,mod_ in ((xs_park0+PARK_KIS,-1,order[1],'guney'),(xs_park1-PARK_KIS,1,order[2],'guney'),(U_CUT,1,_k3,'serit')):
     # park kenarinin guney ucu
     _ln=LineString([U*u_e+NU*-1e3,U*u_e+NU*1e3]).intersection(P)
     _c=np.array(_ln.coords) if _ln.geom_type=='LineString' else np.array(max(_ln.geoms,key=lambda g:g.length).coords)
-    n_s=float((_c@NU).min())+1.5; n0=n_s; n1=n_s+ST_W                      # guney sinir duvarindan 1.5 m iceride
+    if mod_=='guney': n_s=float((_c@NU).min())+1.5                         # guney sinir duvarindan 1.5 m iceride
+    else:                                                                   # yaya seridinin ortasinda
+        _bl=LineString([U*(u_e+0.05)+NU*-1e3,U*(u_e+0.05)+NU*1e3]).intersection(band); _bc=np.array(_bl.coords) if _bl.geom_type=='LineString' else np.array(max(_bl.geoms,key=lambda g:g.length).coords)
+        n_s=float((_bc@NU).mean())-ST_W/2
+    n0=n_s; n1=n_s+ST_W
     pp_=U*(u_e-sg_*0.3)+NU*(n0+ST_W/2)
     zp=float(zax(axis.project(Point(*pp_))))
     h_=Z[k]-zp; ns_=max(int(np.ceil(abs(h_)/RISER)),1); r_=h_/ns_; run=(ns_-1)*TREAD
@@ -303,6 +311,7 @@ for j_,k in enumerate(order):                                   # bina izleri: y
     _c=np.array(fps[k].exterior.coords); nf=float((_c@NU).max()); u0f,u1f=float((_c@U).min()),float((_c@U).max())
     # kaldirim: yalniz evin onu - cephe hatti ile yol arasi, evin boyu kadar; evin yanlari ve bahce tarafi yesil
     kald=fz.intersection(Polygon([U*u0f+NU*(nf-0.05),U*u1f+NU*(nf-0.05),U*u1f+NU*(nf+1e3),U*u0f+NU*(nf+1e3)]))
+    if k==_k3: kald=kald.difference(slab_u(U_CUT,1e4))
     parts.append((kald,'kaldirim',const(Z[k])))
     parts.append((fz.difference(kald),'cim',const(Z[k])))
 VV=[]; FF=[]
@@ -527,6 +536,7 @@ for dd in doors:
     if not dd['north'] or any(np.hypot(*(dd['c']-q_))<1.5 for q_ in _gor): continue
     _gor.append(dd['c']); k=dd['k']
     zr=float(zax(axis.project(Point(*(dd['c']+dd['n']*0.5)))))
+    if k==_k3 and uc(dd['c'])>U_CUT: zr=Z[k]                                    # son bolum: kapi onu bahce
     hh=Lk[k]-zr
     if hh<0.05: continue
     nb_=int(np.ceil(hh/RISER)); rb_=hh/nb_
