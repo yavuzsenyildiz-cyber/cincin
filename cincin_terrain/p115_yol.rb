@@ -14,7 +14,10 @@ begin
   mk = lambda { |n, r, g, b| x = m.materials[n] || m.materials.add(n); x.color = Sketchup::Color.new(r, g, b); x }
   # SketchUp malzeme kutuphanesinden (.skm) malzeme yukle; bulunamazsa duz renkli yedek
   kutup = lambda do |adlar, yedek, r, g, b|
-    adlar.each { |a| x = m.materials[a] || m.materials["[#{a}]"]; return x if x }
+    adlar.each do |a|
+      x = a.is_a?(Regexp) ? m.materials.find { |q| q.name =~ a } : (m.materials[a] || m.materials["[#{a}]"])
+      return x if x
+    end
     kok = (Sketchup.find_support_file("Materials") rescue nil)
     dosyalar = kok ? Dir.glob(File.join(kok, "**", "*.skm")) : []
     adlar.each do |a|
