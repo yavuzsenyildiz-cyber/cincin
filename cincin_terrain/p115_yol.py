@@ -171,6 +171,25 @@ gard=[None]*3
 for j,k in enumerate(order):
     g=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
     gard[k]=g
+# giris kosesi pahi: YAPI1 bahcesinin giris yoluna bakan (kuzeybati) kosesi kirilip yola katilir -> arac donusu kolay
+PAH=3.0
+g1=gard[order[0]]; g1p=g1 if g1.geom_type=='Polygon' else max(g1.geoms,key=lambda q:q.area)
+gc=np.array(g1p.exterior.coords)[:-1]
+ic_=int(np.argmin(np.hypot(*(gc-np.array(axis_pts[1])).T)))
+C_=gc[ic_]
+def _komsu(st_):                                               # kenar boyunca koseden >=1 m uzaktaki ilk nokta
+    i_=ic_
+    for _ in range(len(gc)):
+        i_=(i_+st_)%len(gc)
+        if np.hypot(*(gc[i_]-C_))>=1.0: return gc[i_]
+    return gc[(ic_+st_)%len(gc)]
+Pp=_komsu(-1); Pn=_komsu(1)
+A_p=C_+(Pp-C_)/np.hypot(*(Pp-C_))*min(PAH,np.hypot(*(Pp-C_))*0.8); B_p=C_+(Pn-C_)/np.hypot(*(Pn-C_))*min(PAH,np.hypot(*(Pn-C_))*0.8)
+pah=Polygon([C_,A_p,B_p]).buffer(0.02,join_style=2).intersection(g1p).difference(FPu.buffer(0.5))
+print('giris kosesi pahi: kose (%.2f,%.2f), alan %.1f m2'%(C_[0],C_[1],pah.area))
+road_poly=unary_union([road_poly,pah]).buffer(0.01).buffer(-0.01)
+hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
+for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 
 # ---------- arazi ----------
 
@@ -295,6 +314,7 @@ for a_,b_,lo,hi,ty,nl in walls:
     if not hard.buffer(0.05).contains(Point(*(mid-nl*0.3))): continue        # yuksek taraf yol (istinatin ustu)
     if (hi-lo).mean()<0.35: continue
     if FPu.distance(Point(*mid))<2.5: continue                                # bina kosesine sikismasin
+    if pah.buffer(0.6).contains(Point(*mid)): continue                       # giris pahina degil, duz istinata
     run_=TH+np.ceil((hi-lo).mean()/RISER)*TREAD+0.5
     tip=mid+nl*run_                                                           # merdiven bahceye sigmali, binaya carpmamali
     if not gard[0].buffer(-0.05).contains(LineString([mid+nl*TH,tip]).buffer(ST_W/2,cap_style=2)): continue
