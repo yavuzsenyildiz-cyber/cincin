@@ -234,7 +234,14 @@ for j,k in enumerate(order):                                   # evin kuzey ceph
     ky=gard[k].intersection(kuz).difference(FPu)
     if k==_k3: ky=ky.difference(slab_u(U_CUT,1e4))                              # son bolumun on bahcesi korunur
     if ky.area>0.05: sliv.append(ky); print('%s cephe onu bahce parcasi yola: %.1f m2'%(names[k],ky.area))
+road_ana=road_poly                                                              # ana tasit yolu (otopark girisi egimi buna gore)
 if sliv:
+    _sv=unary_union(sliv)
+    _sv_lot=unary_union([g_ for g_ in getattr(_sv,'geoms',[_sv]) if g_.distance(lot_poly)<0.1]) if not _sv.is_empty else Polygon()
+    if not _sv_lot.is_empty:                                                     # otoparka bitisik sivriler otoparka (yola degil)
+        lot_poly=unary_union([lot_poly,_sv_lot]).buffer(0.01).buffer(-0.01)
+        if lot_poly.geom_type!='Polygon': lot_poly=max(lot_poly.geoms,key=lambda q:q.area)
+        sliv=[_sv.difference(_sv_lot)]
     print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
     road_poly=unary_union([road_poly]+sliv).buffer(0.01).buffer(-0.01)
     hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
@@ -244,17 +251,18 @@ if sliv:
 RISER=0.17; TREAD=0.30; ST_W=1.20
 gm_stairs=[]; gm_zones=[]; gm_info=[]      # (poly, ramp fonk) ve basamak bloklari
 _pk=park_poly if park_poly.geom_type=='Polygon' else max(park_poly.geoms,key=lambda q:q.area)
-for u_e,sg_,k,mod_ in ((xs_park0+PARK_KIS,-1,order[1],'guney'),(xs_park1-PARK_KIS,1,order[2],'guney'),(U_CUT,1,_k3,'serit')):
+Z_LOT=float(za[int(np.argmin([abs(uc(q)-(LOT_U[0]+AISLE_L/2)) for q in SP]))])     # ara otopark duz platform kotu
+for u_e,sg_,k,mod_ in ((xs_park0+PARK_KIS,-1,order[1],'guney'),(xs_park1-PARK_KIS,1,order[2],'guney'),(U_CUT,1,_k3,'serit'),(LOT_U[0],-1,order[0],'lot')):
     # park kenarinin guney ucu
     _ln=LineString([U*u_e+NU*-1e3,U*u_e+NU*1e3]).intersection(P)
     _c=np.array(_ln.coords) if _ln.geom_type=='LineString' else np.array(max(_ln.geoms,key=lambda g:g.length).coords)
-    if mod_=='guney': n_s=float((_c@NU).min())+1.5                         # guney sinir duvarindan 1.5 m iceride
+    if mod_ in ('guney','lot'): n_s=float((_c@NU).min())+1.5               # guney sinir duvarindan 1.5 m iceride
     else:                                                                   # yaya seridinin ortasinda
         _bl=LineString([U*(u_e+0.05)+NU*-1e3,U*(u_e+0.05)+NU*1e3]).intersection(band); _bc=np.array(_bl.coords) if _bl.geom_type=='LineString' else np.array(max(_bl.geoms,key=lambda g:g.length).coords)
         n_s=float((_bc@NU).mean())-ST_W/2
     n0=n_s; n1=n_s+ST_W
     pp_=U*(u_e-sg_*0.3)+NU*(n0+ST_W/2)
-    zp=float(zax(axis.project(Point(*pp_))))
+    zp=Z_LOT if mod_=='lot' else float(zax(axis.project(Point(*pp_))))
     h_=Z[k]-zp; ns_=max(int(np.ceil(abs(h_)/RISER)),1); r_=h_/ns_; run=(ns_-1)*TREAD
     gzone=Polygon([U*u_e+NU*n0,U*(u_e+sg_*run)+NU*n0,U*(u_e+sg_*run)+NU*n1,U*u_e+NU*n1])
     if gzone.area>0 and not gzone.is_valid: gzone=gzone.buffer(0)
@@ -292,7 +300,7 @@ def final(x,y):
 Z_LOT=None
 def lot_z(x,y):
     x=np.asarray(x,float); y=np.asarray(y,float)
-    d=shapely.distance(road_poly,shapely.points(x,y)); w_=np.clip(1-d/LOT_APRON,0,1)
+    d=shapely.distance(road_ana,shapely.points(x,y)); w_=np.clip(1-d/LOT_APRON,0,1)
     return Z_LOT+(feat_z(x,y)-Z_LOT)*w_
 def ringpts(poly,step=0.5):
     out=[]
@@ -614,7 +622,7 @@ while True:
 # en ustte duvar ustu = bahce kotu (bahceye gecilir)
 k1=_ord[0]; hgt=Z[k1]-Z_LOT
 lot_stair=[]
-if hgt>0.2:
+if False and hgt>0.2:                                                         # otopark ici merdiven yerine gomulu merdiven (yukarida)
     n_=int(np.ceil(hgt/RISER)); r_=hgt/n_
     u0_=LOT_U[0]+0.02; u1_=u0_+ST_W
     n_lo=min(np.array(lot_poly.exterior.coords)@NU)
