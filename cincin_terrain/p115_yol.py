@@ -57,6 +57,7 @@ def _kes(r):
 real_fp=[_kes(r) for r in real_fp]
 real_fp=[r if r.geom_type=='Polygon' else max(r.geoms,key=lambda q:q.area) for r in real_fp if not r.is_empty]
 FPu=unary_union(fps+real_fp)
+FPu_ic=FPu.buffer(-0.30,join_style=2)      # yol evin 30 cm altina girer (ev/perde altinda gizli): kose sivrileri havada kalmaz
 
 # ---------- kapilar ----------
 d=json.loads(subprocess.check_output(['git','show','HEAD:cincin_terrain/kitle_dump.json']))
@@ -106,11 +107,11 @@ u_gap0=max(urange(q)[1] for q in fps+real_fp if urange(q)[1]<_u2+0.5)        # Y
 u_gap1=min(urange(q)[0] for q in fps+real_fp if urange(q)[0]>u_gap0)          # YAPI2 bati ucu
 ROAD_W2=5.5
 wide=north.buffer(ROAD_W2,cap_style=2,join_style=2).intersection(P).intersection(slab_u(u_gap0,u_gap1))
-road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,wide]).buffer(0.01).buffer(-0.01).difference(FPu)
+road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,wide]).buffer(0.01).buffer(-0.01).difference(FPu_ic)
 # not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
 PARK_KIS=3.0     # otopark iki uctan 3'er m kisalir, bahceler buyur; kuzeydeki W serit gecis icin otopark/yol kalir
-park_poly=unary_union([band.intersection(slab_u(xs_park0,xs_park1)),P.intersection(slab_u(xs_park0+PARK_KIS,xs_park1-PARK_KIS))]).difference(FPu)
-walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu)
+park_poly=unary_union([band.intersection(slab_u(xs_park0,xs_park1)),P.intersection(slab_u(xs_park0+PARK_KIS,xs_park1-PARK_KIS))]).difference(FPu_ic)
+walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu_ic)
 # YAPI1 ile YAPI2 arasi otopark: kuzeyden yola acilan 5.5 m koridor (bati) + dogu tarafta 5 m derin park yerleri.
 # Duz platform; yola bitisik 2.5 m serit yol kotundan platform kotuna yumusak baglanir (giris).
 LOT_W=10.5; LOT_APRON=2.5; AISLE_L=5.5
@@ -297,7 +298,7 @@ for pp_,tg in ((road_poly,'asfalt'),(park_poly,'otopark'),(walk_poly,'yaya')): p
 parts.append((lot_poly,'otopark',lot_z))
 for zn_,rf_ in gm_zones: parts.append((zn_,'kaldirim',rf_))
 for j_,k in enumerate(order):                                   # bina izleri: yol tarafi (kuzey) kaldirim, bahce tarafi cim
-    fz=FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1]))
+    fz=FPu.intersection(P).intersection(slab_u(cuts[j_],cuts[j_+1])).difference(hard)
     if fz.is_empty: continue
     _c=np.array(fps[k].exterior.coords); nf=float((_c@NU).max()); u0f,u1f=float((_c@U).min()),float((_c@U).max())
     # kaldirim: yalniz evin onu - cephe hatti ile yol arasi, evin boyu kadar; evin yanlari ve bahce tarafi yesil
