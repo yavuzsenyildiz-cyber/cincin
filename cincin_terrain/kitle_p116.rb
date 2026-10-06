@@ -36,10 +36,10 @@ begin
   m.definitions.purge_unused
   m.commit_operation
   File.write(dir + "kitle_p116_result.txt", "OK yerlestirilen=#{placed}/#{plan.length} eksik=#{missing.inspect}\n#{log.join("\n")}\nskp=#{skp}")
-  UI.messagebox("P116 kitleleri: #{placed}/#{plan.length} yerlestirildi\n#{log.join("\n")}")
+  UI.messagebox("[betik v3: #{File.expand_path(__FILE__)}]\nP116 kitleleri: #{placed}/#{plan.length} yerlestirildi\n#{log.join("\n")}")
   load dir + "p116_yol.rb" if missing.empty?
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "kitle_p116_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(3).join("\n")}")
-  UI.messagebox("HATA: #{e.message}")
+  UI.messagebox("HATA: #{e.message}\n#{e.backtrace.first(4).join("\n")}\n[betik v3: #{File.expand_path(__FILE__)}]")
 end
