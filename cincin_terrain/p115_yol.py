@@ -100,15 +100,15 @@ u_gap0=max(urange(q)[1] for q in fps+real_fp if urange(q)[1]<_u2+0.5)        # Y
 u_gap1=min(urange(q)[0] for q in fps+real_fp if urange(q)[0]>u_gap0)          # YAPI2 bati ucu
 ROAD_W2=5.5
 wide=north.buffer(ROAD_W2,cap_style=2,join_style=2).intersection(P).intersection(slab_u(u_gap0,u_gap1))
-road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,wide]).buffer(0.01).buffer(-0.01).difference(FPu.buffer(0.05))
+road_poly=unary_union([band.intersection(slab_u(-1e4,xs_park0)),entry,west_fill,wide]).buffer(0.01).buffer(-0.01).difference(FPu)
 # not: bati ucta giris seridi (3 m) disinda ~17 m2 kaliyor; 2.5x5 park yeri sigmiyor -> rampa/asfalt olarak kalir
-park_poly=P.intersection(slab_u(xs_park0,xs_park1)).difference(FPu.buffer(0.05))
-walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu.buffer(0.05))
+park_poly=P.intersection(slab_u(xs_park0,xs_park1)).difference(FPu)
+walk_poly=band.intersection(slab_u(xs_park1,1e4)).difference(FPu)
 # YAPI1 ile YAPI2 arasi otopark: kuzeyden yola acilan 5.5 m koridor (bati) + dogu tarafta 5 m derin park yerleri.
 # Duz platform; yola bitisik 2.5 m serit yol kotundan platform kotuna yumusak baglanir (giris).
 LOT_W=10.5; LOT_APRON=2.5; AISLE_L=5.5
 LOT_U=(u_gap0+3.9,u_gap0+3.9+LOT_W)
-lot_poly=P.intersection(slab_u(*LOT_U)).difference(road_poly).difference(FPu.buffer(0.05)).buffer(-0.01).buffer(0.01)
+lot_poly=P.intersection(slab_u(*LOT_U)).difference(road_poly).difference(FPu).buffer(-0.01).buffer(0.01)
 if lot_poly.geom_type!='Polygon': lot_poly=max(lot_poly.geoms,key=lambda q:q.area)
 for nm_,pp in (('yol',road_poly),('otopark',park_poly),('yaya',walk_poly)):
     if pp.geom_type!='Polygon': print('uyari:',nm_,'parcali',pp.geom_type)
@@ -205,7 +205,7 @@ for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).d
 sliv=[]
 for k in range(3):
     g_=gard[k]; gc_=g_.buffer(-0.5,join_style=2).buffer(0.5,join_style=2).intersection(g_)
-    sl=g_.difference(gc_).difference(FPu.buffer(0.05))
+    sl=g_.difference(gc_).difference(FPu)
     if not sl.is_empty and sl.area>0.01: sliv.append(sl)
 if sliv:
     print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
@@ -307,6 +307,7 @@ with open('p115y_mesh.txt','w') as f:
 
 # ---------- duvarlar ----------
 walls=[]; WL={}
+GARD_U=unary_union(gard)
 groups=[('bahce',q) for q in gard]+[('sokak',hard)]
 allf=unary_union(gard+[hard])
 for tag,q in groups:
@@ -328,6 +329,10 @@ for tag,q in groups:
                 outside_feat=allf.contains(Point(*(mid-nn*0.06)))
                 if outside_feat and zi.mean()<=zo.mean(): continue                             # oteki taraf cizer
                 nlow=-nn if zi.mean()>zo.mean() else nn          # duvar alcak tarafa dogru kalinlasir
+                if hard.contains(Point(*(mid-nlow*0.2))) is False and hard.contains(Point(*(mid+nlow*0.2))) and GARD_U.contains(Point(*(mid-nlow*0.2))):
+                    nlow=-nlow                                                                  # yol ile bahce arasinda govde bahce tarafinda: yol kenari cephe hizasinda temiz kalir
+                    hi_ek=0.01
+                else: hi_ek=0.0
                 lo=np.minimum(zi,zo); hi=np.maximum(zi,zo)
                 zi4=final([a_[0]+nn[0]*0.4,b_[0]+nn[0]*0.4],[a_[1]+nn[1]*0.4,b_[1]+nn[1]*0.4])     # koseler: duvar ustu yanindaki en yuksek zemine kadar
                 zo4=final([a_[0]-nn[0]*0.4,b_[0]-nn[0]*0.4],[a_[1]-nn[1]*0.4,b_[1]-nn[1]*0.4])
@@ -335,6 +340,7 @@ for tag,q in groups:
                     in4=contains_xy(P,np.array([a_[0]+q4[0],b_[0]+q4[0]]),np.array([a_[1]+q4[1],b_[1]+q4[1]]))
                     z4[~in4]=np.nan
                 if (hi-lo).max()>=0.30: hi=np.nanmax(np.vstack([hi,zi4,zo4]),axis=0)          # kucuk kot farklarinda ucgen tepe olusmasin
+                hi=hi+hi_ek                                                                    # bahce icindeki duvar ustu cimle cakismasin
                 if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu'
                 else: ty='istinat' if zi.mean()<zo.mean() else 'basamak'
                 walls.append((a_,b_,lo,hi,ty,nlow)); WL[ty]=WL.get(ty,0)+np.hypot(*(b_-a_))
@@ -344,8 +350,9 @@ with open('p115y_duvar.txt','w') as f:
     for a_,b_,lo,hi,ty,nl in walls:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
         tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
-        if e0: a_=a_-tv_*0.30
-        if e1: b_=b_+tv_*0.30
+        uzat_ok=lambda q: not (hard.contains(Point(*q)) or FPu.contains(Point(*q)))   # uc yola/evin icine tasmasin (cikinti olmasin)
+        if e0 and uzat_ok(a_-tv_*0.30): a_=a_-tv_*0.30
+        if e1 and uzat_ok(b_+tv_*0.30): b_=b_+tv_*0.30
         f.write('W %s %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %d %d\n'%(ty,a_[0],a_[1],b_[0],b_[1],lo[0]-0.3,lo[1]-0.3,hi[0],hi[1],nl[0],nl[1],e0,e1))
 
 # ---------- istinattan YAPI1 bahcesine (yesile) inen merdiven: kot farkinin en az oldugu duvar parcasi ----------
