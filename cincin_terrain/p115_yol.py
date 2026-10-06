@@ -227,13 +227,13 @@ if sliv:
 
 # ---------- otoparktan bahcelere gomulu merdivenler (guney uclarda, bahceye dogru) ----------
 RISER=0.17; TREAD=0.30; ST_W=1.20
-gm_stairs=[]; gm_zones=[]      # (poly, ramp fonk) ve basamak bloklari
+gm_stairs=[]; gm_zones=[]; gm_info=[]      # (poly, ramp fonk) ve basamak bloklari
 _pk=park_poly if park_poly.geom_type=='Polygon' else max(park_poly.geoms,key=lambda q:q.area)
 for u_e,sg_,k in ((xs_park0+PARK_KIS,-1,order[1]),(xs_park1-PARK_KIS,1,order[2])):
     # park kenarinin guney ucu
     _ln=LineString([U*u_e+NU*-1e3,U*u_e+NU*1e3]).intersection(P)
     _c=np.array(_ln.coords) if _ln.geom_type=='LineString' else np.array(max(_ln.geoms,key=lambda g:g.length).coords)
-    n_s=float((_c@NU).min())+0.6; n0=n_s; n1=n_s+ST_W
+    n_s=float((_c@NU).min())+1.5; n0=n_s; n1=n_s+ST_W                      # guney sinir duvarindan 1.5 m iceride
     pp_=U*(u_e-sg_*0.3)+NU*(n0+ST_W/2)
     zp=float(zax(axis.project(Point(*pp_))))
     h_=Z[k]-zp; ns_=max(int(np.ceil(abs(h_)/RISER)),1); r_=h_/ns_; run=(ns_-1)*TREAD
@@ -247,7 +247,7 @@ for u_e,sg_,k in ((xs_park0+PARK_KIS,-1,order[1]),(xs_park1-PARK_KIS,1,order[2])
     if h_>0:          # bahce yuksek: merdiven bahceye gomulu (bahceden oyulur; yanlarda istinat)
         def _ramp(x,y,u_e=u_e,sg_=sg_,zp=zp,r_=r_):
             d=np.clip(((np.c_[x,y]@U)-u_e)*sg_,0,None); return zp+d/TREAD*r_-0.02
-        gm_zones.append((gzone,_ramp))
+        gm_zones.append((gzone,_ramp)); gm_info.append((u_e,sg_,n0,n1,zp,Z[k],run))
         gard[k]=gard[k].difference(gzone)
     print('%s bahcesine merdiven: %s %.2f m, %d rihtim x %.1f cm, kosu %.2f m'%(names[k],'cikis (gomulu)' if h_>0 else 'inis',abs(h_),ns_,abs(r_)*100,run))
 
@@ -393,13 +393,41 @@ for tag,q in groups:
                 if zi.mean()>zo.mean() and (zi-zo).max()>0.5: hi=hi+PARAPET; ty='dolgu'
                 else: ty='istinat' if zi.mean()<zo.mean() else 'basamak'
                 walls.append((a_,b_,lo,hi,ty,nlow)); WL[ty]=WL.get(ty,0)+np.hypot(*(b_-a_))
+# gomulu merdiven: oyuga degen otomatik duvarlar oyuk sinirinda kesilir; yerine merdivenin iki yaninda,
+# oyugun DISINDA, duz tepeli (bahce kotu) istinat duvarlari -> V/ucgen parca ve aciklik olusmaz
+if gm_zones:
+    _zu=unary_union([z_ for z_,_ in gm_zones]).buffer(0.01,join_style=2)
+    yeni=[]
+    for a_,b_,lo,hi,ty,nl in walls:
+        ln=LineString([a_,b_])
+        if not ln.intersects(_zu): yeni.append((a_,b_,lo,hi,ty,nl)); continue
+        kal=ln.difference(_zu); L_=ln.length
+        for g_ in getattr(kal,'geoms',[kal]):
+            if g_.is_empty or g_.length<0.05: continue
+            c_=np.array(g_.coords); t0=np.dot(c_[0]-a_,b_-a_)/L_**2; t1=np.dot(c_[-1]-a_,b_-a_)/L_**2
+            yeni.append((c_[0],c_[-1],lo[0]+(lo[1]-lo[0])*np.array([t0,t1]),hi[0]+(hi[1]-hi[0])*np.array([t0,t1]),ty,nl))
+    # merdiven agzina yakin parcalarin tepesi duz (bahce kotu): egik/ucgen tepe olmasin
+    yeni=[(a_,b_,np.full(2,lo.min()),np.full(2,hi.max()),ty,nl) if LineString([a_,b_]).distance(_zu)<0.8 else (a_,b_,lo,hi,ty,nl) for a_,b_,lo,hi,ty,nl in yeni]
+    # merdiven yanindaki parcalarin govdesi otoparka/yola tasmasin (bahce tarafinda)
+    yeni=[(a_,b_,lo,hi,ty,(-nl if (LineString([a_,b_]).distance(_zu)<0.8 and hard.contains(Point(*((a_+b_)/2+nl*0.2)))) else nl)) for a_,b_,lo,hi,ty,nl in yeni]
+    walls=yeni
+    for u_e,sg_,n0,n1,zp,zg,run in gm_info:
+        for nn_,dn in ((n0,-1.0),(n1,1.0)):
+            a_=U*u_e+NU*nn_; b_=U*(u_e+sg_*run)+NU*nn_
+            walls.append((a_,b_,np.array([zp,zp]),np.array([zg+0.01,zg+0.01]),'istinat',NU*dn))
+# ust uste binen (ayni konumda iki kez uretilen) duvarlar tekillesir: yuksek olan kalir
+_tek={}
+for w_ in walls:
+    key=tuple(sorted([tuple(np.round(w_[0],1)),tuple(np.round(w_[1],1))]))
+    if key not in _tek or w_[3].max()>_tek[key][3].max(): _tek[key]=w_
+walls=list(_tek.values())
 with open('p115y_duvar.txt','w') as f:
     from collections import Counter
     cnt=Counter([tuple(np.round(w_[0],2)) for w_ in walls]+[tuple(np.round(w_[1],2)) for w_ in walls])
     for a_,b_,lo,hi,ty,nl in walls:
         e0=int(cnt[tuple(np.round(a_,2))]<2); e1=int(cnt[tuple(np.round(b_,2))]<2)       # zincir ucu -> uc yuzu kapat
         tv_=(b_-a_)/max(np.hypot(*(b_-a_)),1e-9)                                           # zincir uclari 30 cm uzar: kose bosluklari kapanir
-        uzat_ok=lambda q: not hard.contains(Point(*q))                                 # uc yola tasmasin; evin icine uzayabilir (kose boslugu kapanir)
+        uzat_ok=lambda q: not hard.contains(Point(*q)) and not (gm_zones and unary_union([z_ for z_,_ in gm_zones]).buffer(0.02).contains(Point(*q)))   # uc yola/merdiven oyuguna tasmasin
         def eve_uzat(p_,d_):                                                            # uc evin 2 m yakinindaysa ayni hizada eve kadar uzar
             ray=LineString([p_,p_+d_*2.0]); x_=ray.intersection(FPu)
             if x_.is_empty: return None
