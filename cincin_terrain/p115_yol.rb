@@ -144,7 +144,8 @@ begin
   dikme = {}; nbd = 0
   File.foreach(dir + "p115y_bahce_duvari.txt") do |ln|
     t = ln.split; next unless t[0] == "B"
-    x0, y0, x1, y1, zb, ox, oy = t[1..7].map(&:to_f)
+    x0, y0, x1, y1, zb, ox, oy, zm = t[1..8].map(&:to_f)
+    zm ||= zb
     off = Geom::Vector3d.new(ox, oy, 0); off.length = 0.15.m           # istinat govdesinin ortasi
     a = Geom::Point3d.new(x0.m, y0.m, 0).offset(off); b = Geom::Point3d.new(x1.m, y1.m, 0).offset(off)
     u = b - a
@@ -152,19 +153,20 @@ begin
     u.normalize!
     a2 = a.offset(u, 0.20.m); b2 = b.offset(u.reverse, 0.20.m)
     z = zb.m
+    kutu.(a, b, 0.15.m, (zm - 0.10).m, z, istinat_tas) if zb - zm > 0.005  # istinat ile kademeli bolme arasi: istinat tasi dolgu (aciklik kalmaz)
     kutu.(a2, b2, 0.125.m, z - 0.05.m, z + 0.60.m, siva)                 # alcak duvar 25 cm kalin, 60 cm
     kutu.(a2, b2, 0.165.m, z + 0.60.m, z + 0.66.m, kapak)                # kapak tasi
     4.times { |k| kutu.(a2, b2, 0.025.m, z + (0.76 + k * 0.17).m, z + (0.85 + k * 0.17).m, ahsap) }   # ahsap yatay citalar
     [a, b].each do |q|
       key = [(q.x.to_m * 20).round, (q.y.to_m * 20).round]
-      d = (dikme[key] ||= { p: q, u: u, z0: zb, z1: zb })
-      d[:z0] = [d[:z0], zb].min; d[:z1] = [d[:z1], zb].max
+      d = (dikme[key] ||= { p: q, u: u, z0: zm, z1: zb })
+      d[:z0] = [d[:z0], zm].min; d[:z1] = [d[:z1], zb].max
     end
     nbd += 1
   end
   dikme.each_value do |d|
     q = d[:p]; u = d[:u]
-    kutu.(q.offset(u.reverse, 0.20.m), q.offset(u, 0.20.m), 0.20.m, (d[:z0] - 0.05).m, (d[:z1] + 1.55).m, istinat_tas)    # dikme 40x40 (kademede uzun olan)
+    kutu.(q.offset(u.reverse, 0.20.m), q.offset(u, 0.20.m), 0.20.m, (d[:z0] - 0.10).m, (d[:z1] + 1.55).m, istinat_tas)    # dikme 40x40 (kademede uzun olan)
     kutu.(q.offset(u.reverse, 0.25.m), q.offset(u, 0.25.m), 0.25.m, (d[:z1] + 1.55).m, (d[:z1] + 1.61).m, kapak)          # dikme basligi
   end
   m.commit_operation

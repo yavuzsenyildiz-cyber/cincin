@@ -696,7 +696,7 @@ for i_ in range(len(_pe)):
         zi=final(sm[:,0]-out[0]*0.3,sm[:,1]-out[1]*0.3); zo=final(sm[:,0]+out[0]*0.6,sm[:,1]+out[1]*0.6)
         zz=np.nanmax(np.vstack([zi,zo]),axis=0)
         if np.isnan(zz).all(): continue
-        bays.append((p0,p1,float(np.nanmax(zz)),out))
+        bays.append((p0,p1,float(np.nanmax(zz)),out,float(np.nanmin(zz))))
 with open('p115y_bahce_duvari.txt','w') as f:
-    for p0,p1,zb_,out in bays: f.write('B %.3f %.3f %.3f %.3f %.3f %.4f %.4f\n'%(p0[0],p0[1],p1[0],p1[1],zb_,out[0],out[1]))
+    for p0,p1,zb_,out,zm_ in bays: f.write('B %.3f %.3f %.3f %.3f %.3f %.4f %.4f %.3f\n'%(p0[0],p0[1],p1[0],p1[1],zb_,out[0],out[1],zm_))
 print('bahce duvari: %d bolme, %.0f m'%(len(bays),sum(np.hypot(*(b[1]-b[0])) for b in bays)))
