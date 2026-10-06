@@ -673,3 +673,30 @@ ax.set_aspect('equal'); plt.savefig('p115y_onizleme.png',dpi=110,bbox_inches='ti
 with open('p115y_taban.txt','w') as f:
     for k in range(3):
         f.write('B %s %.3f %.3f %s\n'%(names[k],Z[k]-0.05,Lk[k],';'.join('%.3f,%.3f'%tuple(q) for q in np.array(fps[k].exterior.coords)[:-1])))
+
+# ---------- bahce duvari: kuzey, dogu, bati parsel sinirindaki istinat duvarlarinin ustunde, kademeli ----------
+# 2.5 m'lik bolmeler; her bolmenin tabani o bolmedeki istinat duvari ustunun en yukseginde (kademeli).
+BAY=2.5
+_pe=list(P.exterior.coords)[:-1]
+_guney={tuple(np.round(ring[14],2)),tuple(np.round(ring[15],2)),tuple(np.round(ring[16],2))}
+bays=[]
+for i_ in range(len(_pe)):
+    a_=np.array(_pe[i_]); b_=np.array(_pe[(i_+1)%len(_pe)])
+    if tuple(np.round(a_,2)) in _guney and tuple(np.round(b_,2)) in _guney: continue      # guney siniri haric
+    L_=np.hypot(*(b_-a_))
+    if L_<0.5: continue
+    t_=(b_-a_)/L_; out=np.array([t_[1],-t_[0]])
+    if P.contains(Point(*((a_+b_)/2+out*0.2))): out=-out                                 # disari normal
+    nb=max(int(np.ceil(L_/BAY)),1)
+    for j_ in range(nb):
+        p0=a_+t_*L_*j_/nb; p1=a_+t_*L_*(j_+1)/nb
+        sm=np.array([p0+(p1-p0)*f_ for f_ in np.linspace(0,1,6)])
+        mid=(p0+p1)/2
+        if opening.buffer(0.6).contains(Point(*mid)) or mouth.buffer(0.3).contains(Point(*mid)): continue   # arac girisi acik
+        zi=final(sm[:,0]-out[0]*0.3,sm[:,1]-out[1]*0.3); zo=final(sm[:,0]+out[0]*0.6,sm[:,1]+out[1]*0.6)
+        zz=np.nanmax(np.vstack([zi,zo]),axis=0)
+        if np.isnan(zz).all(): continue
+        bays.append((p0,p1,float(np.nanmax(zz)),out))
+with open('p115y_bahce_duvari.txt','w') as f:
+    for p0,p1,zb_,out in bays: f.write('B %.3f %.3f %.3f %.3f %.3f %.4f %.4f\n'%(p0[0],p0[1],p1[0],p1[1],zb_,out[0],out[1]))
+print('bahce duvari: %d bolme, %.0f m'%(len(bays),sum(np.hypot(*(b[1]-b[0])) for b in bays)))
