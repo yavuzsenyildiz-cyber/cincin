@@ -198,6 +198,17 @@ print('kamu yolu agzi pahi: alan %.1f m2'%mouth.area)
 road_poly=unary_union([road_poly,pah,mouth]).buffer(0.01).buffer(-0.01)
 hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
 for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
+# bahce sivrileri (1 m'den dar seritler) yola katilir: yol ustunde anlamsiz duvar kutulari olusmasin
+sliv=[]
+for k in range(3):
+    g_=gard[k]; gc_=g_.buffer(-0.5,join_style=2).buffer(0.5,join_style=2).intersection(g_)
+    sl=g_.difference(gc_).difference(FPu.buffer(0.05))
+    if not sl.is_empty and sl.area>0.01: sliv.append(sl)
+if sliv:
+    print('yola katilan bahce sivrisi: %.1f m2'%unary_union(sliv).area)
+    road_poly=unary_union([road_poly]+sliv).buffer(0.01).buffer(-0.01)
+    hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
+    for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 
 # ---------- arazi ----------
 

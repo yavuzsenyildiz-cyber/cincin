@@ -168,7 +168,25 @@ begin
     # tek tek asagi uzatilir. Dis sinir (kabuk) kullanilmaz: girintilerde/kapi onlerinde tas yuzey acikta kalmaz.
     zdip = zmin - CincinEv::GOMME.m
     yuzler = []
-    CincinEv.alt_yuzler(ev.definition.entities, ev.transformation, zb + 0.29.m, yuzler) # dosemenin (zb+0.30) altindakiler; esyaya dokunma
+    CincinEv.alt_yuzler(ev.definition.entities, ev.transformation, zb + 1.5.m, yuzler)
+    # 1) dosemenin (zb+0.30) altindaki tum alt yuzler; 2) daha yukaridaki ama taban izi DISINA tasan buyuk alt yuzler
+    # (cepheden tasan subasman/plinth alti, >= 1 m2): plinth ile zemin arasi bosluk dolar; esya/denizlik alti dolmaz
+    hp = hull.map { |x, y| Geom::Point3d.new(x, y, 0) }
+    yuzler = yuzler.select do |poly|
+      zt = poly.map(&:z).max
+      next true if zt < zb + 0.29.m
+      alan = 0.0
+      poly.each_with_index { |p0, i| p1 = poly[(i + 1) % poly.length]; alan += p0.x.to_m * p1.y.to_m - p1.x.to_m * p0.y.to_m }
+      next false if alan.abs / 2 < 1.0
+      c = poly.inject(Geom::Vector3d.new(0, 0, 0)) { |v, q| v + Geom::Vector3d.new(q.x, q.y, 0) }
+      c = Geom::Point3d.new(c.x / poly.length, c.y / poly.length, 0)
+      seg = lambda do |a_, b_|
+        ab = b_ - a_; t = ab.length > 0 ? ((c - a_).dot(ab) / (ab.length**2)) : 0
+        t = [[t, 0].max, 1].min
+        c.distance(a_.offset(ab, ab.length * t))
+      end
+      !Geom.point_in_polygon_2D(c, hp, true) || hp.each_index.map { |i| seg.(hp[i], hp[(i + 1) % hp.length]) }.min < 0.6.m
+    end
     yuzler.each do |poly|
       zt = poly.map(&:z).max
       next if zt - zdip < 0.02.m
