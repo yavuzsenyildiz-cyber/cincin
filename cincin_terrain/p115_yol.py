@@ -28,7 +28,10 @@ for l in open('pk_rings.txt'):
 P=Polygon(ring)
 # kuzey istinat duvari 0.50 m disari kaydirilir -> kuzey serit (yol) 0.50 m genisler
 KUZEY_KAYMA=0.50
-P=P.union(LineString(ring[0:13]).buffer(KUZEY_KAYMA,single_sided=True,join_style=2)).buffer(0.01,join_style=2).buffer(-0.01,join_style=2)
+_off=LineString(ring[0:13]).offset_curve(KUZEY_KAYMA,join_style=2)      # kuzey kenar 0.5 m disari; uclar dogrudan komsu koselere baglanir
+_oc=list(_off.coords)
+if np.hypot(_oc[0][0]-ring[0][0],_oc[0][1]-ring[0][1])>np.hypot(_oc[-1][0]-ring[0][0],_oc[-1][1]-ring[0][1]): _oc=_oc[::-1]
+P=Polygon(_oc+list(ring[13:])).buffer(0)                                # dogu/bati kenarlari duz (kirik/kademe yok)
 J=json.load(open('tesviye.json'))
 ids=[k for k,n in enumerate(J['names']) if n.startswith('P115')]
 names=[J['names'][k] for k in ids]; Z=np.array([J['Z'][k] for k in ids]); fps=[Polygon(J['fp'][k]) for k in ids]
@@ -404,6 +407,32 @@ def nat_agiz(x,y):
     return z0
 outer[:,2]=nat_agiz(outer[:,0],outer[:,1])
 tri_part(region.difference(P),'arazi',nat_agiz,step=1.0,extra=np.vstack([outer,far]))
+# ---------- kenar perdeleri: her alanin kenarindan alcak komsuya kadar dikey yuzey (bosluk/aciklik kalmaz) ----------
+# Duvarlarin 1 cm gerisinde: duvar olan yerde gorunmez, olmayan her kosede acikligi kapatir. Ev izi kenarlari tas, digerleri beton.
+nperde=0
+for poly,tag,zf in parts:
+    tas_=tag=='kaldirim' or (not poly.is_empty and poly.intersection(FPu).area>0.5*poly.area)
+    for pg in ([poly] if poly.geom_type=='Polygon' else [q for q in getattr(poly,'geoms',[]) if q.geom_type=='Polygon']):
+        for rr in [pg.exterior]+list(pg.interiors):
+            c_=np.array(shapely.segmentize(rr,0.5).coords)
+            if len(c_)<3: continue
+            a_=c_[:-1]; b_=c_[1:]; d_=b_-a_; L_=np.hypot(d_[:,0],d_[:,1]); ok=L_>1e-4
+            a_,b_,d_,L_=a_[ok],b_[ok],d_[ok],L_[ok]
+            nn=np.c_[-d_[:,1],d_[:,0]]/L_[:,None]; mid=(a_+b_)/2
+            ic=contains_xy(pg,mid[:,0]+nn[:,0]*0.02,mid[:,1]+nn[:,1]*0.02); nn[~ic]*=-1      # ice dogru normal
+            zs_a=zf(a_[:,0],a_[:,1]); zs_b=zf(b_[:,0],b_[:,1])
+            oa=a_-nn*0.06; ob=b_-nn*0.06
+            zo_a=final(oa[:,0],oa[:,1]); zo_b=final(ob[:,0],ob[:,1])
+            dz=np.maximum(zs_a-zo_a,zs_b-zo_b)
+            for i_ in np.where(dz>0.02)[0]:
+                if np.isnan(zo_a[i_]) or np.isnan(zo_b[i_]): continue
+                zb_=min(zo_a[i_],zo_b[i_])-0.05
+                pa=a_[i_]+nn[i_]*0.01; pb=b_[i_]+nn[i_]*0.01
+                q4=np.array([[pa[0],pa[1],zs_a[i_]],[pb[0],pb[1],zs_b[i_]],[pb[0],pb[1],zb_],[pa[0],pa[1],zb_]])
+                base=sum(len(v_) for v_ in VV); VV.append(q4)
+                tg_='perde_tas' if tas_ else 'perde_beton'
+                FF.append((np.array([base,base+1,base+2]),tg_)); FF.append((np.array([base,base+2,base+3]),tg_)); nperde+=1
+print('kenar perdesi: %d parca'%nperde)
 A_=np.vstack(VV)
 UV=np.c_[A_[:,:2],np.ones(len(A_))]@uvA
 with open('p115y_mesh.txt','w') as f:

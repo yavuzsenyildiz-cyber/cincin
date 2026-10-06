@@ -16,7 +16,9 @@ begin
     "arazi" => (m.materials["ARAZI_PLANKOTE_UYDU"] || mk.("ARAZI_PLANKOTE_UYDU", 120, 120, 90)),
     "cim" => mk.("BAHCE_CIM", 96, 150, 60), "asfalt" => mk.("ARAC_YOLU_ASFALT", 70, 70, 75),
     "otopark" => mk.("OTOPARK_ZEMIN", 120, 120, 128), "yaya" => mk.("YAYA_YOLU", 205, 190, 150),
-    "kaldirim" => mk.("KALDIRIM", 200, 190, 170)
+    "kaldirim" => mk.("KALDIRIM", 200, 190, 170),
+    "perde_beton" => mk.("BAHCE_DUVARI", 175, 170, 160),
+    "perde_tas" => (m.materials["[Stone Sandstone Ashlar Light]"] || mk.("ETEK_DUVAR", 200, 175, 130))
   }
   v = []; tris = Hash.new { |h, k| h[k] = [] }
   File.foreach(dir + "p115y_mesh.txt") do |ln|
