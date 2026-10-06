@@ -15,31 +15,44 @@ begin
   ents = m.entities
   ents.grep(Sketchup::Group).select { |g| g.name =~ /^KITLE_P116/ }.each { |g_| g_.erase! if g_.valid? }
   lay = m.layers.add("KITLE")
-  inst = ents.add_instance(m.definitions.load(skp), Geom::Transformation.new)
-  parts = inst.explode
-  groups = parts.select { |e| e.valid? && e.is_a?(Sketchup::Group) }
+  # 3dmodel3.skp patlatilmaz (explode modelin geometrisiyle birlesip silinmis nesne hatasi veriyordu): tanim icindeki gruplar okunur,
+  # secilen evin tanimi modele yeni grup olarak eklenir. Modeldeki baska hicbir seye dokunulmaz.
+  src = m.definitions.load(skp)
+  groups = []
+  topla = lambda do |es, tr, d|
+    es.each do |x|
+      next unless x.is_a?(Sketchup::Group) || x.is_a?(Sketchup::ComponentInstance)
+      t = tr * x.transformation
+      bb = Geom::BoundingBox.new
+      db = x.definition.bounds
+      (0..7).each { |i| bb.add(db.corner(i).transform(t)) }
+      groups << [x, t, [bb.min.x, bb.min.y, bb.min.z, bb.max.x, bb.max.y, bb.max.z].map(&:to_m)]
+      topla.(x.definition.entities, t, d + 1) if d < 1
+    end
+  end
+  topla.(src.entities, Geom::Transformation.new, 0)
   keep = []; placed = 0; missing = []; log = []
   plan.each do |p|
     b = p["bounds"]
-    bd = lambda { |x| bx = x.bounds; [bx.min.x, bx.min.y, bx.min.z, bx.max.x, bx.max.y, bx.max.z].map(&:to_m) }
-    cand = groups.select { |x| x.valid? && !keep.include?(x) }.map { |x| [x, bd.(x).each_with_index.map { |v, i| (v - b[i]).abs }.max] }.min_by { |_, d| d }
-    g = (cand && cand[1] < 1.0) ? cand[0] : nil
-    log << "#{p['yapi']}: en yakin sapma=#{cand ? cand[1].round(3) : 'yok'} (grup sayisi #{groups.length})"
-    if g.nil? || esik[p["yapi"]].nil? then missing << p["yapi"]; next end
+    cand = groups.reject { |x, _, _| keep.include?(x) }.map { |x, t, v| [x, t, v.each_with_index.map { |q, i| (q - b[i]).abs }.max] }.min_by { |_, _, d| d }
+    log << "#{p['yapi']}: en yakin sapma=#{cand ? cand[2].round(3) : 'yok'} m (aday #{groups.length})"
+    if cand.nil? || cand[2] > 1.0 || esik[p["yapi"]].nil? then missing << p["yapi"]; next end
+    x, t, = cand
     dz = esik[p["yapi"]] - p["kapi_alt_kotlar"].first
+    g = ents.add_group
+    ii = g.entities.add_instance(x.definition, t); ii.material = x.material if x.material
     g.transform!(Geom::Transformation.translation(Geom::Vector3d.new(0, 0, dz.m)))
     placed += 1
     g.name = "KITLE_#{p['yapi']}_#{placed}"; g.layer = lay
-    keep << g
+    keep << x
   end
-  (parts.select(&:valid?) - keep).each { |e| e.erase! if e.valid? }
   m.definitions.purge_unused
   m.commit_operation
   File.write(dir + "kitle_p116_result.txt", "OK yerlestirilen=#{placed}/#{plan.length} eksik=#{missing.inspect}\n#{log.join("\n")}\nskp=#{skp}")
-  UI.messagebox("[betik v3: #{File.expand_path(__FILE__)}]\nP116 kitleleri: #{placed}/#{plan.length} yerlestirildi\n#{log.join("\n")}")
+  UI.messagebox("[betik v4: #{File.expand_path(__FILE__)}]\nP116 kitleleri: #{placed}/#{plan.length} yerlestirildi\n#{log.join("\n")}")
   load dir + "p116_yol.rb" if missing.empty?
 rescue => e
   begin; Sketchup.active_model.abort_operation; rescue; end
   File.write(dir + "kitle_p116_result.txt", "ERR #{e.class}: #{e.message}\n#{e.backtrace.first(3).join("\n")}")
-  UI.messagebox("HATA: #{e.message}\n#{e.backtrace.first(4).join("\n")}\n[betik v3: #{File.expand_path(__FILE__)}]")
+  UI.messagebox("HATA: #{e.message}\n#{e.backtrace.first(4).join("\n")}\n[betik v4: #{File.expand_path(__FILE__)}]")
 end
