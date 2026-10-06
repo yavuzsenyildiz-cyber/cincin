@@ -187,7 +187,15 @@ Pp=_komsu(-1); Pn=_komsu(1)
 A_p=C_+(Pp-C_)/np.hypot(*(Pp-C_))*min(PAH,np.hypot(*(Pp-C_))*0.8); B_p=C_+(Pn-C_)/np.hypot(*(Pn-C_))*min(PAH,np.hypot(*(Pn-C_))*0.8)
 pah=Polygon([C_,A_p,B_p]).buffer(0.02,join_style=2).intersection(g1p).difference(FPu.buffer(0.5))
 print('giris kosesi pahi: kose (%.2f,%.2f), alan %.1f m2'%(C_[0],C_[1],pah.area))
-road_poly=unary_union([road_poly,pah]).buffer(0.01).buffer(-0.01)
+# kamu yolu agzi: giris seridi ile parsel guneybati kosesi arasindaki bahce sivrisi duz bir pahla yola katilir
+_sw=np.array(ring[-1]); _s2=np.array(ring[-2])                                    # (18.35,76.94) ve (21.06,74.22)
+_ax=np.array(axis_pts[1])-np.array(axis_pts[0]); _ax/=np.hypot(*_ax); _an=np.array([_ax[1],-_ax[0]])
+if np.dot(_an,_sw-np.array(axis_pts[0]))<0: _an=-_an                              # seridin bahce tarafi
+_l0=np.array(axis_pts[0])+_an*W/2
+mouth=shapely.MultiPoint([tuple(_l0-_ax*1.0),tuple(_l0+_ax*PAH),tuple(_sw),tuple(_sw+(_s2-_sw)/np.hypot(*(_s2-_sw))*PAH)]).convex_hull
+mouth=mouth.intersection(P).difference(FPu.buffer(0.5))
+print('kamu yolu agzi pahi: alan %.1f m2'%mouth.area)
+road_poly=unary_union([road_poly,pah,mouth]).buffer(0.01).buffer(-0.01)
 hard=unary_union([road_poly,park_poly,walk_poly,lot_poly])
 for j,k in enumerate(order): gard[k]=P.intersection(slab_u(cuts[j],cuts[j+1])).difference(hard)
 
@@ -281,7 +289,8 @@ for tag,q in groups:
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
                 if FPu.distance(LineString([a_,b_]))<0.6: continue
-                if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
+                if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik
+                if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
                 zo=final([a_[0]-nn[0]*0.06,b_[0]-nn[0]*0.06],[a_[1]-nn[1]*0.06,b_[1]-nn[1]*0.06])
                 if np.isnan(zo).any() or np.abs(zi-zo).max()<0.05: continue
@@ -320,7 +329,7 @@ for a_,b_,lo,hi,ty,nl in walls:
     if not gard[0].buffer(-0.05).contains(LineString([mid+nl*TH,tip]).buffer(ST_W/2,cap_style=2)): continue
     cand.append(((hi-lo).mean(),mid,nl,float(hi.mean()),float(lo.mean())))
 stair2=[]
-if cand:
+if False and cand:                                                             # istinat->bahce merdiveni istenmedi (kaldirildi)
     hgt,mid,nl,ztop,zbot=min(cand,key=lambda q:q[0])
     n_=int(np.ceil((ztop-zbot)/RISER)); r_=(ztop-zbot)/n_
     tw=np.array([-nl[1],nl[0]])
