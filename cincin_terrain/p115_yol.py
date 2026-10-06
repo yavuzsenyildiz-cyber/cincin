@@ -264,8 +264,9 @@ for j_,k in enumerate(order):                                   # bina izleri: y
     if fz.is_empty: continue
     nc=float(np.mean(np.array(fps[k].exterior.coords)@NU))
     kuzey=Polygon([U*-1e4+NU*nc,U*1e4+NU*nc,U*1e4+NU*(nc+1e3),U*-1e4+NU*(nc+1e3)])
-    parts.append((fz.intersection(kuzey),'kaldirim',const(Z[k])))
-    parts.append((fz.difference(kuzey),'cim',const(Z[k])))
+    kald=fz.intersection(kuzey).intersection(hard.buffer(1.0))                   # yalniz yola bitisik serit kaldirim; bahceye bakan (merdiven yani vb.) yesil
+    parts.append((kald,'kaldirim',const(Z[k])))
+    parts.append((fz.difference(kald),'cim',const(Z[k])))
 VV=[]; FF=[]
 def tri_part(poly,tag,zf,step=1.0,extra=None):
     if poly.is_empty: return
@@ -331,7 +332,7 @@ for tag,q in groups:
                 a_=p0+(p1-p0)*i/m; b_=p0+(p1-p0)*(i+1)/m; mid=(a_+b_)/2
                 dv=b_-a_; nn=np.array([-dv[1],dv[0]])/max(np.hypot(*dv),1e-9)
                 if not pg.contains(Point(*(mid+nn*0.06))): nn=-nn
-                if FPu.buffer(0.35).contains(LineString([a_,b_])): continue                 # yalniz cepheye yapisik parcalar (dolgu blok kapatir); digerlerinde bosluk kalmasin
+                if LineString([a_,b_]).intersection(FPu.buffer(0.35)).length>=0.6*np.hypot(*(b_-a_)): continue   # cepheye yapisik parcalar (temel perdesi kapatir): egik tepeli ucgen duvar olmasin
                 if sw.distance(Point(*mid))<0.2 and Point(*mid).distance(Jp)<W/2+2.0: continue   # kamu yolundan arac girisi: acik
                 if P.exterior.distance(Point(*mid))<0.2 and mouth.buffer(0.3).contains(Point(*mid)): continue   # yol agzinda parsel kenari: acik                         # bina cephesine yapisik parcalar (dolgu blok kapatir)
                 zi=final([a_[0]+nn[0]*0.06,b_[0]+nn[0]*0.06],[a_[1]+nn[1]*0.06,b_[1]+nn[1]*0.06])
