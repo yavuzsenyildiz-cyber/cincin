@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CİNCİN Ada 189 Modeli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed 3D canvas, a slim title plate top-left, a tool rail bottom-centre */
+:root {
+  --bg: #e9ece6;          /* survey-paper green-grey */
+  --plate: rgba(250,251,248,.88);
+  --fg: #1d2620;
+  --muted: #5c6a60;
+  --accent: #b5562f;      /* ochre of a section line */
+  --line: rgba(29,38,32,.14);
+  --f-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #151a17; --plate: rgba(26,32,28,.86); --fg: #e6ebe4; --muted: #9aa79d; --accent: #e08a5f; --line: rgba(230,235,228,.16); color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #151a17; --plate: rgba(26,32,28,.86); --fg: #e6ebe4; --muted: #9aa79d; --accent: #e08a5f; --line: rgba(230,235,228,.16); color-scheme: dark }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-display); overflow: hidden; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.plate {
+  position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+  max-width: min(340px, calc(100% - 32px)); background: var(--plate); backdrop-filter: blur(8px);
+  border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: grid; gap: 4px;
+}
+.plate h1 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .01em; text-wrap: balance; }
+.plate .sub { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+.plate .hint { font-size: 12.5px; color: var(--muted); }
+.bar {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
+  background: var(--plate); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 8px; padding: 6px;
+  max-width: calc(100% - 32px);
+}
+.bar button {
+  font: 500 13px var(--f-display); color: var(--fg); background: transparent; border: 1px solid transparent;
+  border-radius: 5px; padding: 8px 12px; cursor: pointer;
+}
+.bar button:hover { border-color: var(--line); }
+.bar button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.bar button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+#load {
+  position: fixed; inset: 0; display: grid; place-content: center; gap: 10px; text-align: center; pointer-events: none;
+}
+#load .t { font-family: var(--f-mono); font-size: 13px; color: var(--muted); }
+#load .track { width: min(260px, 70vw); height: 3px; background: var(--line); border-radius: 2px; overflow: hidden; }
+#load .fill { height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.scale { font-family: var(--f-mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { #load .fill { transition: none; } }
+</style>
+<style>:root{padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}body{margin:0;font-size:14px}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<canvas id="c" aria-label="CİNCİN 3B arazi ve yapı modeli"></canvas>
+
+<div class="plate">
+  <span class="sub">Çinçin · Ada 189 · Parsel 115–117</span>
+  <h1>Arazi, kitle ve peyzaj modeli</h1>
+  <span class="hint">Sürükle: döndür · İki parmak / sağ tık: kaydır · Tekerlek / sıkıştır: yakınlaş</span>
+  <span class="scale" id="info">Çevre arazi 2 km × 2 km · uydu dokulu topoğrafya</span>
+</div>
+
+<div id="load"><div class="t" id="lt">Model yükleniyor… 0 / 3</div><div class="track"><div class="fill" id="lf"></div></div></div>
+
+<div class="bar" role="toolbar" aria-label="Görünüm">
+  <button id="b-home" type="button">Parseller</button>
+  <button id="b-top" type="button">Üstten</button>
+  <button id="b-wide" type="button">Çevre</button>
+  <button id="b-sun" type="button" aria-pressed="false">Akşam ışığı</button>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, logarithmicDepthBuffer: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+const skyDay = new THREE.Color(0xbfd3e0), skyEve = new THREE.Color(0xe8b48f);
+scene.background = skyDay.clone();
+scene.fog = new THREE.Fog(scene.background, 2600, 6500);
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.3, 8000);
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.maxPolarAngle = Math.PI * 0.495; controls.maxDistance = 3500; controls.minDistance = 3;
+controls.screenSpacePanning = true;
+
+const hemi = new THREE.HemisphereLight(0xeef4ff, 0x6b6450, 1.1); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffffff, 2.0); scene.add(sun);
+
+// SketchUp export is in inches with Z up
+const root = new THREE.Group();
+root.rotation.x = -Math.PI / 2; root.scale.setScalar(0.0254);
+scene.add(root);
+
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize); resize();
+
+// default framing on the parcels (approx. bounds of the building parts, metres)
+const focus = new THREE.Vector3(80, 6, 14);
+function fly(pos, target) {
+  const p0 = camera.position.clone(), t0 = controls.target.clone(); const t1 = performance.now();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const D = reduce ? 1 : 900;
+  function step(now) {
+    const k = Math.min(1, (now - t1) / D), e = k < .5 ? 2*k*k : 1 - Math.pow(-2*k+2, 2)/2;
+    camera.position.lerpVectors(p0, pos, e); controls.target.lerpVectors(t0, target, e);
+    if (k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const views = {
+  home: () => fly(focus.clone().add(new THREE.Vector3(-150, 110, 170)), focus.clone()),
+  top:  () => fly(focus.clone().add(new THREE.Vector3(0, 320, 0.01)), focus.clone()),
+  wide: () => fly(focus.clone().add(new THREE.Vector3(-900, 700, 1000)), focus.clone()),
+};
+camera.position.copy(focus).add(new THREE.Vector3(-150, 110, 170)); controls.target.copy(focus);
+
+function placeSun(eve) {
+  const dir = eve ? new THREE.Vector3(-1, 0.28, 0.35) : new THREE.Vector3(0.45, 1, 0.6);
+  sun.position.copy(focus).add(dir.normalize().multiplyScalar(500)); sun.target.position.copy(focus); sun.target.updateMatrixWorld();
+  sun.color.set(eve ? 0xffc79a : 0xffffff); sun.intensity = eve ? 2.4 : 2.0;
+  hemi.intensity = eve ? 0.7 : 1.1;
+  scene.background.copy(eve ? skyEve : skyDay); scene.fog.color.copy(scene.background);
+}
+placeSun(false);
+
+document.getElementById('b-home').onclick = views.home;
+document.getElementById('b-top').onclick = views.top;
+document.getElementById('b-wide').onclick = views.wide;
+const bs = document.getElementById('b-sun');
+bs.onclick = () => { const on = bs.getAttribute('aria-pressed') !== 'true'; bs.setAttribute('aria-pressed', String(on)); placeSun(on); };
+
+const loader = new GLTFLoader(); loader.setMeshoptDecoder(MeshoptDecoder);
+const parts = ['cincin_1.glb', 'cincin_2.glb', 'cincin_3.glb'];
+const prog = parts.map(() => 0); let done = 0;
+const lt = document.getElementById('lt'), lf = document.getElementById('lf');
+function upd() { lf.style.width = (prog.reduce((a, b) => a + b, 0) / parts.length * 100).toFixed(0) + '%'; lt.textContent = `Model yükleniyor… ${done} / ${parts.length}`; }
+parts.forEach((f, i) => loader.load(f, (g) => {
+  g.scene.traverse((o) => {
+    if (o.isMesh) {
+      const ms = Array.isArray(o.material) ? o.material : [o.material];
+      ms.forEach((m) => { m.side = THREE.DoubleSide; if (m.map) m.map.anisotropy = 4; });
+    }
+  });
+  root.add(g.scene); done++; prog[i] = 1; upd();
+  if (done === parts.length) document.getElementById('load').hidden = true;
+}, (e) => { if (e.total) { prog[i] = e.loaded / e.total; upd(); } },
+(err) => { lt.textContent = 'Model parçası yüklenemedi: ' + f + '. Sayfayı yenileyin.'; console.error(err); }));
+
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+</script>
+</body>
+</html>
